@@ -18,6 +18,10 @@ export default class Template {
                             draggable="false"
                             onDragStart={preventDrag}
                         ></img>
+                        <div key='h_logo_button_section' className='land-btn-section'>
+                            <span key='hl_btn_1' className='land-btn'>CONTACT US</span>
+                            <span key='hl_btn_2' className='land-btn'>ABOUT US</span>
+                        </div>
                     </div>
                 </div>
             </div>

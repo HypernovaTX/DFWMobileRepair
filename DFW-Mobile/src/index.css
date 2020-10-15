@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: rgba(0,0,0,0.8);
 }
 
 img {
@@ -31,8 +32,25 @@ code {
   }
   .logo {
     margin: auto;
+    display: grid;
   }
   .logo img {
     height: 30vh;
+    margin: auto;
   }
+  .land-btn-section {
+    margin: auto;
+    margin-top: 8px;
+  }
+  span.land-btn {
+    margin: 4px;
+    background: rgb(255 94 0 / 80%);
+    padding: 4px 16px 5px 16px;
+    border-radius: 2px;
+    user-select: none;
+    border-top: 2px solid #ff9428;
+    border-bottom: 2px solid #b32508;
+    color: #FFF;
+    font-size: 0.75em;
+}
 }
