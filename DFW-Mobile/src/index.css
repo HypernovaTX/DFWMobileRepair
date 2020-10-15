@@ -5,7 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgb(60, 58, 57);
 }
 
 img {
@@ -53,14 +53,22 @@ code {
     color: #FFF;
     font-weight: 700;
     font-size: 0.75em;
-    transition: 250ms linear all;
+    transition: 200ms linear all;
+    text-decoration: overline;
   }
   .land-item:hover {
     background: rgba(255,255,255,0.3);
+    text-decoration: none;
   }
-  .land-btn { color: rgb(255,94,0); }
+  .land-item:active { background: rgba(255,255,255,0.6); }
+  .land-btn {
+    color: rgb(255,94,0);
+    text-decoration: overline;
+  }
   .land-btn:hover {
     color: #FFF;
-    background: rgba(255,94,0,0.5);
+    background: rgba(255,94,0,0.4);
+    text-decoration: none;
   }
+  .land-btn:active { background: rgba(255,94,0,0.7); }
 }

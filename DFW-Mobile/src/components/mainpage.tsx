@@ -17,7 +17,7 @@ export default class MainPage extends React.Component<Props, State> {
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll);
     }
-    componentDidUnmount() {
+    componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll);
     }
 
