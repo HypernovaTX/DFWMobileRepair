@@ -11,3 +11,24 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@media only screen and (min-width: 600px) {
+  .lander {
+    width: 100vw;
+    height: 50vh;
+    background: url('./resources/images/landing-bg-placeholder1.jpg');
+    background-size: cover;
+  }
+  .lander-contain {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+  }
+  .logo {
+    margin: auto;
+  }
+  .logo img {
+    height: 30vh;
+  }
+}

@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
+import MainPage from './components/mainpage';
 
 ReactDOM.render(
   <React.StrictMode>
-    
+    <MainPage />
   </React.StrictMode>,
   document.getElementById('root')
 );
