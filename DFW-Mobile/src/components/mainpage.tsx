@@ -28,7 +28,8 @@ export default class MainPage extends React.Component<Props, State> {
     }
 
     render() {
-        const head = Template.head();
+        const { bgy_landing } = this.state;
+        const head = Template.head(bgy_landing, 0);
         const body = Template.content();
 
         return (
