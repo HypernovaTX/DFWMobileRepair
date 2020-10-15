@@ -20,7 +20,8 @@ export default class Template {
                         ></img>
                         <div key='h_logo_button_section' className='land-btn-section'>
                             <span key='hl_btn_1' className='land-btn'>CONTACT US</span>
-                            <span key='hl_btn_2' className='land-btn'>ABOUT US</span>
+                            <span key='hl_btn_2' className='land-item'>ABOUT US</span>
+                            <span key='hl_btn_3' className='land-item'>SERVICES</span>
                         </div>
                     </div>
                 </div>
