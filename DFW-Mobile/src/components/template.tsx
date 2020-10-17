@@ -46,7 +46,13 @@ export default class Template extends React.Component<Props, State> {
                                     this.ref_s1.current.scrollIntoView(this.scroll_behavior);
                                 }}
                             >ABOUT US</span>
-                            <span key='hl_btn_3' className='land-item'>SERVICES</span>
+                            <span
+                                key='hl_btn_3'
+                                className='land-item'
+                                onClick={() => {
+                                    this.ref_s2.current.scrollIntoView(this.scroll_behavior);
+                                }}
+                            >SERVICES</span>
                             <span key='hl_btn_1' className='land-btn'>CONTACT US</span>
                         </div>
                     </div>
@@ -67,15 +73,7 @@ export default class Template extends React.Component<Props, State> {
                     <div key='about_us' className='section1-box'>
                         <h3>About US</h3>
                         <p>
-                            DFW Mobile Repair - Lorem ipsum dolor sit amet, 
-                            consectetur adipiscing elit, sed do eiusmod tempor 
-                            incididunt ut labore et dolore magna aliqua. Ut enim 
-                            ad minim veniam, quis nostrud exercitation ullamco 
-                            laboris nisi ut aliquip ex ea commodo consequat. Duis 
-                            aute irure dolor in reprehenderit in voluptate velit 
-                            esse cillum dolore eu fugiat nulla pariatur. Excepteur 
-                            sint occaecat cupidatat non proident, sunt in culpa 
-                            qui officia deserunt mollit anim id est laborum.
+                            DFW Mobile Repair is a business where we bring the shop to our customers instead having the customer to drive their vehicle all the way to us. We service most of the DFW area.
                         </p>
                     </div>
                 </div>
@@ -84,7 +82,12 @@ export default class Template extends React.Component<Props, State> {
                     className='ct-section section2'
                     ref={this.ref_s2}
                 >
-
+                    <div key='about_us' className='section1-box'>
+                        <h3>Services</h3>
+                        <p>
+                            Oil change, coolant change, brake change, ....
+                        </p>
+                    </div>
                 </div>
             </div>
         );
