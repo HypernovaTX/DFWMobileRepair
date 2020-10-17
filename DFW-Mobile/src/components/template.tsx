@@ -1,11 +1,4 @@
 import React from 'react';
-// ES6 Imports
-import * as Scroll from 'react-scroll';
- 
-// Or Access Link,Element,etc as follows
-let Events    = Scroll.Events;
-let scroll    = Scroll.animateScroll;
-let scrollSpy = Scroll.scrollSpy;
 
 type Props = {
     head_bgy: number,
@@ -25,41 +18,7 @@ export default class Template extends React.Component<Props, State> {
         this.ref_s1 = React.createRef();
         this.ref_s2 = React.createRef();
         this.scroll_behavior = { behavior: 'smooth', block: 'start' };
-        window.HTMLElement.prototype.scrollIntoView = function() {};
     }
-
-    componentDidMount() {
-        Events.scrollEvent.register('begin', function(to, element) {
-            console.log('begin', arguments);
-        });
-     
-        Events.scrollEvent.register('end', function(to, element) {
-            console.log('end', arguments);
-        });
-     
-        scrollSpy.update();
-    }
-    componentWillUnmount() {
-        Events.scrollEvent.remove('begin');
-        Events.scrollEvent.remove('end');
-    }
-
-    scrollToTop() { scroll.scrollToTop(); }
-    scrollToElement(element: string) {
-        Scroll.scroller.scrollTo(element, {
-            duration: 500,
-            delay: 10,
-            smooth: true,
-            containerId: 'ContainerElementID',
-            offset: 50 // Scrolls to element + 50 pixels down the page
-        })
-    }
-
-
-    /*scrollToRef1() {
-        if (!this.ref_s1) { return; }
-        this.ref_s1.scrollIntoView(this.scroll_behavior);
-    };*/ //window.scrollTo(0, ref);
 
     head(): JSX.Element {
         const { head_bgo, head_bgy } = this.props;
@@ -68,7 +27,6 @@ export default class Template extends React.Component<Props, State> {
             backgroundPositionY: head_bgy + head_bgo
         }
         const preventDrag = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); };
-        //console.log(`O1: ${this.ref_s1.offsetTop}`)
         return (
             <div key='h_'className='lander' style={style}>
                 <div key='h_container' className='lander-contain' draggable="false" onDragStart={preventDrag}>
@@ -84,7 +42,9 @@ export default class Template extends React.Component<Props, State> {
                             <span
                                 key='hl_btn_2'
                                 className='land-item'
-                                onClick={() => {  }}
+                                onClick={() => {
+                                    this.ref_s1.current.scrollIntoView(this.scroll_behavior);
+                                }}
                             >ABOUT US</span>
                             <span key='hl_btn_3' className='land-item'>SERVICES</span>
                             <span key='hl_btn_1' className='land-btn'>CONTACT US</span>
@@ -119,7 +79,6 @@ export default class Template extends React.Component<Props, State> {
                         </p>
                     </div>
                 </div>
-
                 <div
                     key='section2'
                     className='ct-section section2'
