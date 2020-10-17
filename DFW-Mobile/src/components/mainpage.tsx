@@ -35,7 +35,7 @@ export default class MainPage extends React.Component<Props, State> {
         />
 
         return (
-            <div key="react_body" className="render-body">{pageTemplate}</div>
+            <>{pageTemplate}</>
         );
     }
 }
