@@ -71,7 +71,7 @@ export default class Template extends React.Component<Props, State> {
                     ref={this.ref_s1}
                 >
                     <div key='about_us' className='section1-box'>
-                        <h3>About US</h3>
+                        <h2>About US</h2>
                         <p>
                             DFW Mobile Repair is a business where we bring the shop to our customers instead having the customer to drive their vehicle all the way to us. We service most of the DFW area.
                         </p>
@@ -83,13 +83,22 @@ export default class Template extends React.Component<Props, State> {
                     ref={this.ref_s2}
                 >
                     <div key='about_us' className='section1-box'>
-                        <h3>Services</h3>
+                        <h2>Services</h2>
                         <p>
                             Oil change, coolant change, brake change, ....
                         </p>
                     </div>
                 </div>
             </div>
+        );
+    }
+
+    services(): JSX.Element {
+        const contentA = (<div key='sectionA'></div>);
+        return(
+            <>
+                
+            </>
         );
     }
     
