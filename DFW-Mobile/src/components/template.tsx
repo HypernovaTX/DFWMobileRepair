@@ -4,7 +4,9 @@ type Props = {
     head_bgy: number,
     head_bgo: number
 };
-type State = {};
+type State = {
+    sel_service: number
+};
 
 export default class Template extends React.Component<Props, State> {
     ref_s1: React.RefObject<any>;
@@ -13,7 +15,9 @@ export default class Template extends React.Component<Props, State> {
     //ref_s3: React.RefObject<any>;
     constructor(p: Props) {
         super(p);
-        this.state = {};
+        this.state = {
+            sel_service: 0
+        };
 
         this.ref_s1 = React.createRef();
         this.ref_s2 = React.createRef();
@@ -97,9 +101,37 @@ export default class Template extends React.Component<Props, State> {
         const contentA = (<div key='sectionA'></div>);
         return(
             <>
-                
+                <div key='service_selector' className='service-selector'>
+                    
+                </div>
             </>
         );
+        /** SELECTION OF SERVICES
+         * - Check ups
+         *      Fluid check: Oil, coolant, transmission, power steering, differential, etc.
+         *      Tire check: pressure, tread, etc.
+         *      Light check: headlights, taillights, turning signals, etc.
+         *      Service light check: check engine, tire pressure, ABS, etc.
+         *      Suspension check: Shock/strut, bushings, control arm, ball joint, tie rod, etc.
+         *      
+         * - Routine maintenance
+         *      Fluid Change: oil, coolant, etc.
+         *      Ignotion: Spark plugs, wires, and distributors
+         *      Brake service: brake pads, rotor, and fluid
+         *      Electrical: battery, relays, alternator
+         *      Fuel: fuel pump, fuel filter, fuel injector
+         *      
+         * - Repairs
+         *      Starting issues: no crank, clicking noise, crank but no start
+         *      Check engine light: sensors, emission, etc.
+         *      Leak: Oil, coolant, transmission, power steering, differential, etc.
+         *      Suspension issues: clunking, squealing, bouncy suspension, uneven steering
+         *      Climate Control: no A/C, no heat
+         *      Engine: overheating, misfiring, clicking noise, stalling
+         * 
+         * If your issues are not listed on our list of service, please reach out to us and we will determine whether it is serviceable.
+         *      
+         */
     }
     
     render() {
