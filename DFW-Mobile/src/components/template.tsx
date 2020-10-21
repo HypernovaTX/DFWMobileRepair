@@ -111,7 +111,7 @@ export default class Template extends React.Component<Props, State> {
          *      Brake fluid
          *      Brake pads
          *      Brake caliper
-         *      Brake rotor
+         *      Brake rotor/drum
          *      Brake cylinder
          *      Brake lines
          * 
@@ -119,42 +119,78 @@ export default class Template extends React.Component<Props, State> {
          *      Oil/oil filter
          *      Spark plugs
          *      Spark plug wires
-         *      Ignition
+         *      Ignition coil
+         *      Distributor
          *      Starter
-         *      Sensors
          *      Tune-ups
          *      Gaskets
-         *      Intake
-         *      Throttle
          *      Valve cover
+         *      Hoses
+         * 
+         * - Fuel
+         *      Fuel pump
+         *      Fuel filter
+         *      Fuel injector
+         *      Air filter
+         *      Intake
+         *      Sensors
+         *      Throttle
          * 
          * - Cooling
          *      Coolant
          *      Radiator
          *      Thermostat
          *      Water pump
-         * 
+         *      Radiator fan
          *      
          * - Drivetrain
          *      Transmission fluid
-         *      Axle/driveshaft
+         *      Transfer case fluid
+         *      Differential fluid
+         *      Driveshaft
+         *      CV Boot/joint
          *      Differential
-         *      Cl
+         *      U-joints
+         * 
+         * - Electrical
+         *      Battery
+         *      Battery terminal/cable
+         *      Alternator
+         *      Relays
+         *      Lights
+         * 
+         * - Suspension/steering
+         *      Shock/strut
+         *      Tie rod
+         *      Control arm
+         *      Ball joint
+         *      Sway bar
+         *      Bushing
+         *      Power steering
+         *      Rack and pinion
+         *      Wheel hub/bearing
+         * 
+         * - Climate control
+         *      A/C recharge
+         *      A/C Compressor
+         *      A/C drier
+         *      A/C Condenser
+         *      A/C lines
+         *      A/C relay
+         *      Heater core
          *      
          * - Diagnostic
-         *      Oil change
-         *      Ignotion: Spark plugs, wires, and distributors
-         *      Brake service: brake pads, rotor, and fluid
-         *      Electrical: battery, relays, alternator
-         *      Fuel: fuel pump, fuel filter, fuel injector
-         *      
-         * - Repairs
-         *      Starting issues: no crank, clicking noise, crank but no start
-         *      Check engine light: sensors, emission, etc.
-         *      Leak: Oil, coolant, transmission, power steering, differential, etc.
-         *      Suspension issues: clunking, squealing, bouncy suspension, uneven steering
-         *      Climate Control: no A/C, no heat
-         *      Engine: overheating, misfiring, clicking noise, stalling
+         *      No start
+         *      Check/service engine light
+         *      Warning lights
+         *      Running rouch
+         *      Emissions
+         *      Leaking
+         *      Handling
+         *      Unusual noises
+         *      User car inspection
+         *      Tires
+         *     
          * 
          * If your issues are not listed on our list of service, please reach out to us and we will determine whether it is serviceable.
          *      
