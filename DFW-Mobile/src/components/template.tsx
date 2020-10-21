@@ -107,15 +107,42 @@ export default class Template extends React.Component<Props, State> {
             </>
         );
         /** SELECTION OF SERVICES
-         * - Check ups
-         *      Fluid check: Oil, coolant, transmission, power steering, differential, etc.
-         *      Tire check: pressure, tread, etc.
-         *      Light check: headlights, taillights, turning signals, etc.
-         *      Service light check: check engine, tire pressure, ABS, etc.
-         *      Suspension check: Shock/strut, bushings, control arm, ball joint, tie rod, etc.
+         * - Brakes
+         *      Brake fluid
+         *      Brake pads
+         *      Brake caliper
+         *      Brake rotor
+         *      Brake cylinder
+         *      Brake lines
+         * 
+         * - Engine
+         *      Oil/oil filter
+         *      Spark plugs
+         *      Spark plug wires
+         *      Ignition
+         *      Starter
+         *      Sensors
+         *      Tune-ups
+         *      Gaskets
+         *      Intake
+         *      Throttle
+         *      Valve cover
+         * 
+         * - Cooling
+         *      Coolant
+         *      Radiator
+         *      Thermostat
+         *      Water pump
+         * 
          *      
-         * - Routine maintenance
-         *      Fluid Change: oil, coolant, etc.
+         * - Drivetrain
+         *      Transmission fluid
+         *      Axle/driveshaft
+         *      Differential
+         *      Cl
+         *      
+         * - Diagnostic
+         *      Oil change
          *      Ignotion: Spark plugs, wires, and distributors
          *      Brake service: brake pads, rotor, and fluid
          *      Electrical: battery, relays, alternator
