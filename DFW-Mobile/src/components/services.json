@@ -1,0 +1,88 @@
+{
+    "Brakes": [
+        "Brake fluid",
+        "Brake pads",
+        "Brake calipers",
+        "Brake rotors/drums",
+        "Brake booster",
+        "Brake lines"
+    ],
+    "Engine": [
+        "Oil/oil filter",
+        "Spark plugs",
+        "Spark plug wires",
+        "Ignition coil",
+        "Distributor",
+        "Starter",
+        "Tune-ups",
+        "Gaskets",
+        "Valve cover",
+        "Hoses"
+    ],
+    "Fuel": [
+        "Fuel pump",
+        "Fuel filter",
+        "Fuel injector",
+        "Air filter",
+        "Intake",
+        "Sensors",
+        "Throttle"
+    ],
+    "Cooling": [
+        "Coolant",
+        "Radiator",
+        "Thermostat",
+        "Water pump",
+        "Radiator fan"
+    ],
+    "Drivetrain": [
+        "Transmission fluid",
+        "Transfer case fluid",
+        "Differential fluid",
+        "Driveshaft",
+        "CV Boot/joint",
+        "Differential",
+        "U-joints"
+    ],
+    "Electrical": [
+        "Battery",
+        "Battery terminal/cable",
+        "Alternator",
+        "Relays",
+        "Lights"
+    ],
+    "Suspension/steering": [
+        "Shock/strut",
+        "Tie rod",
+        "Control arm",
+        "Ball joint",
+        "Sway bar",
+        "Bushings",
+        "Power steering",
+        "Rack and pinion",
+        "Wheel hub/bearing"
+    ],
+    "Climate control": [
+        "A/C Recharge",
+        "A/C Compressor",
+        "A/C drier",
+        "A/C Condenser",
+        "A/C lines",
+        "A/C relay",
+        "Heater Core",
+        "Switches"
+    ],
+    "Diagnostic": [
+        "No start",
+        "Check/service engine light",
+        "Warning lights",
+        "Running rouch",
+        "Emissions",
+        "Leaking",
+        "Handling",
+        "Unusual noises",
+        "Tires",
+        "User car inspection"
+    ]
+}
+

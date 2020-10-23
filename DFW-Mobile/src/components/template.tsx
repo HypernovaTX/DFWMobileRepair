@@ -98,7 +98,6 @@ export default class Template extends React.Component<Props, State> {
     }
 
     services(): JSX.Element {
-        const contentA = (<div key='sectionA'></div>);
         return(
             <>
                 <div key='service_selector' className='service-selector'>
