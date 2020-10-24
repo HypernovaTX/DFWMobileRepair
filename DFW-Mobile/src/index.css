@@ -31,7 +31,7 @@ code {
     display: flex;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.7);
   }
   .logo {
     margin: auto;
@@ -54,26 +54,39 @@ code {
     border-bottom: 2px solid rgba(0,0,0,0);
     background: (0,0,0,0);
     color: #000;
-    font-weight: 700;
-    font-size: 0.75em;
+    font-weight: 900;
+    font-size: 1em;
     transition: 200ms linear all;
     text-decoration: overline;
+    text-shadow: 0 0 8px #FFF, 0 0 8px #FFF;
+    cursor: pointer;
   }
   .land-item:hover {
-    background: rgba(255,255,255,0.3);
+    color: #FFF;
+    text-shadow: 0 0 0 #000;
+    background: rgba(0, 0, 0, 0.4);
     text-decoration: none;
   }
-  .land-item:active { background: rgba(255,255,255,0.6); }
+  .land-item:active {
+    color: #FFF;
+    text-shadow: 0 0 0 #000;
+    background: rgba(0, 0, 0, 0.7);
+  }
   .land-btn {
-    color: rgb(255,94,0);
+    color: rgb(202, 74, 0); /*rgb(255,94,0)*/
     text-decoration: overline;
   }
   .land-btn:hover {
     color: #FFF;
-    background: rgba(255,94,0,0.4);
+    text-shadow: 0 0 0 #000;
+    background: rgba(202, 74, 0, 0.4);
     text-decoration: none;
   }
-  .land-btn:active { background: rgba(255,94,0,0.7); }
+  .land-btn:active {
+    color: #FFF;
+    text-shadow: 0 0 0 #000;
+    background: rgba(202, 74, 0, 0.7);
+  }
   
   .content {
     width: 100vw;

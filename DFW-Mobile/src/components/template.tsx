@@ -27,7 +27,7 @@ export default class Template extends React.Component<Props, State> {
 
     head(): JSX.Element {
         const { head_bgo, head_bgy } = this.props;
-        const LOGO_IMG = require('./../resources/images/logo-placeholder1.png');
+        const LOGO_IMG = require('./../resources/images/logo-placeholder2.png');
         const style = {
             backgroundPositionY: head_bgy + head_bgo
         }
