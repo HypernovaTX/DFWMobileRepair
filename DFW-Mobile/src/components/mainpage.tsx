@@ -29,7 +29,7 @@ export default class MainPage extends React.Component<Props, State> {
 
     render() {
         const { bgy_landing } = this.state;
-        const pageTemplate = <Template
+        const pageTemplate = <Template key='templateIndex'
             head_bgy={bgy_landing}
             head_bgo={0}
         />

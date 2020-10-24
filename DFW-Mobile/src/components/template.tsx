@@ -1,4 +1,5 @@
 import React from 'react';
+import * as ServiceList from "./services.json"; 
 
 type Props = {
     head_bgy: number,
@@ -88,9 +89,9 @@ export default class Template extends React.Component<Props, State> {
                 >
                     <div key='about_us' className='section1-box'>
                         <h2>Services</h2>
-                        <p>
-                            Oil change, coolant change, brake change, ....
-                        </p>
+                        <div key='service_box' className='serviceBox'>
+                            {this.services()}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,10 +99,21 @@ export default class Template extends React.Component<Props, State> {
     }
 
     services(): JSX.Element {
+        let topBar = [<></>];
+        const serviceOption = Object.keys(
+            JSON.parse(JSON.stringify(ServiceList)).default
+        );
+        serviceOption.forEach((serviceName) => {
+            topBar.push(
+                <div key={`service_${serviceName}`} className={`serviceBlock ${serviceName}`}>
+                    {serviceName.replace(/(_+)/g, ' ')}
+                </div>
+            );
+        })
         return(
             <>
                 <div key='service_selector' className='service-selector'>
-                    
+                    {topBar}
                 </div>
             </>
         );

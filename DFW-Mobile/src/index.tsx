@@ -6,7 +6,7 @@ import MainPage from './components/mainpage';
 
 ReactDOM.render(
   <React.StrictMode>
-    <MainPage />
+    <MainPage key='MAIN'/>
   </React.StrictMode>,
   document.getElementById('root')
 );

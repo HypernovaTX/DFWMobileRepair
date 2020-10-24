@@ -51,7 +51,7 @@
         "Relays",
         "Lights"
     ],
-    "Suspension/steering": [
+    "Suspension_and_steering": [
         "Shock/strut",
         "Tie rod",
         "Control arm",
@@ -62,7 +62,7 @@
         "Rack and pinion",
         "Wheel hub/bearing"
     ],
-    "Climate control": [
+    "Climate_control": [
         "A/C Recharge",
         "A/C Compressor",
         "A/C drier",
