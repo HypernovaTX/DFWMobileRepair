@@ -5,13 +5,21 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: rgb(60, 58, 57);
+  background-color: #EEE;
   overflow-x: hidden;
   scroll-snap-type: y mandatory;
 }
 
 img {
   user-select: none;
+}
+
+h2 {
+  font-size: 2.5em;
+  color: rgb(202, 74, 0);
+  line-height: 1em;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
 }
 
 code {
@@ -100,7 +108,7 @@ code {
   .section1-box {
     width: 75%;
     margin: auto;
-    color: #FFF;
+    color: #333;
   }
   .section2 {
     background: rgba(255,255,255,0.2);
