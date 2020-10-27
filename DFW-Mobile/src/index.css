@@ -114,18 +114,30 @@ code {
     background: rgba(255,255,255,0.2);
   }
 
+  .service-selector {
+    height: 4em;
+    position: relative;
+  }
+  .service-selector-inner {
+    position: absolute;
+    bottom: 0px;
+  }
+
   .serviceBlock {
     display: inline-block;
     margin: 2px;
-    color: #000;
-    background: #FFF;
+    color: #FFF;
+    background: #333;
     padding: 8px 12px;
+    line-height: 1em;
+    border-top: 0 solid rgb(202, 74, 0);
     transition: 200ms linear all;
     user-select: none;
   }
   .serviceBlock:hover {
-    color: #333;
-    background: #E8E8E8;
+    color: #CCC;
+    background: #555;
+    border-top: 4px solid rgb(202, 74, 0);
     padding-top: 12px;
   }
 }

@@ -113,7 +113,9 @@ export default class Template extends React.Component<Props, State> {
         return(
             <>
                 <div key='service_selector' className='service-selector'>
-                    {topBar}
+                    <div key='service_selector_inner' className='service-selector-inner'>
+                        {topBar}
+                    </div>
                 </div>
             </>
         );
