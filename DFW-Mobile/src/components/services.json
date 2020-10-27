@@ -1,4 +1,16 @@
 {
+    "Diagnostic": [
+        "No start",
+        "Check/service engine light",
+        "Warning lights",
+        "Running rouch",
+        "Emissions",
+        "Leaking",
+        "Handling",
+        "Unusual noises",
+        "Tires",
+        "User car inspection"
+    ],
     "Brakes": [
         "Brake fluid",
         "Brake pads",
@@ -71,18 +83,6 @@
         "A/C relay",
         "Heater Core",
         "Switches"
-    ],
-    "Diagnostic": [
-        "No start",
-        "Check/service engine light",
-        "Warning lights",
-        "Running rouch",
-        "Emissions",
-        "Leaking",
-        "Handling",
-        "Unusual noises",
-        "Tires",
-        "User car inspection"
     ]
 }
 

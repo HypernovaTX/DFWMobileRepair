@@ -6,7 +6,7 @@ type Props = {
     head_bgo: number
 };
 type State = {
-    sel_service: number
+    sel_service: string
 };
 
 export default class Template extends React.Component<Props, State> {
@@ -17,7 +17,7 @@ export default class Template extends React.Component<Props, State> {
     constructor(p: Props) {
         super(p);
         this.state = {
-            sel_service: 0
+            sel_service: 'Diagnostic'
         };
 
         this.ref_s1 = React.createRef();
@@ -99,16 +99,28 @@ export default class Template extends React.Component<Props, State> {
     }
 
     services(): JSX.Element {
+        const serOBJ = JSON.parse(JSON.stringify(ServiceList)).default;
+        const serviceOption = Object.keys(serOBJ);
+        let { sel_service } = this.state;
         let topBar = [<></>];
-        const serviceOption = Object.keys(
-            JSON.parse(JSON.stringify(ServiceList)).default
-        );
+        let specificServiceList: [] = [];
+
         serviceOption.forEach((serviceName) => {
+            let selected = '';
+            if (sel_service === serviceName) {
+                specificServiceList = serOBJ[serviceName];
+                selected = 'serviceBlockSelected';
+            }
             topBar.push(
-                <div key={`service_${serviceName}`} className={`serviceBlock ${serviceName}`}>
+                <div
+                    key={`service_${serviceName}`}
+                    className={`serviceBlock ${selected} ${serviceName}`}
+                    onClick={() => { this.setState({ sel_service: serviceName }) }}
+                >
                     {serviceName.replace(/(_+)/g, ' ')}
                 </div>
             );
+            
         })
         return(
             <>
@@ -117,6 +129,13 @@ export default class Template extends React.Component<Props, State> {
                         {topBar}
                     </div>
                 </div>
+                {
+                    specificServiceList.map((item, idx) => {
+                        return (
+                            <li key={idx}>{item}</li>
+                        );
+                    })
+                }
             </>
         );
         /** SELECTION OF SERVICES

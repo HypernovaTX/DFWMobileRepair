@@ -109,6 +109,7 @@ code {
     width: 75%;
     margin: auto;
     color: #333;
+    height: 50%;
   }
   .section2 {
     background: rgba(255,255,255,0.2);
@@ -135,9 +136,22 @@ code {
     user-select: none;
   }
   .serviceBlock:hover {
-    color: #CCC;
     background: #555;
-    border-top: 4px solid rgb(202, 74, 0);
-    padding-top: 12px;
+    border-top: 6px solid rgb(202, 74, 0);
+    padding-top: 10px;
+  }
+  .serviceBlock:active, .serviceBlockSelected {
+    background: #777;
+    border-top: 6px solid rgb(255, 94, 2);
+    padding-top: 10px;
+  }
+  .section1-box li {
+    font-size: 1.25em;
+    margin-top: 2px;
+    list-style-type: circle;
+    margin-left: 32px;
+  }
+  .section1-box li::before {
+    
   }
 }
