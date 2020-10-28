@@ -152,12 +152,14 @@ export default class Template extends React.Component<Props, State> {
                 selected = 'serviceBlockSelected';
             }
             topBar.push(
-                <div
-                    key={`service_${serviceName}`}
-                    className={`serviceBlock ${selected} ${serviceName}`}
-                    onClick={() => { tabClicked(serviceName, serOBJ[serviceName]) }}
-                >
-                    {serviceName.replace(/(_+)/g, ' ')}
+                <div key={`service_selector_inner_${serviceName}`} className='service-selector-inner'>
+                    <div
+                        key={`service_${serviceName}`}
+                        className={`serviceBlock ${selected} ${serviceName}`}
+                        onClick={() => { tabClicked(serviceName, serOBJ[serviceName]) }}
+                    >
+                        {serviceName.replace(/(_+)/g, ' ')}
+                    </div>
                 </div>
             );
             
@@ -165,114 +167,27 @@ export default class Template extends React.Component<Props, State> {
         return(
             <>
                 <div key='service_selector' className='service-selector'>
-                    <div key='service_selector_inner' className='service-selector-inner'>
+                    <div key={`service_selector_mid`} className='service-selector-mid'>
                         {topBar}
                     </div>
                 </div>
-                {
-                    specificServiceList.map((item, num) => {
-                        const SLCN = this.state.service_list_cname;;
-                        
-                        return (
-                            <li
-                                key={`ser_list_${num}`}
-                                className={`serv-li ${SLCN[num]}`}
-                                style={{ transition: this.state.service_list_trans }}
-                            >{item}</li>
-                        );
-                    })
-                }
+                <div key='servuce_list_box' className='service-list'>
+                    {
+                        specificServiceList.map((item, num) => {
+                            const SLCN = this.state.service_list_cname;;
+                            
+                            return (
+                                <li
+                                    key={`ser_list_${num}`}
+                                    className={`serv-li ${SLCN[num]}`}
+                                    style={{ transition: this.state.service_list_trans }}
+                                >{item}</li>
+                            );
+                        })
+                    }
+                </div>
             </>
         );
-        /** SELECTION OF SERVICES
-         * - Brakes
-         *      Brake fluid
-         *      Brake pads
-         *      Brake caliper
-         *      Brake rotor/drum
-         *      Brake cylinder
-         *      Brake lines
-         * 
-         * - Engine
-         *      Oil/oil filter
-         *      Spark plugs
-         *      Spark plug wires
-         *      Ignition coil
-         *      Distributor
-         *      Starter
-         *      Tune-ups
-         *      Gaskets
-         *      Valve cover
-         *      Hoses
-         * 
-         * - Fuel
-         *      Fuel pump
-         *      Fuel filter
-         *      Fuel injector
-         *      Air filter
-         *      Intake
-         *      Sensors
-         *      Throttle
-         * 
-         * - Cooling
-         *      Coolant
-         *      Radiator
-         *      Thermostat
-         *      Water pump
-         *      Radiator fan
-         *      
-         * - Drivetrain
-         *      Transmission fluid
-         *      Transfer case fluid
-         *      Differential fluid
-         *      Driveshaft
-         *      CV Boot/joint
-         *      Differential
-         *      U-joints
-         * 
-         * - Electrical
-         *      Battery
-         *      Battery terminal/cable
-         *      Alternator
-         *      Relays
-         *      Lights
-         * 
-         * - Suspension/steering
-         *      Shock/strut
-         *      Tie rod
-         *      Control arm
-         *      Ball joint
-         *      Sway bar
-         *      Bushing
-         *      Power steering
-         *      Rack and pinion
-         *      Wheel hub/bearing
-         * 
-         * - Climate control
-         *      A/C recharge
-         *      A/C Compressor
-         *      A/C drier
-         *      A/C Condenser
-         *      A/C lines
-         *      A/C relay
-         *      Heater core
-         *      
-         * - Diagnostic
-         *      No start
-         *      Check/service engine light
-         *      Warning lights
-         *      Running rouch
-         *      Emissions
-         *      Leaking
-         *      Handling
-         *      Unusual noises
-         *      User car inspection
-         *      Tires
-         *     
-         * 
-         * If your issues are not listed on our list of service, please reach out to us and we will determine whether it is serviceable.
-         *      
-         */
     }
     
     render() {
