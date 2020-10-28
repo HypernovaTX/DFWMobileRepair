@@ -6,7 +6,8 @@ type Props = {
     head_bgo: number
 };
 type State = {
-    sel_service: string
+    sel_service: string,
+    service_list_cname: string[]
 };
 
 export default class Template extends React.Component<Props, State> {
@@ -17,7 +18,8 @@ export default class Template extends React.Component<Props, State> {
     constructor(p: Props) {
         super(p);
         this.state = {
-            sel_service: 'Diagnostic'
+            sel_service: 'Diagnostic',
+            service_list_cname: ['done','done','done','done','done','done','done','done','done','done']
         };
 
         this.ref_s1 = React.createRef();
@@ -103,7 +105,24 @@ export default class Template extends React.Component<Props, State> {
         const serviceOption = Object.keys(serOBJ);
         let { sel_service } = this.state;
         let topBar = [<></>];
-        let specificServiceList: [] = [];
+        let transitionStyle = { 'transition': 'none' };
+        let specificServiceList: string[] = [];
+
+        const tabClicked = (serviceName: string, slistArray: string[]) => {
+            console.log('arraySize: '+slistArray.length);
+            this.setState({ sel_service: serviceName, service_list_cname: slistArray });
+            transitionStyle = { 'transition': 'none' };
+            setTimeout(() => { transitionStyle = { 'transition': '200ms linear all' }; }, 190);
+            slistArray.forEach((val, num) => {
+                slistArray[num] = '';
+                setTimeout(() => {
+                    let getSLCN = this.state.service_list_cname;
+                    getSLCN[num] = 'done'
+                    this.setState({ service_list_cname: getSLCN });
+                }, 200 + (100 * num));
+            });
+            this.setState({ service_list_cname: slistArray });
+        };
 
         serviceOption.forEach((serviceName) => {
             let selected = '';
@@ -114,8 +133,9 @@ export default class Template extends React.Component<Props, State> {
             topBar.push(
                 <div
                     key={`service_${serviceName}`}
+                    style={transitionStyle}
                     className={`serviceBlock ${selected} ${serviceName}`}
-                    onClick={() => { this.setState({ sel_service: serviceName }) }}
+                    onClick={() => { tabClicked(serviceName, serOBJ[serviceName]) }}
                 >
                     {serviceName.replace(/(_+)/g, ' ')}
                 </div>
@@ -130,9 +150,11 @@ export default class Template extends React.Component<Props, State> {
                     </div>
                 </div>
                 {
-                    specificServiceList.map((item, idx) => {
+                    specificServiceList.map((item, num) => {
+                        const SLCN = this.state.service_list_cname;;
+                        
                         return (
-                            <li key={idx}>{item}</li>
+                            <li key={`ser_list_${num}`} className={`serv-li ${SLCN[num]}`}>{item}</li>
                         );
                     })
                 }

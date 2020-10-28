@@ -145,11 +145,16 @@ code {
     border-top: 6px solid rgb(255, 94, 2);
     padding-top: 10px;
   }
-  .section1-box li {
+  .serv-li {
     font-size: 1.25em;
     margin-top: 2px;
     list-style-type: circle;
-    margin-left: 32px;
+    margin-left: 48px;
+    color: rgba(0, 0, 0, 0);
+  }
+  .serv-li.done {
+    margin-left: 16px;
+    color: rgba(0, 0, 0, 1);
   }
   .section1-box li::before {
     
