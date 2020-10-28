@@ -174,12 +174,13 @@ export default class Template extends React.Component<Props, State> {
                 <div key='servuce_list_box' className='service-list'>
                     {
                         specificServiceList.map((item, num) => {
-                            const SLCN = this.state.service_list_cname;;
-                            
+                            const SLCN = this.state.service_list_cname;
+                            let isRight = '';
+                            if (num % 2 === 1) { isRight = 'li-right' }
                             return (
                                 <li
                                     key={`ser_list_${num}`}
-                                    className={`serv-li ${SLCN[num]}`}
+                                    className={`serv-li ${isRight} ${SLCN[num]}`}
                                     style={{ transition: this.state.service_list_trans }}
                                 >{item}</li>
                             );
