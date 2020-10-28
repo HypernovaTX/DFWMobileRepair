@@ -122,6 +122,8 @@ code {
   .service-selector-inner {
     position: absolute;
     bottom: 0px;
+    white-space: nowrap;
+    text-align: center;
   }
 
   .serviceBlock {
@@ -146,8 +148,8 @@ code {
     padding-top: 10px;
   }
   .serv-li {
-    font-size: 1.25em;
-    margin-top: 2px;
+    font-size: 1.3em;
+    margin-top: 4px;
     list-style-type: circle;
     margin-left: 48px;
     color: rgba(0, 0, 0, 0);

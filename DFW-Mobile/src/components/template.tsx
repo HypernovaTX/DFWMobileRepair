@@ -7,7 +7,9 @@ type Props = {
 };
 type State = {
     sel_service: string,
-    service_list_cname: string[]
+    service_list_cname: string[],
+    service_list_trans: string,
+    timeout: NodeJS.Timeout[]
 };
 
 export default class Template extends React.Component<Props, State> {
@@ -19,7 +21,9 @@ export default class Template extends React.Component<Props, State> {
         super(p);
         this.state = {
             sel_service: 'Diagnostic',
-            service_list_cname: ['done','done','done','done','done','done','done','done','done','done']
+            service_list_cname: ['done','done','done','done','done','done','done','done','done','done'],
+            service_list_trans: 'none',
+            timeout: []
         };
 
         this.ref_s1 = React.createRef();
@@ -105,23 +109,40 @@ export default class Template extends React.Component<Props, State> {
         const serviceOption = Object.keys(serOBJ);
         let { sel_service } = this.state;
         let topBar = [<></>];
-        let transitionStyle = { 'transition': 'none' };
         let specificServiceList: string[] = [];
 
-        const tabClicked = (serviceName: string, slistArray: string[]) => {
+        const tabClicked = (selection: string, slistArray: string[]) => {
+            let { timeout } = this.state;
             console.log('arraySize: '+slistArray.length);
-            this.setState({ sel_service: serviceName, service_list_cname: slistArray });
-            transitionStyle = { 'transition': 'none' };
-            setTimeout(() => { transitionStyle = { 'transition': '200ms linear all' }; }, 190);
+
+            //clear all other timeouts to prevent display bug
+            timeout.forEach((timeoutID) => {
+                window.clearTimeout(timeoutID);
+            });
+            timeout = [];
+            
+            //Time out for the animation to begin
+            timeout.push(
+                setTimeout(() => { this.setState({ service_list_trans: '200ms linear all' }); }, 90)
+            );
+
+            //Each of the list item has a delayed timing
             slistArray.forEach((val, num) => {
                 slistArray[num] = '';
-                setTimeout(() => {
+                timeout.push(setTimeout(() => {
                     let getSLCN = this.state.service_list_cname;
                     getSLCN[num] = 'done'
                     this.setState({ service_list_cname: getSLCN });
-                }, 200 + (100 * num));
+                }, 100 + (100 * num)));
             });
-            this.setState({ service_list_cname: slistArray });
+
+            //update
+            this.setState({
+                sel_service: selection,
+                service_list_cname: slistArray,
+                service_list_trans: 'none',
+                timeout
+            });
         };
 
         serviceOption.forEach((serviceName) => {
@@ -133,7 +154,6 @@ export default class Template extends React.Component<Props, State> {
             topBar.push(
                 <div
                     key={`service_${serviceName}`}
-                    style={transitionStyle}
                     className={`serviceBlock ${selected} ${serviceName}`}
                     onClick={() => { tabClicked(serviceName, serOBJ[serviceName]) }}
                 >
@@ -154,7 +174,11 @@ export default class Template extends React.Component<Props, State> {
                         const SLCN = this.state.service_list_cname;;
                         
                         return (
-                            <li key={`ser_list_${num}`} className={`serv-li ${SLCN[num]}`}>{item}</li>
+                            <li
+                                key={`ser_list_${num}`}
+                                className={`serv-li ${SLCN[num]}`}
+                                style={{ transition: this.state.service_list_trans }}
+                            >{item}</li>
                         );
                     })
                 }
