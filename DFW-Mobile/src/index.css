@@ -178,6 +178,7 @@ code {
     text-transform: uppercase;
     user-select: none;
     font-weight: 500;
+    transition: 200ms linear all;
   }
   .serv-li.done {
     margin: 8px 8px 8px 8px;

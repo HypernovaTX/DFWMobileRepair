@@ -145,6 +145,7 @@ export default class Template extends React.Component<Props, State> {
             });
         };
 
+        //Prepare each of the tabs
         serviceOption.forEach((serviceName) => {
             let selected = '';
             if (sel_service === serviceName) {
@@ -182,7 +183,10 @@ export default class Template extends React.Component<Props, State> {
                                     key={`ser_list_${num}`}
                                     className={`serv-li ${isRight} ${SLCN[num]}`}
                                     style={{ transition: this.state.service_list_trans }}
-                                >{item}</li>
+                                >
+                                    <span style={{display: 'block', fontSize: '2em'}}></span>
+                                    {item}
+                                </li>
                             );
                         })
                     }
