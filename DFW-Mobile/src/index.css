@@ -47,12 +47,12 @@ code {
     display: grid;
   }
   .logo img {
-    height: 30vh;
+    max-height: 30vh;
     margin: auto;
   }
   .land-btn-section {
     margin: auto;
-    margin-top: 8px;
+    margin-top: 36px;
   }
   .land-item, .land-btn {
     margin: 4px;
