@@ -16,6 +16,7 @@ type State = {
 export default class Template extends React.Component<Props, State> {
     ref_s1: React.RefObject<any>;
     ref_s2: React.RefObject<any>;
+    ref_s3: React.RefObject<any>;
     scroll_behavior: { behavior: string; block: string; };
     //ref_s3: React.RefObject<any>;
     constructor(p: Props) {
@@ -29,6 +30,7 @@ export default class Template extends React.Component<Props, State> {
 
         this.ref_s1 = React.createRef();
         this.ref_s2 = React.createRef();
+        this.ref_s3 = React.createRef();
         this.scroll_behavior = { behavior: 'smooth', block: 'start' };
     }
 
@@ -78,6 +80,7 @@ export default class Template extends React.Component<Props, State> {
     }
 
     content(): JSX.Element {
+        const AboutText = "DFW Mobile Repair established in 2014 offering an Auto mobile repair service. We are dedicated to offering you a unique service that adds much needed convenience to your life at affordable rates. We provide you with quality grade parts and quality service. You can rest assured that when a repair is done it is fixed right the first time.";
         return (
             <div key='M_content' className='content'>
                 { this.head() }
@@ -86,23 +89,58 @@ export default class Template extends React.Component<Props, State> {
                     className='ct-section section1'
                     ref={this.ref_s1}
                 >
-                    <div key='about_us' className='section1-box'>
-                        <h2 key='about_us_h2'>About US</h2>
-                        <p key='about_us_p'>
-                            DFW Mobile Repair is a business where we bring the shop to our customers instead having the customer to drive their vehicle all the way to us. We service most of the DFW area.
-                        </p>
+                    <div key='M_section1_box' className='section1-box'>
+                        <div key='about_us' className='section1-spanbox'>
+                            <h2 key='about_us_h2'>About US</h2>
+                            <div key='about_us_p' className='about-p'>{AboutText}</div>
+                        </div>
                     </div>
                 </div>
+                
                 <div
                     key='M_section2'
                     className='ct-section section2'
                     ref={this.ref_s2}
                 >
-                    <div key='services_outer_body' className='section1-box'>
-                        <h2 key='services_outer_h2'>Services</h2>
-                        <div key='service_box' className='serviceBox'>
-                            {this.services()}
+                    <div key='M_section_inner' className='section2-bg'>
+                        <div key='services_outer_body' className='section2-box'>
+                            <h2 key='services_outer_h2'>Services</h2>
+                            <div key='service_box' className='serviceBox'>
+                                {this.services()}
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <div
+                    key='M_section3'
+                    className='ct-section section1'
+                    ref={this.ref_s3}
+                >
+                    <div key='M_section3_box' className='section1-box'>
+                        {this.hours()}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    hours(): JSX.Element {
+        return (
+            <div key='hours' className='section1-spanbox'>
+                <h2 key='hours_h2'>Hours</h2>
+                <div key='hours_container' className='hours-container'>
+                    <div key='Hours_l5' className='hours-list'>
+                        <span key='HL_5' className='hours-list-l'>Monday - Friday</span>
+                        <span key='HR_5' className='hours-list-r'>9:00 AM - 5:00 PM</span>
+                    </div>
+                    <div key='Hours_l6' className='hours-list'>
+                        <span key='HL_6' className='hours-list-l'>Saturday</span>
+                        <span key='HR_6' className='hours-list-r'>11:00 AM - 3:00 PM</span>
+                    </div>
+                    <div key='Hours_l7' className='hours-list'>
+                        <span key='HL_7' className='hours-list-l'>Sunday</span>
+                        <span key='HR_7' className='hours-list-r'>Closed</span>
                     </div>
                 </div>
             </div>
