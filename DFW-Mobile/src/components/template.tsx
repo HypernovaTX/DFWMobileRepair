@@ -266,6 +266,11 @@ export default class Template extends React.Component<Props, State> {
                         })
                     }
                 </div>
+                <div key='service_note_box' className='service-note'>
+                    <p>
+                        Not all of the listed services can be applied to all vehicle make and models. If your expected service is not on the list, we may or may not able to service it. Please leave us a contact and we will get back to you as soon as we can!
+                    </p>
+                </div>
             </>
         );
     }

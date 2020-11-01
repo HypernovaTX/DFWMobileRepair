@@ -236,6 +236,16 @@ code {
   overflow: hidden;
   text-align: center;
 }
+.service-note {
+  background: #777;
+  color: #FFF;
+  margin-top: 24px;
+  padding: 12px 24px;
+  border-radius: 2px;
+  overflow: hidden;
+  text-align: center;
+  font-size: 1.15em;
+}
 .serv-li {
   display: inline-block;
   background: rgb(202, 74, 0);
