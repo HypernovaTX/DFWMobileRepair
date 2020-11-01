@@ -44,7 +44,7 @@ export default class Template extends React.Component<Props, State> {
         }
         const preventDrag = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); };
         return (
-            <div key='h_'className='lander' style={style}>
+            <div key='M_header'className='lander' style={style}>
                 <div key='h_container' className='lander-contain' draggable="false" onDragStart={preventDrag}>
                     <div key='h_logo' className='logo'>
                         <img
@@ -79,27 +79,27 @@ export default class Template extends React.Component<Props, State> {
 
     content(): JSX.Element {
         return (
-            <div key='content' className='content'>
+            <div key='M_content' className='content'>
                 { this.head() }
                 <div
-                    key='section1'
+                    key='M_section1'
                     className='ct-section section1'
                     ref={this.ref_s1}
                 >
                     <div key='about_us' className='section1-box'>
-                        <h2>About US</h2>
-                        <p>
+                        <h2 key='about_us_h2'>About US</h2>
+                        <p key='about_us_p'>
                             DFW Mobile Repair is a business where we bring the shop to our customers instead having the customer to drive their vehicle all the way to us. We service most of the DFW area.
                         </p>
                     </div>
                 </div>
                 <div
-                    key='section2'
+                    key='M_section2'
                     className='ct-section section2'
                     ref={this.ref_s2}
                 >
-                    <div key='about_us' className='section1-box'>
-                        <h2>Services</h2>
+                    <div key='services_outer_body' className='section1-box'>
+                        <h2 key='services_outer_h2'>Services</h2>
                         <div key='service_box' className='serviceBox'>
                             {this.services()}
                         </div>
@@ -113,7 +113,7 @@ export default class Template extends React.Component<Props, State> {
         const serOBJ = JSON.parse(JSON.stringify(ServiceList)).default;
         const serviceOption = Object.keys(serOBJ);
         let { sel_service } = this.state;
-        let topBar = [<></>];
+        let topBar = [<div key='TopBarUndefined'></div>];
         let specificServiceList: string[] = [];
 
         const tabClicked = (selection: string, slistArray: string[]) => {
@@ -157,11 +157,13 @@ export default class Template extends React.Component<Props, State> {
                 specificServiceList = serOBJ[serviceName];
                 selected = 'serviceBlockSelected';
             }
+            // eslint-disable-next-line
+            const keyServiceName = serviceName.replace(/[\s\/+]/g, '_');
             topBar.push(
-                <div key={`service_selector_inner_${serviceName}`} className='service-selector-inner'>
+                <div key={`service_selector_inner_${keyServiceName}`} className='service-selector-inner'>
                     <div
-                        key={`service_${serviceName}`}
-                        className={`serviceBlock ${selected} ${serviceName}`}
+                        key={`service_${keyServiceName}`}
+                        className={`serviceBlock ${selected} ${keyServiceName}`}
                         onClick={() => { tabClicked(serviceName, serOBJ[serviceName]) }}
                     >
                         {serviceName.replace(/(_+)/g, ' ')}
@@ -201,9 +203,9 @@ export default class Template extends React.Component<Props, State> {
     
     render() {
         return (
-            <>
+            <div key='templateBody'>
                 {this.content()}
-            </>
+            </div>
         );
     }
 }
