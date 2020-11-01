@@ -47,8 +47,9 @@ code {
   display: grid;
 }
 .logo img {
-  max-height: 30vh;
+  height: 30vh;
   margin: auto;
+  max-height: 128px;
 }
 .land-btn-section {
   margin: auto;
@@ -63,8 +64,8 @@ code {
   border-bottom: 2px solid rgba(0,0,0,0);
   background: (0,0,0,0);
   color: #000;
-  font-weight: 900;
-  font-size: 1em;
+  font-weight: 700;
+  font-size: 1.2em;
   transition: 200ms linear all;
   text-decoration: overline;
   text-shadow: 0 0 16px #FFF;
