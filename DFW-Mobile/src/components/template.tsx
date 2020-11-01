@@ -4,7 +4,8 @@ import '.././resources/services.css';
 
 type Props = {
     head_bgy: number,
-    head_bgo: number
+    head_bgo: number,
+    p2_bgy: number
 };
 type State = {
     sel_service: string,
@@ -41,9 +42,7 @@ export default class Template extends React.Component<Props, State> {
     head(): JSX.Element {
         const { head_bgo, head_bgy } = this.props;
         const LOGO_IMG = require('./../resources/images/logo-current.png');
-        const style = {
-            backgroundPositionY: head_bgy + head_bgo
-        }
+        const style = { backgroundPositionY: head_bgy + head_bgo };
         const preventDrag = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); };
         return (
             <div key='M_header'className='lander' style={style}>
@@ -80,7 +79,9 @@ export default class Template extends React.Component<Props, State> {
     }
 
     content(): JSX.Element {
+        const { p2_bgy } = this.props;
         const AboutText = "DFW Mobile Repair established in 2014 offering an Auto mobile repair service. We are dedicated to offering you a unique service that adds much needed convenience to your life at affordable rates. We provide you with quality grade parts and quality service. You can rest assured that when a repair is done it is fixed right the first time.";
+        const p2Style = { backgroundPositionY: p2_bgy };
         return (
             <div key='M_content' className='content'>
                 { this.head() }
@@ -101,6 +102,7 @@ export default class Template extends React.Component<Props, State> {
                     key='M_section2'
                     className='ct-section section2'
                     ref={this.ref_s2}
+                    style={p2Style}
                 >
                     <div key='M_section_inner' className='section2-bg'>
                         <div key='services_outer_body' className='section2-box'>

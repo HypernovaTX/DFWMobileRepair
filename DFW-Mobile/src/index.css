@@ -113,14 +113,24 @@ code {
   background: rgba(255,255,255,0.2) url(./resources/images/CarPartsBG.png);
   background-repeat: repeat;
   background-size: 20%;
-  background-attachment: fixed;
+  animation: section2_bg 120s linear infinite;
+  /*background-attachment: fixed;*/
   padding: 0px;
+}
+@keyframes section2_bg {
+  from {
+    background-position-x: 0px;
+  }
+
+  to {
+    background-position-x: 100%;
+  }
 }
 .section2-bg {
   width: 100%;
   height: 100%;
   display: flex;
-  background: rgba(235, 235, 235, 0.85);
+  background: rgba(235, 235, 235, 0.75);
   padding: 64px 0px;
 }
 .section1-box {

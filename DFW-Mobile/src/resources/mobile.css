@@ -14,6 +14,14 @@
     .section1-box {
         width: 90%;
     }
+    .section2 {
+        background-size: 50%;
+        animation: section2_bg 60s linear infinite;
+    }
+    @keyframes section2_bg {
+        from { background-position-x: 0px; }
+        to { background-position-x: 100%; }
+    }
     .section2-box {
         width: 90%;
     }
@@ -25,24 +33,24 @@
         border-radius: 16px;
     }
     .land-item {
-    color: #FFF;
-    text-shadow: 0 0 0 #000;
-    background: rgba(0, 0, 0, 0.75);
-    text-decoration: none;
+        color: #FFF;
+        text-shadow: 0 0 0 #000;
+        background: rgba(0, 0, 0, 0.75);
+        text-decoration: none;
     }
     .land-item:active {
-    color: #FFF;
-    text-shadow: 0 0 0 #000;
-    background: rgba(0, 0, 0, 1);
+        color: #FFF;
+        text-shadow: 0 0 0 #000;
+        background: rgba(0, 0, 0, 1);
     }
     .land-btn {
-    color: rgb(202, 74, 0); /*rgb(255,94,0)*/
-    text-decoration: overline;
+        color: rgb(202, 74, 0); /*rgb(255,94,0)*/
+        text-decoration: overline;
     }
     .land-btn {
-    color: #FFF;
-    text-shadow: 0 0 0 #000;
-    background: rgba(202, 74, 0, 0.75);
-    text-decoration: none;
+        color: #FFF;
+        text-shadow: 0 0 0 #000;
+        background: rgba(202, 74, 0, 0.75);
+        text-decoration: none;
     }
 }
