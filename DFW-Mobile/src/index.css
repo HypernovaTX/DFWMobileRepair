@@ -130,7 +130,7 @@ code {
   width: 100%;
   height: 100%;
   display: flex;
-  background: rgba(235, 235, 235, 0.75);
+  background: rgba(220, 220, 220, 0.75);
   padding: 64px 0px;
 }
 .section1-box {
@@ -164,6 +164,11 @@ code {
   background-color: #ca4a00;
   margin: 8px;
   border-radius: 16px;
+  user-select: none;
+  transition: 200ms linear all;
+}
+.hours-list:hover {
+  background-color: rgb(255, 94, 0);
 }
 /*.hours-list-l { float: left; }
 .hours-list-r { float: right; }*/
@@ -252,4 +257,26 @@ code {
 }
 .serv-li:hover {
   background: rgb(255, 94, 0);
+}
+.section4 {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.footer {
+  background: #333;
+  color: #FFF;
+  padding: 64px 48px;
+  display: flex;
+  border-top: 8px solid #ca4a00;
+}
+
+.footer-contain {
+  margin: auto;
+  display: block;
+}
+
+.footer-text {
+  text-align: center;
+  display: block;
+  font-size: 0.9em;
 }

@@ -18,8 +18,9 @@ export default class Template extends React.Component<Props, State> {
     ref_s1: React.RefObject<any>;
     ref_s2: React.RefObject<any>;
     ref_s3: React.RefObject<any>;
+    ref_s4: React.RefObject<any>;
     scroll_behavior: { behavior: string; block: string; };
-    //ref_s3: React.RefObject<any>;
+
     constructor(p: Props) {
         super(p);
         this.state = {
@@ -32,6 +33,7 @@ export default class Template extends React.Component<Props, State> {
         this.ref_s1 = React.createRef();
         this.ref_s2 = React.createRef();
         this.ref_s3 = React.createRef();
+        this.ref_s4 = React.createRef();
         this.scroll_behavior = { behavior: 'smooth', block: 'start' };
     }
 
@@ -84,7 +86,7 @@ export default class Template extends React.Component<Props, State> {
         const p2Style = { backgroundPositionY: p2_bgy };
         return (
             <div key='M_content' className='content'>
-                { this.head() }
+                {this.head()}
                 <div
                     key='M_section1'
                     className='ct-section section1'
@@ -123,6 +125,32 @@ export default class Template extends React.Component<Props, State> {
                         {this.hours()}
                     </div>
                 </div>
+
+                <div
+                    key='M_section4'
+                    className='ct-section section4'
+                    ref={this.ref_s4}
+                >
+                    <div key='contact_body' className='section1-box'>
+                        <h2 key='contact_h2'>Contact Us</h2>
+                        <div key='contact_content' className='contact-body'>
+                            {this.contact()}
+                        </div>
+                    </div>
+                </div>
+
+                { this.footer() }
+            </div>
+        );
+    }
+
+    footer(): JSX.Element {
+        return (
+            <div key='M_footer' className='footer'>
+                <div key='f_container' className='footer-contain'>
+                    <span key='f_text1' className='footer-text'>Copyright &#169; 2014 - 2020, DFW Mobile Repair</span>
+                    <span key='f_text2' className='footer-text'>Website designed and programmed by Arthur (Hypernova) Guo</span>
+                </div>
             </div>
         );
     }
@@ -156,6 +184,7 @@ export default class Template extends React.Component<Props, State> {
         let topBar = [<div key='TopBarUndefined'></div>];
         let specificServiceList: string[] = [];
 
+        //Prepare the list of services blocks for fade in animation
         const tabClicked = (selection: string, slistArray: string[]) => {
             let { timeout } = this.state;
             console.log('arraySize: '+slistArray.length);
@@ -237,6 +266,16 @@ export default class Template extends React.Component<Props, State> {
                         })
                     }
                 </div>
+            </>
+        );
+    }
+
+    contact(): JSX.Element {
+        return (
+            <>
+                <form key='contact_form'>
+
+                </form>
             </>
         );
     }
