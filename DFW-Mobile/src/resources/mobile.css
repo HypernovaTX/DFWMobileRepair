@@ -1,0 +1,27 @@
+@media only screen and (max-width: 640px) {
+    .logo img {
+        width: 80vw;
+        margin: auto;
+    }
+    .land-btn-section {
+        display: grid;
+        text-align: center;
+    }
+    .land-item, .land-btn {
+        margin-bottom: 12px;
+        font-size: 1.3em;
+    }
+    .section1-box {
+        width: 90%;
+    }
+    .section2-box {
+        width: 90%;
+    }
+    .serviceBlock {
+        font-size: 1.2em;
+    }
+    .service-list {
+        margin-top: 20px;
+        border-radius: 16px;
+    }
+}

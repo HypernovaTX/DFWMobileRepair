@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import './resources/mobile.css';
 import * as serviceWorker from './serviceWorker';
 import MainPage from './components/mainpage';
 

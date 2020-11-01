@@ -67,7 +67,7 @@ code {
   font-size: 1em;
   transition: 200ms linear all;
   text-decoration: overline;
-  text-shadow: 0 0 8px #FFF, 0 0 8px #FFF;
+  text-shadow: 0 0 16px #FFF;
   cursor: pointer;
 }
 .land-item:hover {
