@@ -9,36 +9,36 @@
 
 .No-start::before { background-image: url(./images/ServicesIcons/A0-NoStartAlt.png); }
 .Check-service-engine-light::before { background-image: url(./images/ServicesIcons/A1-CheckEngine.png); }
-.Warning-lights::before { background-image: url(./images/ServicesIcons/A2-WarningLights.png); }
+.Warning-light::before { background-image: url(./images/ServicesIcons/A2-WarningLights.png); }
 .Running-rough::before { background-image: url(./images/ServicesIcons/A3-RunningRough.png); }
-.Emissions::before { background-image: url(./images/ServicesIcons/A4-Emissions.png); }
+.Emission::before { background-image: url(./images/ServicesIcons/A4-Emissions.png); }
 .Leaking::before { background-image: url(./images/ServicesIcons/A5-Leak.png); }
 .Handling::before { background-image: url(./images/ServicesIcons/A6-Handling.png); }
-.Unusual-noises::before { background-image: url(./images/ServicesIcons/A7-Noises.png); }
-.Tires::before { background-image: url(./images/ServicesIcons/A8-Tires.png); }
+.Unusual-noise::before { background-image: url(./images/ServicesIcons/A7-Noises.png); }
+.Tire-check::before { background-image: url(./images/ServicesIcons/A8-Tires.png); }
 .Used-car-inspection::before { background-image: url(./images/ServicesIcons/A9-Inspection.png); }
 
 .Brake-fluid::before { background-image: url(./images/ServicesIcons/B0-BrakeFluid.png); }
-.Brake-pads::before { background-image: url(./images/ServicesIcons/B1-BrakePads.png); }
-.Brake-calipers::before { background-image: url(./images/ServicesIcons/B2-BrakeCalipers.png); }
-.Brake-rotors-drums::before { background-image: url(./images/ServicesIcons/B3-BrakeRotors.png); }
+.Brake-pad::before { background-image: url(./images/ServicesIcons/B1-BrakePads.png); }
+.Brake-caliper::before { background-image: url(./images/ServicesIcons/B2-BrakeCalipers.png); }
+.Brake-rotor-drum::before { background-image: url(./images/ServicesIcons/B3-BrakeRotors.png); }
 .Brake-booster::before { background-image: url(./images/ServicesIcons/B4-BrakeBooster.png); }
-.Brake-lines::before { background-image: url(./images/ServicesIcons/B5-BrakeLines.png); }
+.Brake-line::before { background-image: url(./images/ServicesIcons/B5-BrakeLines.png); }
 
 .Oil-oil-filter::before { background-image: url(./images/ServicesIcons/C0-OilFilter.png); }
-.Spark-plugs::before { background-image: url(./images/ServicesIcons/C1-SparkPlugs.png); }
-.Spark-plug-wires::before { background-image: url(./images/ServicesIcons/C2-SparkPlugWires.png); }
+.Spark-plug::before { background-image: url(./images/ServicesIcons/C1-SparkPlugs.png); }
+.Spark-plug-wire::before { background-image: url(./images/ServicesIcons/C2-SparkPlugWires.png); }
 .Distributor::before { background-image: url(./images/ServicesIcons/C3-Distributor.png); }
 .Starter::before { background-image: url(./images/ServicesIcons/C4-Starter.png); }
-.Gaskets::before { background-image: url(./images/ServicesIcons/C5-Gaskets.png); }
-.Hoses::before { background-image: url(./images/ServicesIcons/C6-Hoses.png); }
+.Gasket::before { background-image: url(./images/ServicesIcons/C5-Gaskets.png); }
+.Hose::before { background-image: url(./images/ServicesIcons/C6-Hoses.png); }
 
 .Fuel-pump::before { background-image: url(./images/ServicesIcons/D0-FuelPump.png); }
 .Fuel-filter::before { background-image: url(./images/ServicesIcons/D1-FuelFilter.png); }
-.Fuel-injectors::before { background-image: url(./images/ServicesIcons/D2-FuelInjector.png); }
+.Fuel-injector::before { background-image: url(./images/ServicesIcons/D2-FuelInjector.png); }
 .Air-filter::before { background-image: url(./images/ServicesIcons/D3-AirFilter.png); }
 .Intake::before { background-image: url(./images/ServicesIcons/D4-Intake.png); }
-.Sensors::before { background-image: url(./images/ServicesIcons/D5-Sensor.png); }
+.Sensor::before { background-image: url(./images/ServicesIcons/D5-Sensor.png); }
 .Throttle::before { background-image: url(./images/ServicesIcons/D6-Throttle.png); }
 
 .Coolant::before { background-image: url(./images/ServicesIcons/E0-Coolant.png); }
@@ -49,12 +49,26 @@
 
 .Transmission-Transfer-case-fluid::before { background-image: url(./images/ServicesIcons/F0-TransmissionFluid.png); }
 .Differential-fluid::before { background-image: url(./images/ServicesIcons/F1-DifferentialFluid.png); }
-.Driveshaft-CV-joint::before { background-image: url(./images/ServicesIcons/F2-DriveShaft.png); }
+.Driveshaft-CV-axle::before { background-image: url(./images/ServicesIcons/F2-DriveShaft.png); }
 .Differential-repair::before { background-image: url(./images/ServicesIcons/F3-Differential.png); }
-.U-joints::before { background-image: url(./images/ServicesIcons/F4-UJoint.png); }
+.U-joint::before { background-image: url(./images/ServicesIcons/F4-UJoint.png); }
 
 .Battery::before { background-image: url(./images/ServicesIcons/G0-Battery.png); }
-.Battery-terminals-wires::before { background-image: url(./images/ServicesIcons/G1-BatteryTerminal.png); }
+.Battery-terminal-wire::before { background-image: url(./images/ServicesIcons/G1-BatteryTerminal.png); }
 .Alternator::before { background-image: url(./images/ServicesIcons/G2-Alternator.png); }
-.Relays::before { background-image: url(./images/ServicesIcons/G3-Relays.png); }
-.Lights::before { background-image: url(./images/ServicesIcons/G4-Headlight.png); }
+.Relay::before { background-image: url(./images/ServicesIcons/G3-Relays.png); }
+.Light::before { background-image: url(./images/ServicesIcons/G4-Headlight.png); }
+
+.Shock-strut::before { background-image: url(./images/ServicesIcons/H0-Strut.png); }
+.Tie-rod::before { background-image: url(./images/ServicesIcons/H1-TieRod.png); }
+.Control-arm::before { background-image: url(./images/ServicesIcons/H2-ControlArm.png); }
+.Ball-joint::before { background-image: url(./images/ServicesIcons/H3-BallJoint.png); }
+.Sway-bar::before { background-image: url(./images/ServicesIcons/H4-SwayBar.png); }
+.Bushing::before { background-image: url(./images/ServicesIcons/H5-Bushing.png); }
+.Power-steering::before { background-image: url(./images/ServicesIcons/H7-RackNPinion.png); }
+.Wheel-hub-bearing::before { background-image: url(./images/ServicesIcons/H8-WheelBearing.png); }
+
+.A-C::before { background-image: url(./images/ServicesIcons/I0-AC.png); }
+.Heater::before { background-image: url(./images/ServicesIcons/I1-Heater.png); }
+.Instrument-Cluster-Dashboard::before { background-image: url(./images/ServicesIcons/I3-Speedo.png); }
+.Other-accessories::before { background-image: url(./images/ServicesIcons/I4-Accessories.png); }

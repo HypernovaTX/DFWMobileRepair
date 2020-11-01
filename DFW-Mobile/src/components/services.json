@@ -2,39 +2,39 @@
     "Diagnostic": [
         "No start",
         "Check/service engine light",
-        "Warning lights",
+        "Warning light",
         "Running rough",
-        "Emissions",
+        "Emission",
         "Leaking",
         "Handling",
-        "Unusual noises",
-        "Tires",
+        "Unusual noise",
+        "Tire check",
         "Used car inspection"
     ],
     "Brakes": [
         "Brake fluid",
-        "Brake pads",
-        "Brake calipers",
-        "Brake rotors/drums",
+        "Brake pad",
+        "Brake caliper",
+        "Brake rotor/drum",
         "Brake booster",
-        "Brake lines"
+        "Brake line"
     ],
     "Engine": [
         "Oil/oil filter",
-        "Spark plugs",
-        "Spark plug wires",
+        "Spark plug",
+        "Spark plug wire",
         "Distributor",
         "Starter",
-        "Gaskets",
-        "Hoses"
+        "Gasket",
+        "Hose"
     ],
     "Fuel": [
         "Fuel pump",
         "Fuel filter",
-        "Fuel injectors",
+        "Fuel injector",
         "Air filter",
         "Intake",
-        "Sensors",
+        "Sensor",
         "Throttle"
     ],
     "Cooling": [
@@ -47,16 +47,16 @@
     "Drivetrain": [
         "Transmission/Transfer case fluid",
         "Differential fluid",
-        "Driveshaft/CV joint",
+        "Driveshaft/CV axle",
         "Differential repair",
-        "U-joints"
+        "U-joint"
     ],
     "Electrical": [
         "Battery",
-        "Battery terminals/wires",
+        "Battery terminal/wire",
         "Alternator",
-        "Relays",
-        "Lights"
+        "Relay",
+        "Light"
     ],
     "Suspension_and_steering": [
         "Shock/strut",
@@ -64,16 +64,15 @@
         "Control arm",
         "Ball joint",
         "Sway bar",
-        "Bushings",
+        "Bushing",
         "Power steering",
-        "Rack and pinion",
         "Wheel hub/bearing"
     ],
     "Interior": [
-        "A/C Repair",
-        "Heater Reoair",
-        "Switches",
-        "Panels"
+        "A/C",
+        "Heater",
+        "Instrument Cluster/Dashboard",
+        "Other accessories"
     ]
 }
 
