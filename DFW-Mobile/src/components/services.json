@@ -3,13 +3,13 @@
         "No start",
         "Check/service engine light",
         "Warning lights",
-        "Running rouch",
+        "Running rough",
         "Emissions",
         "Leaking",
         "Handling",
         "Unusual noises",
         "Tires",
-        "User car inspection"
+        "Used car inspection"
     ],
     "Brakes": [
         "Brake fluid",
@@ -31,7 +31,7 @@
     "Fuel": [
         "Fuel pump",
         "Fuel filter",
-        "Fuel injector",
+        "Fuel injectors",
         "Air filter",
         "Intake",
         "Sensors",
@@ -53,7 +53,7 @@
     ],
     "Electrical": [
         "Battery",
-        "Battery terminal/cable",
+        "Battery terminals/wires",
         "Alternator",
         "Relays",
         "Lights"
@@ -69,15 +69,11 @@
         "Rack and pinion",
         "Wheel hub/bearing"
     ],
-    "Climate_control": [
-        "A/C Recharge",
-        "A/C Compressor",
-        "A/C drier",
-        "A/C Condenser",
-        "A/C lines",
-        "A/C relay",
-        "Heater Core",
-        "Switches"
+    "Interior": [
+        "A/C Repair",
+        "Heater Reoair",
+        "Switches",
+        "Panels"
     ]
 }
 

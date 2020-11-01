@@ -1,5 +1,6 @@
 import React from 'react';
 import * as ServiceList from "./services.json"; 
+import '.././resources/services.css';
 
 type Props = {
     head_bgy: number,
@@ -29,6 +30,10 @@ export default class Template extends React.Component<Props, State> {
         this.ref_s1 = React.createRef();
         this.ref_s2 = React.createRef();
         this.scroll_behavior = { behavior: 'smooth', block: 'start' };
+    }
+
+    componentDidMount() {
+        this.setState({ service_list_trans: '200ms linear all' });
     }
 
     head(): JSX.Element {
@@ -172,16 +177,15 @@ export default class Template extends React.Component<Props, State> {
                         {topBar}
                     </div>
                 </div>
-                <div key='servuce_list_box' className='service-list'>
+                <div key='service_list_box' className='service-list'>
                     {
                         specificServiceList.map((item, num) => {
                             const SLCN = this.state.service_list_cname;
-                            let isRight = '';
-                            if (num % 2 === 1) { isRight = 'li-right' }
                             return (
                                 <li
                                     key={`ser_list_${num}`}
-                                    className={`serv-li ${isRight} ${SLCN[num]}`}
+                                    // eslint-disable-next-line
+                                    className={`serv-li ${SLCN[num]} ${item.replace(/[\s\/+]/g, '-')}`}
                                     style={{ transition: this.state.service_list_trans }}
                                 >
                                     <span style={{display: 'block', fontSize: '2em'}}></span>
