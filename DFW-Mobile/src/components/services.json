@@ -23,12 +23,9 @@
         "Oil/oil filter",
         "Spark plugs",
         "Spark plug wires",
-        "Ignition coil",
         "Distributor",
         "Starter",
-        "Tune-ups",
         "Gaskets",
-        "Valve cover",
         "Hoses"
     ],
     "Fuel": [
@@ -48,12 +45,10 @@
         "Radiator fan"
     ],
     "Drivetrain": [
-        "Transmission fluid",
-        "Transfer case fluid",
+        "Transmission/Transfer case fluid",
         "Differential fluid",
-        "Driveshaft",
-        "CV Boot/joint",
-        "Differential",
+        "Driveshaft/CV joint",
+        "Differential repair",
         "U-joints"
     ],
     "Electrical": [
