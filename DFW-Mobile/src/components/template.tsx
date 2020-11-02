@@ -268,7 +268,7 @@ export default class Template extends React.Component<Props, State> {
                 </div>
                 <div key='service_note_box' className='service-note'>
                     <p>
-                        Not all of the listed services can be applied to all vehicle make and models. If your expected service is not on the list, we may or may not able to service it. Please leave us a contact and we will get back to you as soon as we can!
+                        Not all of the listed services can be applied to all vehicle make and models. If your expected service is not on the list, we may or may not able to service it. Please leave us your contact information and we’ll get back to you as soon as possible!
                     </p>
                 </div>
             </>
@@ -276,10 +276,94 @@ export default class Template extends React.Component<Props, State> {
     }
 
     contact(): JSX.Element {
+        const email_regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        const inqury = [
+            'get a quote',
+            'schedule an appointment',
+            'business inqury'
+        ];
         return (
             <>
                 <form key='contact_form'>
+                    <div key='cform_block1' className='form-block'>
+                        <div key='cform_name' className='form-title'>Name</div>
+                        <div key='cform_name_box'>
+                            <input
+                                key = 'cform_name_box_input'
+                                type = 'text'
+                                value = ''
+                                onChange = {() => {}}
+                                disabled = {false}
+                                className = 'form-input-text'
+                            ></input>
+                        </div>
+                    </div>
 
+                    <div key='cform_block2' className='form-block'>
+                        <div key='cform_email' className='form-title'>Email</div>
+                        <div key='cform_email_box'>
+                            <input
+                                key = 'cform_name_box_input'
+                                type = 'text'
+                                value = ''
+                                onChange = {() => {}}
+                                disabled = {false}
+                                className = 'form-input-text'
+                            ></input>
+                        </div>
+                    </div>
+
+                    <div key='cform_block3' className='form-block'>
+                        <div key='cform_type' className='form-title'>Inquiry</div>
+                        <div key='cform_type_box'>
+                            <input
+                                key = 'cform_name_box_input'
+                                type = 'text'
+                                value = ''
+                                onChange = {() => {}}
+                                disabled = {false}
+                                className = 'form-input-text'
+                            ></input>
+                        </div>
+                    </div>
+
+                    <div key='cform_block4' className='form-block'>
+                        <div key='cform_title' className='form-name'>Subject</div>
+                        <div key='cform_title_box'>
+                            <input
+                                key = 'cform_title_box_input'
+                                type = 'text'
+                                value = ''
+                                onChange = {() => {}}
+                                disabled = {false}
+                                className = 'form-input-text'
+                            ></input>
+                        </div>
+                    </div>
+
+                    <div key='cform_block9' className='form-block'>
+                        <div key='cform_description' className='form-title'>Description</div>
+                        <div key='cform_description_box'>
+                            <textarea
+                                key = 'cform_description_box_input'
+                                value = ''
+                                onChange = {() => {}}
+                                rows = {8}
+                                cols = {48}
+                                disabled = {false}
+                                className = 'form-input-textarea'
+                            ></textarea>
+                        </div>
+                    </div>
+                    <div key='cform_submit_block' className='form-block submit'>
+                        <button
+                            key = 'cform_submit_button'
+                            type = 'button'
+                            disabled = {false}
+                            onClick = {() => {}}
+                            className = 'form-button'
+                        >Submit</button>
+                    </div>
                 </form>
             </>
         );
