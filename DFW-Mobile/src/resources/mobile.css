@@ -53,4 +53,8 @@
         background: rgba(202, 74, 0, 0.75);
         text-decoration: none;
     }
+    .form-block {
+        width: 100%;
+        display: block;
+      }
 }

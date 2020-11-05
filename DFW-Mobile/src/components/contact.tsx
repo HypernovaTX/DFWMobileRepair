@@ -34,7 +34,7 @@ export default class ContactForm extends React.Component<Props, State> {
         this.inquiryList = [
             'Get a quote',
             'Schedule an appointment',
-            'Other inqury'
+            'Other inquiry'
         ];
     }
 
