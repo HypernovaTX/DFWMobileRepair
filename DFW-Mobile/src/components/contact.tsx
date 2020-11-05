@@ -10,6 +10,7 @@ type State = {
     form_phone: string,
     form_title: string,
     form_description: string,
+    form_vehicle: string,
 };
 
 export default class ContactForm extends React.Component<Props, State> {
@@ -25,6 +26,7 @@ export default class ContactForm extends React.Component<Props, State> {
             form_title: '',
             form_phone: '',
             form_description: '',
+            form_vehicle: '',
         };
 
         this.re_emailVerify = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/g;
@@ -44,6 +46,7 @@ export default class ContactForm extends React.Component<Props, State> {
             case ('phone'):         this.setState({ form_phone: value }); break;
             case ('title'):         this.setState({ form_title: value }); break;
             case ('description'):   this.setState({ form_description: value }); break;
+            case ('vehicle'):         this.setState({ form_vehicle: value }); break;
         }
         
     }

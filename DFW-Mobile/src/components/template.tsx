@@ -20,6 +20,7 @@ export default class Template extends React.Component<Props, State> {
     ref_s2: React.RefObject<any>;
     ref_s3: React.RefObject<any>;
     ref_s4: React.RefObject<any>;
+    ref_s5: React.RefObject<any>;
     scroll_behavior: { behavior: string; block: string; };
 
     constructor(p: Props) {
@@ -35,6 +36,7 @@ export default class Template extends React.Component<Props, State> {
         this.ref_s2 = React.createRef();
         this.ref_s3 = React.createRef();
         this.ref_s4 = React.createRef();
+        this.ref_s5 = React.createRef();
         this.scroll_behavior = { behavior: 'smooth', block: 'start' };
     }
 
@@ -73,7 +75,13 @@ export default class Template extends React.Component<Props, State> {
                                     this.ref_s2.current.scrollIntoView(this.scroll_behavior);
                                 }}
                             >SERVICES</span>
-                            <span key='hl_btn_1' className='land-btn'>CONTACT US</span>
+                            <span
+                                key='hl_btn_1'
+                                className='land-btn'
+                                onClick={() => {
+                                    this.ref_s3.current.scrollIntoView(this.scroll_behavior);
+                                }}
+                            >CONTACT US</span>
                         </div>
                     </div>
                 </div>
