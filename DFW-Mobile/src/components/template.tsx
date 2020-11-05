@@ -1,5 +1,6 @@
 import React from 'react';
 import * as ServiceList from "./services.json"; 
+import ContactForm from './contact'
 import '.././resources/services.css';
 
 type Props = {
@@ -283,89 +284,7 @@ export default class Template extends React.Component<Props, State> {
             'business inqury'
         ];
         return (
-            <>
-                <form key='contact_form'>
-                    <div key='cform_block1' className='form-block'>
-                        <div key='cform_name' className='form-title'>Name</div>
-                        <div key='cform_name_box'>
-                            <input
-                                key = 'cform_name_box_input'
-                                type = 'text'
-                                value = ''
-                                onChange = {() => {}}
-                                disabled = {false}
-                                className = 'form-input-text'
-                            ></input>
-                        </div>
-                    </div>
-
-                    <div key='cform_block2' className='form-block'>
-                        <div key='cform_email' className='form-title'>Email</div>
-                        <div key='cform_email_box'>
-                            <input
-                                key = 'cform_name_box_input'
-                                type = 'text'
-                                value = ''
-                                onChange = {() => {}}
-                                disabled = {false}
-                                className = 'form-input-text'
-                            ></input>
-                        </div>
-                    </div>
-
-                    <div key='cform_block3' className='form-block'>
-                        <div key='cform_type' className='form-title'>Inquiry</div>
-                        <div key='cform_type_box'>
-                            <input
-                                key = 'cform_name_box_input'
-                                type = 'text'
-                                value = ''
-                                onChange = {() => {}}
-                                disabled = {false}
-                                className = 'form-input-text'
-                            ></input>
-                        </div>
-                    </div>
-
-                    <div key='cform_block4' className='form-block'>
-                        <div key='cform_title' className='form-name'>Subject</div>
-                        <div key='cform_title_box'>
-                            <input
-                                key = 'cform_title_box_input'
-                                type = 'text'
-                                value = ''
-                                onChange = {() => {}}
-                                disabled = {false}
-                                className = 'form-input-text'
-                            ></input>
-                        </div>
-                    </div>
-
-                    <div key='cform_block9' className='form-block'>
-                        <div key='cform_description' className='form-title'>Description</div>
-                        <div key='cform_description_box'>
-                            <textarea
-                                key = 'cform_description_box_input'
-                                value = ''
-                                onChange = {() => {}}
-                                rows = {8}
-                                cols = {48}
-                                disabled = {false}
-                                className = 'form-input-textarea'
-                            ></textarea>
-                        </div>
-                    </div>
-                    <div key='cform_submit_block' className='form-block submit'>
-                        <button
-                            key = 'cform_submit_button'
-                            type = 'button'
-                            disabled = {false}
-                            onClick = {() => {}}
-                            className = 'form-button'
-                        >Submit</button>
-                    </div>
-                </form>
-            </>
+            <ContactForm />
         );
     }
     
