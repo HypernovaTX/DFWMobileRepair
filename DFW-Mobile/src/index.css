@@ -290,3 +290,56 @@ code {
   display: block;
   font-size: 0.9em;
 }
+
+.contact-body,.hours-container {
+  margin-top: 24px;
+}
+.form-block {
+  width: 50%;
+  display: inline-block;
+}
+.form-block-n {
+  display: block;
+}
+.form-title {
+  padding: 0px 8px;
+}
+.form-input-text {
+  border: 1px solid rgba(0, 0, 0, 0);
+  font-size: 1.2em;
+  margin: 8px 8px 16px;
+  padding: 8px 8px;
+  border-radius: 8px;
+  color: #333;
+  width: -webkit-fill-available;
+  background: #f8f8f8;
+  transition: 200ms linear all;
+}
+.form-input-text:focus {
+  background: #FFF;
+}
+textarea.form-input-textarea {
+  width: -webkit-fill-available;
+  margin: 8px 8px 16px;
+  padding: 8px 8px;
+  border: 1px solid rgba(0, 0, 0, 0);
+  font-size: 1.2em;
+  color: #333;
+  border-radius: 8px;
+  display: block;
+  background: #f8f8f8;
+  transition: 200ms linear all;
+}
+.form-input-textarea:focus {
+  background: #FFF;
+}
+.contact-note {
+  background: #777;
+  color: #FFF;
+  margin-top: 24px;
+  padding: 12px 24px;
+  border-radius: 2px;
+  overflow: hidden;
+  text-align: center;
+  font-size: 1.15em;
+}

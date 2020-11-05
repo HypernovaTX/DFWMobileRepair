@@ -277,12 +277,6 @@ export default class Template extends React.Component<Props, State> {
     }
 
     contact(): JSX.Element {
-        const email_regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        const inqury = [
-            'get a quote',
-            'schedule an appointment',
-            'business inqury'
-        ];
         return (
             <ContactForm />
         );
