@@ -139,6 +139,22 @@ export default class ContactForm extends React.Component<Props, State> {
                     </div>
                 </div>
 
+                <div key='cform_block6' className='form-block-n'>
+                    <div key='cform_car' className='form-title'>Vehicle (Year, Make, Model) {
+                        (this.state.form_type !== this.inquiryList[2]) ? this.requiredMark('title_required') : <></>
+                    }</div>
+                    <div key='cform_car_box'>
+                        <input
+                            key = 'cform_car_box_input'
+                            type = 'text'
+                            value = {this.state.form_vehicle}
+                            onChange = {(c: any) => {this.updateForm('vehicle', c.target.value)}}
+                            disabled = {false}
+                            className = 'form-input-text'
+                        ></input>
+                    </div>
+                </div>
+
                 <div key='cform_block9' className='form-block-n'>
                     <div key='cform_description' className='form-title'>Description{this.requiredMark('desc_required')}</div>
                     <div key='cform_description_box'>
