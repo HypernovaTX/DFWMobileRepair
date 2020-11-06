@@ -42,7 +42,7 @@ export default class ContactForm extends React.Component<Props, State> {
             'Schedule an appointment',
             'Other inquiry'
         ];
-        this.dest_email = 'saturnmfgg@gmail.com';//'dfwmobilerepair@hotmail.com';
+        this.dest_email = 'oldtestemail@gmail.com';
     }
 
     handleSubmit(e: any) {
