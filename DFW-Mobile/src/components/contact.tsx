@@ -1,4 +1,7 @@
 import React from 'react';
+import * as emailjs from 'emailjs-com'
+import{ init } from 'emailjs-com';
+init("user_ywOsc6rCfToreLR8u5v43");
 
 type Props = {
 
@@ -11,11 +14,13 @@ type State = {
     form_title: string,
     form_description: string,
     form_vehicle: string,
+    submitted: boolean,
 };
 
 export default class ContactForm extends React.Component<Props, State> {
     re_emailVerify: RegExp;
-    re_numbers: RegExp
+    re_numbers: RegExp;
+    dest_email: string;
     inquiryList: string[];
     constructor(p: Props) {
         super(p);
@@ -27,6 +32,7 @@ export default class ContactForm extends React.Component<Props, State> {
             form_phone: '',
             form_description: '',
             form_vehicle: '',
+            submitted: false,
         };
 
         this.re_emailVerify = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/g;
@@ -36,6 +42,56 @@ export default class ContactForm extends React.Component<Props, State> {
             'Schedule an appointment',
             'Other inquiry'
         ];
+        this.dest_email = 'saturnmfgg@gmail.com';//'dfwmobilerepair@hotmail.com';
+    }
+
+    handleSubmit(e: any) {
+        e.preventDefault()
+        const {
+            form_name,
+            form_email,
+            form_title,
+            form_phone,
+            form_type,
+            form_vehicle,
+            form_description
+        } = this.state;
+
+        const templateParams = {
+            from_name: form_name,
+            from_email: form_email,
+            to_name: this.dest_email,
+            subject: form_title,
+            message: form_description,
+            phone: form_phone,
+            vehicle: form_vehicle,
+            request: form_type,
+        }
+
+        const emailTemplate
+            = (form_type === this.inquiryList[2])
+                ? 'template_dfwmr_misc'
+                : 'template_dfwmr_quote';
+
+        emailjs.send(
+            'service_jczi006',
+            emailTemplate,
+            templateParams,
+            'user_ywOsc6rCfToreLR8u5v43',
+        )
+        this.resetForm();
+     }
+
+    resetForm(): void {
+        this.setState({
+            form_name: '',
+            form_email: '',
+            form_type: '',
+            form_title: '',
+            form_phone: '',
+            form_description: '',
+            form_vehicle: '',
+        });
     }
 
     updateForm(state: string, value: string): void {
@@ -46,7 +102,7 @@ export default class ContactForm extends React.Component<Props, State> {
             case ('phone'):         this.setState({ form_phone: value }); break;
             case ('title'):         this.setState({ form_title: value }); break;
             case ('description'):   this.setState({ form_description: value }); break;
-            case ('vehicle'):         this.setState({ form_vehicle: value }); break;
+            case ('vehicle'):       this.setState({ form_vehicle: value }); break;
         }
         
     }
@@ -59,7 +115,7 @@ export default class ContactForm extends React.Component<Props, State> {
 
     template():JSX.Element {
         return(<>
-            <form key='contact_form'>
+            <form key='contact_form' onSubmit={this.handleSubmit.bind(this)}>
                 <div key='cform_block1' className='form-block'>
                     <div key='cform_name' className='form-title'>Full Name{this.requiredMark('name_required')}</div>
                     <div key='cform_name_box'>
@@ -94,7 +150,7 @@ export default class ContactForm extends React.Component<Props, State> {
                         <input
                             key = 'cform_phone_box_input'
                             type = 'text'
-                            value = {this.state.form_title}
+                            value = {this.state.form_phone}
                             onChange = {(c: any) => {this.updateForm('phone', c.target.value)}}
                             disabled = {false}
                             className = 'form-input-text'
@@ -172,7 +228,7 @@ export default class ContactForm extends React.Component<Props, State> {
                 <div key='cform_submit_block' className='form-block-n submit'>
                     <button
                         key = 'cform_submit_button'
-                        type = 'button'
+                        type = 'submit'
                         disabled = {false}
                         onClick = {() => {/* Do nothing at the moment */}}
                         className = 'form-button'
