@@ -134,10 +134,10 @@ export default class ContactForm extends React.Component<Props, State> {
             case ('name'):          this.setState({ form_name: value }); break;
             case ('email'):         this.setState({ form_email: value }); break;
             case ('type'):          this.setState({ form_type: value }); break;
-            case ('phone'):         this.setState({ form_phone: value }); break;
             case ('title'):         this.setState({ form_title: value }); break;
             case ('description'):   this.setState({ form_description: value }); break;
             case ('vehicle'):       this.setState({ form_vehicle: value }); break;
+            case ('phone'):         this.setState({ form_phone: value }); break;
         }
         
     }
@@ -146,6 +146,17 @@ export default class ContactForm extends React.Component<Props, State> {
         return (
             <span key={key} style={{color: '#C22'}}>*</span>
         );
+    }
+
+    formatPhoneText(value: string): string {
+        value = value.replace(/[^0-9\b]/g, '').substring(0, 10);
+        
+        if (value.length > 3 && value.length <= 6) {
+            value = value.slice(0,3) + "-" + value.slice(3);
+        } else if (value.length > 6) {
+            value = value.slice(0,3) + "-" + value.slice(3,6) + "-" + value.slice(6);
+        }
+        return value;
     }
 
     template():JSX.Element {
@@ -189,8 +200,9 @@ export default class ContactForm extends React.Component<Props, State> {
                             key = 'cform_phone_box_input'
                             type = 'text'
                             value = {this.state.form_phone}
-                            onChange = {(c: any) => {this.updateForm('phone', c.target.value)}}
+                            onChange = {(c: any) => {this.updateForm('phone', this.formatPhoneText(c.target.value))}}
                             disabled = {false}
+                            pattern='[\d-]*'
                             className = 'form-input-text'
                         ></input>
                     </div>
