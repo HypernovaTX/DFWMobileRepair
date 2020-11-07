@@ -15,6 +15,8 @@ type State = {
     form_description: string,
     form_vehicle: string,
     submitted: boolean,
+    popupMessage: string,
+    popupVisible: number,
 };
 
 export default class ContactForm extends React.Component<Props, State> {
@@ -33,6 +35,8 @@ export default class ContactForm extends React.Component<Props, State> {
             form_description: '',
             form_vehicle: '',
             submitted: false,
+            popupMessage: 'This is a test message',
+            popupVisible: 0,
         };
 
         this.re_emailVerify = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/g;
@@ -115,6 +119,7 @@ export default class ContactForm extends React.Component<Props, State> {
 
     template():JSX.Element {
         return(<>
+            {this.popup()}
             <form key='contact_form' onSubmit={this.handleSubmit.bind(this)}>
                 <div key='cform_block1' className='form-block'>
                     <div key='cform_name' className='form-title'>Full Name{this.requiredMark('name_required')}</div>
@@ -237,6 +242,38 @@ export default class ContactForm extends React.Component<Props, State> {
             </form>
             <div key='contact_note' className='contact-note'>Phone: 972-968-9688</div>
         </>);
+    }
+
+    popupShow = (message: string) => {
+        let { popupVisible } = this.state;
+        if (popupVisible === 0) {
+            
+            setTimeout(() => {
+                this.setState({popupVisible: 2});
+            }, 500);
+        }
+    };
+
+    popupHide = () => {
+        let { popupVisible } = this.state;
+        if (popupVisible > 0 || popupVisible < 3) {
+            this.setState({popupVisible: 3});
+            setTimeout(() => {
+                this.setState({popupVisible: 0});
+            }, 500);
+        }
+    };
+
+    popup(): JSX.Element {
+        const { popupMessage } = this.state;
+        return(
+            <div key='popup_bg' className='popup-overlay'>
+                <div key='popup_box' className='popup-box'>
+                    <span key='popup_text' className='popup-text'>{popupMessage}</span>
+                    <div key='popup_close' className='popup-button' onClick={() => {this.popupHide()}}>Close</div>
+                </div>
+            </div>
+        );
     }
 
     render() {

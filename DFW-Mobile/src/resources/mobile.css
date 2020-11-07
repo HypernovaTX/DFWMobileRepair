@@ -56,5 +56,8 @@
     .form-block {
         width: 100%;
         display: block;
-      }
+    }
+    .popup-box {
+        max-width: 80vw;
+    }
 }
