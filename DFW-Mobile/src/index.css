@@ -211,6 +211,7 @@ code {
   border-top: 0 solid rgb(202, 74, 0);
   transition: 200ms linear all;
   user-select: none;
+  cursor: pointer;
 }
 .serviceBlock::after {
   background: #333;
@@ -354,6 +355,7 @@ button.form-button {
   text-transform: uppercase;
   font-weight: 700;
   transition: 200ms linear all;
+  cursor: pointer;
 }
 .form-button:hover { background: rgb(255, 94, 0); }
 .form-button:active { background: rgb(255, 147, 85); }
@@ -401,7 +403,36 @@ button.form-button {
   transition: 200ms linear all;
   user-select: none;
   text-transform: uppercase;
+  cursor: pointer;
 }
 .popup-button:hover { background: rgb(255, 94, 0); }
 .popup-button:active { background: rgb(255, 147, 85); }
 .popup-button.disabled { background: #555; }
+
+.go-top {
+  position: fixed;
+  right: 0px;
+  bottom: 24px;
+  width: 56px;
+  height: 72px;
+  background: #555;
+  transition: 200ms linear all;
+  border-left: 0 solid rgb(202, 74, 0);
+  font-size: 48px;
+  line-height: 72px;
+  text-align: center;
+  color: #888;
+  user-select: none;
+  cursor: pointer;
+}
+.go-top:hover {
+  background: #555;
+  border-left: 8px solid rgb(202, 74, 0);
+  width: 64px;
+  color: #AAA;
+}
+.go-top:active {
+  background: #777;
+  color: #FFF;
+  border-left: 8px solid rgb(255, 94, 2);
+}

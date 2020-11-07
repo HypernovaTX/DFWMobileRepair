@@ -21,6 +21,7 @@ export default class Template extends React.Component<Props, State> {
     ref_s3: React.RefObject<any>;
     ref_s4: React.RefObject<any>;
     ref_s5: React.RefObject<any>;
+    ref_top: React.RefObject<any>;
     scroll_behavior: { behavior: string; block: string; };
 
     constructor(p: Props) {
@@ -37,6 +38,7 @@ export default class Template extends React.Component<Props, State> {
         this.ref_s3 = React.createRef();
         this.ref_s4 = React.createRef();
         this.ref_s5 = React.createRef();
+        this.ref_top = React.createRef();
         this.scroll_behavior = { behavior: 'smooth', block: 'start' };
     }
 
@@ -50,7 +52,7 @@ export default class Template extends React.Component<Props, State> {
         const style = { backgroundPositionY: head_bgy + head_bgo };
         const preventDrag = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); };
         return (
-            <div key='M_header'className='lander' style={style}>
+            <div key='M_header'className='lander' style={style} ref={this.ref_top}>
                 <div key='h_container' className='lander-contain' draggable="false" onDragStart={preventDrag}>
                     <div key='h_logo' className='logo'>
                         <img
@@ -93,8 +95,18 @@ export default class Template extends React.Component<Props, State> {
         const { p2_bgy } = this.props;
         const AboutText = "DFW Mobile Repair established in 2014 offering an Auto mobile repair service. We are dedicated to offering you a unique service that adds much needed convenience to your life at affordable rates. We provide you with quality grade parts and quality service. You can rest assured that when a repair is done it is fixed right the first time.";
         const p2Style = { backgroundPositionY: p2_bgy };
+        let goTop = { opacity: 0, zIndex: -9 };
+        if (window.pageYOffset > window.innerHeight * 0.5) {
+            goTop = { opacity: 1, zIndex: 9 };
+        }
         return (
             <div key='M_content' className='content'>
+                <div
+                    key='GOUP'
+                    className='go-top'
+                    style={goTop}
+                    onClick={() => { this.ref_top.current.scrollIntoView(this.scroll_behavior); }}
+                >&#8679;</div>
                 {this.head()}
                 <div
                     key='M_section1'
