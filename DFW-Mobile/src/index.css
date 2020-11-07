@@ -368,7 +368,7 @@ button.form-button {
   top: 0;
   left: 0;
   opacity: 0;
-  transition: opacity 500ms;
+  transition: 500ms linear all;
   backdrop-filter: blur(10px);
   z-index: 9;
   display: flex;
@@ -377,9 +377,10 @@ button.form-button {
 .popup-box {
   margin: auto;
   padding: 0px;
+  transition: 500ms cubic-bezier(0, 0, 0, 1) all;
   border-radius: 12px;
   max-width: 25vw;
-  transition: all 500ms;
+  position: relative;
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 8px 8px 24px rgba(0, 0, 0, 0.5);
 }
@@ -403,3 +404,4 @@ button.form-button {
 }
 .popup-button:hover { background: rgb(255, 94, 0); }
 .popup-button:active { background: rgb(255, 147, 85); }
+.popup-button.disabled { background: #555; }

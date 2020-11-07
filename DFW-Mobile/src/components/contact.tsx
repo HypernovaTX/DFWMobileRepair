@@ -49,7 +49,7 @@ export default class ContactForm extends React.Component<Props, State> {
         this.dest_email = 'oldtestemail@gmail.com';
     }
 
-    handleSubmit(e: any) {
+    handleSubmit(e: any): void {
         e.preventDefault()
         const {
             form_name,
@@ -77,13 +77,22 @@ export default class ContactForm extends React.Component<Props, State> {
                 ? 'template_dfwmr_misc'
                 : 'template_dfwmr_quote';
 
-        emailjs.send(
-            'service_jczi006',
-            emailTemplate,
-            templateParams,
-            'user_ywOsc6rCfToreLR8u5v43',
-        )
-        this.resetForm();
+        const verification = this.verifyEmail();
+
+        if (verification === 1) {
+            this.popupShow('One or more of the forms are empty, please check the required fields (with red *) before submitting.');
+        } else if (verification === 2) {
+            this.popupShow('The email is invalid. Did you made any typos?');
+        } else {
+            /*emailjs.send(
+                'service_jczi006',
+                emailTemplate,
+                templateParams,
+                'user_ywOsc6rCfToreLR8u5v43',
+            )*/
+            this.popupShow('Your email has been sent to a DFW Mobile technician! Please allow us some time to get back to you accordingly! If you did not receive any email confirmation, please try again later.');
+            this.resetForm();
+        }
      }
 
     resetForm(): void {
@@ -96,6 +105,28 @@ export default class ContactForm extends React.Component<Props, State> {
             form_description: '',
             form_vehicle: '',
         });
+    }
+
+    /**
+     * 0 - no errors
+     * 1 - empty form
+     * 2 - invalid email
+     * 3 - invalid phone number
+     */
+    verifyEmail(): number {
+        const {
+            form_name, form_email, form_title, form_phone, form_type, form_vehicle, form_description
+        } = this.state;
+
+        if (form_name === ''
+        || form_email === ''
+        || form_title === ''
+        || form_phone === ''
+        || form_description === '')
+            { return 1; }
+        if (form_vehicle === '' && form_type !== this.inquiryList[2]) { return 1; }
+        if (!form_email.match(this.re_emailVerify)) { return 2; }
+        return 0;
     }
 
     updateForm(state: string, value: string): void {
@@ -118,8 +149,10 @@ export default class ContactForm extends React.Component<Props, State> {
     }
 
     template():JSX.Element {
+        let popup = <></>
+        if (this.state.popupVisible > 0) { popup = this.popup(); }
         return(<>
-            {this.popup()}
+            {popup}
             <form key='contact_form' onSubmit={this.handleSubmit.bind(this)}>
                 <div key='cform_block1' className='form-block'>
                     <div key='cform_name' className='form-title'>Full Name{this.requiredMark('name_required')}</div>
@@ -150,7 +183,7 @@ export default class ContactForm extends React.Component<Props, State> {
                 </div>
 
                 <div key='cform_block5' className='form-block'>
-                    <div key='cform_phone' className='form-title'>Phone Number{this.requiredMark('title_required')}</div>
+                    <div key='cform_phone' className='form-title'>Phone Number (xxx-xxx-xxxx){this.requiredMark('title_required')}</div>
                     <div key='cform_phone_box'>
                         <input
                             key = 'cform_phone_box_input'
@@ -201,7 +234,7 @@ export default class ContactForm extends React.Component<Props, State> {
                 </div>
 
                 <div key='cform_block6' className='form-block-n'>
-                    <div key='cform_car' className='form-title'>Vehicle (Year, Make, Model) {
+                    <div key='cform_car' className='form-title'>Vehicle (Year Make Model Trim) {
                         (this.state.form_type !== this.inquiryList[2]) ? this.requiredMark('title_required') : <></>
                     }</div>
                     <div key='cform_car_box'>
@@ -247,10 +280,10 @@ export default class ContactForm extends React.Component<Props, State> {
     popupShow = (message: string) => {
         let { popupVisible } = this.state;
         if (popupVisible === 0) {
-            
+            this.setState({popupVisible: 1, popupMessage: message});
             setTimeout(() => {
                 this.setState({popupVisible: 2});
-            }, 500);
+            }, 50);
         }
     };
 
@@ -265,12 +298,17 @@ export default class ContactForm extends React.Component<Props, State> {
     };
 
     popup(): JSX.Element {
-        const { popupMessage } = this.state;
+        const { popupMessage, popupVisible } = this.state;
+        const opacity = (popupVisible === 2)
+            ? { opacity: 1 }
+            : { opacity: 0 }
+        const boxY = { top: (opacity.opacity * 48) - 48 };
+        const disabledButton = (popupVisible === 3) ? 'disabled' : '';
         return(
-            <div key='popup_bg' className='popup-overlay'>
-                <div key='popup_box' className='popup-box'>
+            <div key='popup_bg' className='popup-overlay' style={opacity}>
+                <div key='popup_box' className='popup-box' style={boxY}>
                     <span key='popup_text' className='popup-text'>{popupMessage}</span>
-                    <div key='popup_close' className='popup-button' onClick={() => {this.popupHide()}}>Close</div>
+                    <div key='popup_close' className={`popup-button ${disabledButton}`} onClick={() => {this.popupHide()}}>Close</div>
                 </div>
             </div>
         );
