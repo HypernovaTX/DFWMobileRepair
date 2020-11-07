@@ -95,9 +95,9 @@ export default class Template extends React.Component<Props, State> {
         const { p2_bgy } = this.props;
         const AboutText = "DFW Mobile Repair established in 2014 offering an Auto mobile repair service. We are dedicated to offering you a unique service that adds much needed convenience to your life at affordable rates. We provide you with quality grade parts and quality service. You can rest assured that when a repair is done it is fixed right the first time.";
         const p2Style = { backgroundPositionY: p2_bgy };
-        let goTop = { opacity: 0, zIndex: -9 };
+        let goTop = { opacity: 0, right: -80 };
         if (window.pageYOffset > window.innerHeight * 0.5) {
-            goTop = { opacity: 1, zIndex: 9 };
+            goTop = { opacity: 1, right: 0 };
         }
         return (
             <div key='M_content' className='content'>
