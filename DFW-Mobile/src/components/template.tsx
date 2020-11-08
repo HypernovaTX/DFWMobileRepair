@@ -12,7 +12,8 @@ type State = {
     sel_service: string,
     service_list_cname: string[],
     service_list_trans: string,
-    timeout: NodeJS.Timeout[]
+    timeout: NodeJS.Timeout[],
+    sel_service_last: string,
 };
 
 export default class Template extends React.Component<Props, State> {
@@ -30,7 +31,8 @@ export default class Template extends React.Component<Props, State> {
             sel_service: 'Diagnostic',
             service_list_cname: ['done','done','done','done','done','done','done','done','done','done'],
             service_list_trans: 'none',
-            timeout: []
+            timeout: [],
+            sel_service_last: 'Diagnostic',
         };
 
         this.ref_s1 = React.createRef();
@@ -93,7 +95,7 @@ export default class Template extends React.Component<Props, State> {
 
     content(): JSX.Element {
         const { p2_bgy } = this.props;
-        const AboutText = "DFW Mobile Repair established in 2014 offering an Auto mobile repair service. We are dedicated to offering you a unique service that adds much needed convenience to your life at affordable rates. We provide you with quality grade parts and quality service. You can rest assured that when a repair is done it is fixed right the first time.";
+        const AboutText = "DFW Mobile Repair established in 2014 offering an Auto mobile repair service that brings the shop to the customer. We are dedicated to offering you a unique service that adds much needed convenience to your life at affordable rates. We provide you with quality grade parts and quality service. You can rest assured that when a repair is done it is fixed right the first time.";
         const p2Style = { backgroundPositionY: p2_bgy };
         let goTop = { opacity: 0, right: -80 };
         if (window.pageYOffset > window.innerHeight * 0.5) {
@@ -207,37 +209,40 @@ export default class Template extends React.Component<Props, State> {
 
         //Prepare the list of services blocks for fade in animation
         const tabClicked = (selection: string, slistArray: string[]) => {
-            let { timeout } = this.state;
-            console.log('arraySize: '+slistArray.length);
+            let { timeout, sel_service } = this.state;
 
-            //clear all other timeouts to prevent display bug
-            timeout.forEach((timeoutID) => {
-                window.clearTimeout(timeoutID);
-            });
-            timeout = [];
-            
-            //Time out for the animation to begin
-            timeout.push(
-                setTimeout(() => { this.setState({ service_list_trans: '200ms linear all' }); }, 90)
-            );
+            if (selection !== sel_service) {
+                this.setState({ sel_service_last: sel_service });
 
-            //Each of the list item has a delayed timing
-            slistArray.forEach((val, num) => {
-                slistArray[num] = '';
-                timeout.push(setTimeout(() => {
-                    let getSLCN = this.state.service_list_cname;
-                    getSLCN[num] = 'done'
-                    this.setState({ service_list_cname: getSLCN });
-                }, 100 + (100 * num)));
-            });
+                //clear all other timeouts to prevent display bug
+                timeout.forEach((timeoutID) => {
+                    window.clearTimeout(timeoutID);
+                });
+                timeout = [];
+                
+                //Time out for the animation to begin
+                timeout.push(
+                    setTimeout(() => { this.setState({ service_list_trans: '200ms linear all' }); }, 90)
+                );
 
-            //update
-            this.setState({
-                sel_service: selection,
-                service_list_cname: slistArray,
-                service_list_trans: 'none',
-                timeout
-            });
+                //Each of the list item has a delayed timing
+                slistArray.forEach((val, num) => {
+                    slistArray[num] = '';
+                    timeout.push(setTimeout(() => {
+                        let getSLCN = this.state.service_list_cname;
+                        getSLCN[num] = 'done'
+                        this.setState({ service_list_cname: getSLCN });
+                    }, 100 + (100 * num)));
+                });
+
+                //update
+                this.setState({
+                    sel_service: selection,
+                    service_list_cname: slistArray,
+                    service_list_trans: 'none',
+                    timeout
+                });
+            }
         };
 
         //Prepare each of the tabs
