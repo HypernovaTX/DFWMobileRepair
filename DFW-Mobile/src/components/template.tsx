@@ -86,6 +86,11 @@ export default class Template extends React.Component<Props, State> {
                                     this.ref_s3.current.scrollIntoView(this.scroll_behavior);
                                 }}
                             >CONTACT US</span>
+                            <a
+                                key='phone_num'
+                                className='phone-btn'
+                                href='tel:9729689688'
+                            >CALL US: 972-968-9688</a>
                         </div>
                     </div>
                 </div>

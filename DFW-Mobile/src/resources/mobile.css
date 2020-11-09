@@ -32,22 +32,23 @@
         margin-top: 20px;
         border-radius: 16px;
     }
-    .land-item {
+    .land-item, .phone-btn {
         color: #FFF;
         text-shadow: 0 0 0 #000;
         background: rgba(0, 0, 0, 0.75);
         text-decoration: none;
+        margin-top: 4px;
     }
     .land-item:active {
         color: #FFF;
         text-shadow: 0 0 0 #000;
         background: rgba(0, 0, 0, 1);
     }
-    .land-btn {
+    .land-btn, .phone-btn {
         color: rgb(202, 74, 0); /*rgb(255,94,0)*/
         text-decoration: overline;
     }
-    .land-btn {
+    .land-btn, .phone-btn {
         color: #FFF;
         text-shadow: 0 0 0 #000;
         background: rgba(202, 74, 0, 0.75);
