@@ -1,7 +1,7 @@
 import React from 'react';
 import * as emailjs from 'emailjs-com'
 import{ init } from 'emailjs-com';
-init("user_ywOsc6rCfToreLR8u5v43");
+init("");
 
 type Props = {
 
@@ -84,12 +84,7 @@ export default class ContactForm extends React.Component<Props, State> {
         } else if (verification === 2) {
             this.popupShow('The email is invalid. Did you made any typos?');
         } else {
-            emailjs.send(
-                'service_jczi006',
-                emailTemplate,
-                templateParams,
-                'user_ywOsc6rCfToreLR8u5v43',
-            )
+            //emailjs send
             this.popupShow('Your email has been sent to a DFW Mobile technician! Please allow us some time to get back to you accordingly! If you did not receive any email confirmation, please try again later.');
             this.resetForm();
         }
