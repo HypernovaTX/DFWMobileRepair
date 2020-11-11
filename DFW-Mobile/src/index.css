@@ -335,6 +335,7 @@ code {
   border-radius: 8px;
   color: #333;
   width: -webkit-fill-available;
+  width: -moz-available;
   background: #f8f8f8;
   transition: 200ms linear all;
 }
@@ -343,6 +344,7 @@ code {
 }
 textarea.form-input-textarea {
   width: -webkit-fill-available;
+  width: -moz-available;
   margin: 8px 8px 16px;
   padding: 8px 8px;
   border: 1px solid rgba(0, 0, 0, 0);

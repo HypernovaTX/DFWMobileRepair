@@ -46,7 +46,7 @@ export default class ContactForm extends React.Component<Props, State> {
             'Schedule an appointment',
             'Other inquiry'
         ];
-        this.dest_email = 'oldtestemail@gmail.com';
+        this.dest_email = '';
     }
 
     handleSubmit(e: any): void {
@@ -84,7 +84,7 @@ export default class ContactForm extends React.Component<Props, State> {
         } else if (verification === 2) {
             this.popupShow('The email is invalid. Did you made any typos?');
         } else {
-            //emailjs send
+            //Email IS Send
             this.popupShow('Your email has been sent to a DFW Mobile technician! Please allow us some time to get back to you accordingly! If you did not receive any email confirmation, please try again later.');
             this.resetForm();
         }
