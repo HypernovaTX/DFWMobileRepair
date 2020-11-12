@@ -48,11 +48,22 @@ export default class Template extends React.Component<Props, State> {
         this.setState({ service_list_trans: '200ms linear all' });
     }
 
+    scrollTo(ref: React.RefObject<any>): () => void {
+        const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+        if (iosPlatforms.indexOf(window.navigator.platform) !== -1) {
+            return () => { ref.current.scrollIntoViewIfNeeded(this.scroll_behavior); };
+        } else {
+            return () => { ref.current.scrollIntoView(this.scroll_behavior); };
+        }
+    }
+
     head(): JSX.Element {
         const { head_bgo, head_bgy } = this.props;
         const LOGO_IMG = require('./../resources/images/logo-current.png');
         const style = { backgroundPositionY: head_bgy + head_bgo };
         const preventDrag = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); };
+
+        
         return (
             <div key='M_header'className='lander' style={style} ref={this.ref_top}>
                 <div key='h_container' className='lander-contain' draggable="false" onDragStart={preventDrag}>
@@ -68,23 +79,17 @@ export default class Template extends React.Component<Props, State> {
                             <span
                                 key='hl_btn_2'
                                 className='land-item'
-                                onClick={() => {
-                                    this.ref_s1.current.scrollIntoView(this.scroll_behavior);
-                                }}
+                                onClick={this.scrollTo(this.ref_s1)}
                             >ABOUT US</span>
                             <span
                                 key='hl_btn_3'
                                 className='land-item'
-                                onClick={() => {
-                                    this.ref_s2.current.scrollIntoView(this.scroll_behavior);
-                                }}
+                                onClick={this.scrollTo(this.ref_s2)}
                             >SERVICES</span>
                             <span
                                 key='hl_btn_1'
                                 className='land-btn'
-                                onClick={() => {
-                                    this.ref_s3.current.scrollIntoView(this.scroll_behavior);
-                                }}
+                                onClick={this.scrollTo(this.ref_s4)}
                             >CONTACT US</span>
                             <a
                                 key='phone_num'
@@ -112,7 +117,7 @@ export default class Template extends React.Component<Props, State> {
                     key='GOUP'
                     className='go-top'
                     style={goTop}
-                    onClick={() => { this.ref_top.current.scrollIntoView(this.scroll_behavior); }}
+                    onClick={this.scrollTo(this.ref_top)}
                 >&#8679;</div>
                 {this.head()}
                 <div
@@ -162,7 +167,7 @@ export default class Template extends React.Component<Props, State> {
                     <div key='contact_body' className='section1-box'>
                         <h2 key='contact_h2'>Contact Us</h2>
                         <div key='contact_content' className='contact-body'>
-                            {this.contact()}
+                            <ContactForm />
                         </div>
                     </div>
                 </div>
@@ -303,12 +308,6 @@ export default class Template extends React.Component<Props, State> {
                     </p>
                 </div>
             </>
-        );
-    }
-
-    contact(): JSX.Element {
-        return (
-            <ContactForm />
         );
     }
     
