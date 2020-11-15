@@ -1,6 +1,7 @@
 import React from 'react';
 import * as emailjs from 'emailjs-com'
-import{ init } from 'emailjs-com';
+import { init } from 'emailjs-com';
+let Recaptcha = require('react-recaptcha');
 init("");
 
 type Props = {
@@ -17,6 +18,7 @@ type State = {
     submitted: boolean,
     popupMessage: string,
     popupVisible: number,
+    form_recaptcha: boolean,
 };
 
 export default class ContactForm extends React.Component<Props, State> {
@@ -37,6 +39,7 @@ export default class ContactForm extends React.Component<Props, State> {
             submitted: false,
             popupMessage: 'This is a test message',
             popupVisible: 0,
+            form_recaptcha: false,
         };
 
         this.re_emailVerify = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/g;
@@ -83,8 +86,15 @@ export default class ContactForm extends React.Component<Props, State> {
             this.popupShow('One or more of the forms are empty, please check the required fields (with red *) before submitting.');
         } else if (verification === 2) {
             this.popupShow('The email is invalid. Did you made any typos?');
+        } else if (verification === 3) {
+            this.popupShow('Please check the reCaptcha form..');
         } else {
-            //Email IS Send
+            emailjs.send(
+                '',
+                emailTemplate,
+                templateParams,
+                '',
+            )
             this.popupShow('Your email has been sent to a DFW Mobile technician! Please allow us some time to get back to you accordingly! If you did not receive any email confirmation, please try again later.');
             this.resetForm();
         }
@@ -99,6 +109,7 @@ export default class ContactForm extends React.Component<Props, State> {
             form_phone: '',
             form_description: '',
             form_vehicle: '',
+            form_recaptcha: false,
         });
     }
 
@@ -106,11 +117,11 @@ export default class ContactForm extends React.Component<Props, State> {
      * 0 - no errors
      * 1 - empty form
      * 2 - invalid email
-     * 3 - invalid phone number
+     * 3 - invalid recaptcha
      */
     verifyEmail(): number {
         const {
-            form_name, form_email, form_title, form_phone, form_type, form_vehicle, form_description
+            form_name, form_email, form_title, form_phone, form_type, form_vehicle, form_description, form_recaptcha
         } = this.state;
 
         if (form_name === ''
@@ -121,6 +132,7 @@ export default class ContactForm extends React.Component<Props, State> {
             { return 1; }
         if (form_vehicle === '' && form_type !== this.inquiryList[2]) { return 1; }
         if (!form_email.match(this.re_emailVerify)) { return 2; }
+        if (form_recaptcha === false) { return 3; }
         return 0;
     }
 
@@ -270,12 +282,21 @@ export default class ContactForm extends React.Component<Props, State> {
                         ></textarea>
                     </div>
                 </div>
+                <div key='cform_recaptcha' className='form-block-n'>
+                    <Recaptcha
+                        sitekey=""
+                        render="explicit"
+                        onloadCallback={() => {}}
+                        verifyCallback={() => {
+                            this.setState({ form_recaptcha: true });
+                        }}
+                    />
+                </div>
                 <div key='cform_submit_block' className='form-block-n submit'>
                     <button
                         key = 'cform_submit_button'
                         type = 'submit'
                         disabled = {false}
-                        onClick = {() => {/* Do nothing at the moment */}}
                         className = 'form-button'
                     >Submit</button>
                 </div>

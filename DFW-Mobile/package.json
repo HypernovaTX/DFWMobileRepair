@@ -15,6 +15,7 @@
     "emailjs-com": "^2.6.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-recaptcha": "^2.3.10",
     "react-scripts": "^3.4.4",
     "typescript": "^3.7.5"
   },
