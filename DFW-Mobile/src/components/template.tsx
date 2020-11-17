@@ -165,7 +165,7 @@ export default class Template extends React.Component<Props, State> {
                     ref={this.ref_s4}
                 >
                     <div key='contact_body' className='section1-box'>
-                        <h2 key='contact_h2'>Contact Us</h2>
+                        <h2 key='contact_h2'>Get a Quote</h2>
                         <div key='contact_content' className='contact-body'>
                             <ContactForm />
                         </div>
