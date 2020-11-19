@@ -90,7 +90,7 @@ export default class Template extends React.Component<Props, State> {
                                 key='hl_btn_1'
                                 className='land-btn'
                                 onClick={this.scrollTo(this.ref_s4)}
-                            >CONTACT US</span>
+                            >GET A QUOTE</span>
                             <a
                                 key='phone_num'
                                 className='phone-btn'
@@ -165,7 +165,7 @@ export default class Template extends React.Component<Props, State> {
                     ref={this.ref_s4}
                 >
                     <div key='contact_body' className='section1-box'>
-                        <h2 key='contact_h2'>Get a Quote</h2>
+                        <h2 key='contact_h2'>Contact Form</h2>
                         <div key='contact_content' className='contact-body'>
                             <ContactForm />
                         </div>
