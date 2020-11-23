@@ -1,15 +1,35 @@
 import React from 'react';
-import * as ServiceList from "./services.json"; 
+import '.././resources/user.css';
 
 type Props = {
 };
 type State = {
+    currentUser: string
 };
 
 export default class User extends React.Component<Props, State> {
     constructor(p: Props) {
         super(p);
+
+        this.state = {
+            currentUser: ''
+        }
     }
 
-    
+    userBar():JSX.Element {
+        const { currentUser } = this.state;
+        const dis_user = (currentUser === '') ?
+            'Guest' : currentUser;
+
+
+        return (<div key='userbar_main' className='user-bar'>
+            <div key='userbar_icon' className='user-icon'>
+                {dis_user}
+            </div>
+        </div>);
+    }
+
+    render() {
+        return (this.userBar());
+    }
 }

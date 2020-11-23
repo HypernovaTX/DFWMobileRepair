@@ -284,7 +284,7 @@ export default class ContactForm extends React.Component<Props, State> {
                 </div>
                 <div key='cform_recaptcha' className='form-block-n'>
                     <Recaptcha
-                        sitekey=""
+                        sitekey="6LcRG-MZAAAAAAwQHX-n3MiROIFf1KBnZqG9n1cK"
                         render="explicit"
                         onloadCallback={() => {}}
                         verifyCallback={() => {

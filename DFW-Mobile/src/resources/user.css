@@ -1,0 +1,13 @@
+.user-bar {
+    display: flex;
+    position: fixed;
+    width: 100%;
+}
+
+.user-icon {
+    font-size: 1.2em;
+    padding: 8px 16px;
+    position: absolute;
+    right: 0px;
+    overflow-x: hidden;
+}

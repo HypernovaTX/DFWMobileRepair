@@ -124,6 +124,7 @@ export default class Template extends React.Component<Props, State> {
                     style={goTop}
                     onClick={this.scrollTo(this.ref_top)}
                 >&#8679;</div>
+                {this.userBar()}
                 {this.head()}
                 <div
                     key='M_section1'
