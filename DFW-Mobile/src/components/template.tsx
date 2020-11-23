@@ -1,6 +1,7 @@
 import React from 'react';
 import * as ServiceList from "./services.json"; 
 import ContactForm from './contact'
+import User from './user'
 import '.././resources/services.css';
 
 type Props = {
@@ -55,6 +56,10 @@ export default class Template extends React.Component<Props, State> {
         } else {
             return () => { ref.current.scrollIntoView(this.scroll_behavior); };
         }
+    }
+
+    userBar(): JSX.Element {
+        return (<User />);
     }
 
     head(): JSX.Element {
