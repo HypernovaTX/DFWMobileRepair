@@ -5,23 +5,36 @@
 }
 
 .user-icon {
-    font-size: 1.2em;
-    padding: 8px 16px;
     position: absolute;
     right: 0px;
     overflow-x: hidden;
+    display: flex;
+}
+
+.user-text {
+    font-size: 1.2em;
+    display: inline-grid;
+    padding: 0px 8px;
+    margin: auto 0px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.user-hamburber {
+    display: inline-grid;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.4);
+    transition: 200ms linear all;
+}
+.user-hamburber:hover {
+    background: rgba(255, 255, 255, 0.9);
+}
+.user-hamburber:active {
+    background: rgba(200, 200, 200, 1);
 }
 
 .user-hamburger-dash {
     background: rgba(0, 0, 0, 0.5);
     width: 1.5em;
-    height: 0.2em;
-    margin: 4px 0px;
-}
-
-.user-hamburber {
-    display: inline-table;
-    margin-left: 8px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.5);
+    height: 4px;
+    margin: 2px 0px;
 }
