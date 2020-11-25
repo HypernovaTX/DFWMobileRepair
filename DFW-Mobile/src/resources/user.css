@@ -11,3 +11,17 @@
     right: 0px;
     overflow-x: hidden;
 }
+
+.user-hamburger-dash {
+    background: rgba(0, 0, 0, 0.5);
+    width: 1.5em;
+    height: 0.2em;
+    margin: 4px 0px;
+}
+
+.user-hamburber {
+    display: inline-table;
+    margin-left: 8px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.5);
+}
