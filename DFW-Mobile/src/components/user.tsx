@@ -7,6 +7,7 @@ type Props = {
 };
 type State = {
     currentUser: string
+    testAny: any
 };
 
 export default class User extends React.Component<Props, State> {
@@ -16,7 +17,8 @@ export default class User extends React.Component<Props, State> {
         super(p);
 
         this.state = {
-            currentUser: ''
+            currentUser: '',
+            testAny: '[object Object]'
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -33,9 +35,18 @@ export default class User extends React.Component<Props, State> {
     }
 
     getCurrentUser = () => {
-        axios.get(CONFIG.backendhost)
+        const postData = {
+            headers: {
+                  'Access-Control-Allow-Origin': '*',
+            }
+        }
+
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=check`, postData)
             .then((response) => {
-                this.setState({ currentUser: response + ''});
+                const responseString = (response.data + '' === 'GUEST')
+                    ? 'Guest'
+                    : response.data + '';
+                this.setState({ currentUser: responseString });
             });
     };
 

@@ -1,4 +1,4 @@
 {
-    "backendhost": "localhost:8080",
-    "backendindex": "index.php"
+    "backendhost": "http://localhost:8080",
+    "backendindex": "DFWM/manager.php"
 }
