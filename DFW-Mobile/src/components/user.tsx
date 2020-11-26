@@ -1,6 +1,7 @@
 import React from 'react';
 import '.././resources/user.css';
-import Express from 'express';
+import axios from 'axios';
+import * as CONFIG from '../config.json';
 
 type Props = {
 };
@@ -9,13 +10,34 @@ type State = {
 };
 
 export default class User extends React.Component<Props, State> {
+    private API_Request: NodeJS.Timeout;
+    private API_refreshInterval: number;
     constructor(p: Props) {
         super(p);
 
         this.state = {
             currentUser: ''
         }
+
+        //Placeholder NodeJS.Timeout to prevent any errors
+        this.API_Request = setInterval(() => {}, 9999999999);
+        clearInterval(this.API_Request);
+
+        this.API_refreshInterval = 5000; 
     }
+    componentDidMount() {
+        clearInterval(this.API_Request);
+        this.getCurrentUser(); //Initial API request
+        //Run API request every X amount of time (see "..\config.json" > General > refreshInterval)
+        this.API_Request = setInterval(() => this.getCurrentUser(), this.API_refreshInterval);
+    }
+
+    getCurrentUser = () => {
+        axios.get(CONFIG.backendhost)
+            .then((response) => {
+                this.setState({ currentUser: response + ''});
+            });
+    };
 
     userBar():JSX.Element {
         const { currentUser } = this.state;

@@ -1,3 +1,4 @@
 {
-    "backendhost": "localhost:8080"
+    "backendhost": "localhost:8080",
+    "backendindex": "index.php"
 }
