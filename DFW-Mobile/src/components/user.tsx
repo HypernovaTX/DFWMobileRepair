@@ -6,8 +6,9 @@ import * as CONFIG from '../config.json';
 type Props = {
 };
 type State = {
-    currentUser: string
-    testAny: any
+    currentUser: string,
+    testAny: any,
+    userBarOn: boolean,
 };
 
 export default class User extends React.Component<Props, State> {
@@ -18,7 +19,8 @@ export default class User extends React.Component<Props, State> {
 
         this.state = {
             currentUser: '',
-            testAny: '[object Object]'
+            testAny: '',
+            userBarOn: false,
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -66,6 +68,7 @@ export default class User extends React.Component<Props, State> {
                     <div key='hbu_2' className='user-hamburger-dash'></div>
                     <div key='hbu_3' className='user-hamburger-dash'></div>
                 </div>
+                <div key='user_bar' className='user-mainbar'></div>
             </div>
         </div>);
     }
