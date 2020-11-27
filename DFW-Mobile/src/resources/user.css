@@ -17,21 +17,16 @@
     padding: 0px 8px;
     margin: auto 0px;
     color: #333;
-    background: rgba(255, 255, 255, 0.8);
     line-height: 2.5em;
 }
 
 .user-hamburber {
     display: inline-grid;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.4);
     transition: 200ms linear all;
 }
-.user-hamburber:hover {
-    background: rgba(255, 255, 255, 0.9);
-}
 .user-hamburber:active {
-    background: rgba(200, 200, 200, 1);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .user-hamburger-dash {
@@ -39,6 +34,11 @@
     width: 1.5em;
     height: 4px;
     margin: 2px 0px;
+    transition: 200ms linear all;
+}
+
+.user-hamburger-dash.hover {
+    background: #FFF;
 }
 
 .user-mainbar {
@@ -46,3 +46,4 @@
     background: rgba(255, 255, 255, 0.4);
     transition: 200ms linear all;
 }
+

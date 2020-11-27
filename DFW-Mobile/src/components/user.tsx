@@ -8,6 +8,7 @@ type Props = {
 type State = {
     currentUser: string,
     testAny: any,
+    menuHover: string,
     userBarOn: boolean,
 };
 
@@ -21,6 +22,7 @@ export default class User extends React.Component<Props, State> {
             currentUser: '',
             testAny: '',
             userBarOn: false,
+            menuHover: '',
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -63,10 +65,15 @@ export default class User extends React.Component<Props, State> {
                 <div key='user_text' className='user-text'>
                     {dis_user}
                 </div>
-                <div key='user_hamburger' className='user-hamburber'>
-                    <div key='hbu_1' className='user-hamburger-dash'></div>
-                    <div key='hbu_2' className='user-hamburger-dash'></div>
-                    <div key='hbu_3' className='user-hamburger-dash'></div>
+                <div
+                    key='user_hamburger'
+                    className='user-hamburber'
+                    onMouseEnter={() => this.setState({ menuHover: 'hover'})}
+                    onMouseLeave={() => this.setState({ menuHover: ''})}
+                >
+                    <div key='hbu_1' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
+                    <div key='hbu_2' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
+                    <div key='hbu_3' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
                 </div>
                 <div key='user_bar' className='user-mainbar'></div>
             </div>
