@@ -2,6 +2,16 @@
     display: flex;
     position: fixed;
     width: 100%;
+    z-index: 10;
+}
+
+.userbar-back {
+    width: 100vw;
+    height: 3em;
+    background: rgba(255, 255, 255, 0.75);
+    transition: 200ms linear all;
+    backdrop-filter: blur(10px);
+    position: fixed;
 }
 
 .user-icon {

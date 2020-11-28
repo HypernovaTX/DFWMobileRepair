@@ -31,6 +31,7 @@ export default class User extends React.Component<Props, State> {
 
         this.API_refreshInterval = 5000; 
     }
+
     componentDidMount() {
         clearInterval(this.API_Request);
         this.getCurrentUser(); //Initial API request
@@ -58,26 +59,37 @@ export default class User extends React.Component<Props, State> {
         const { currentUser } = this.state;
         const dis_user = (currentUser === '') ?
             'Guest' : currentUser;
+        const bgBarStyle = this.userBarScroll();
 
-
-        return (<div key='userbar_main' className='user-bar'>
-            <div key='userbar_icon' className='user-icon'>
-                <div key='user_text' className='user-text'>
-                    {dis_user}
+        return (
+            <div key='userbar_main' className='user-bar'>
+                <div key='userbar_bg' className='userbar-back' style={bgBarStyle}></div>
+                <div key='userbar_icon' className='user-icon'>
+                    <div key='user_text' className='user-text'>
+                        {dis_user}
+                    </div>
+                    <div
+                        key='user_hamburger'
+                        className='user-hamburber'
+                        onMouseEnter={() => this.setState({ menuHover: 'hover'})}
+                        onMouseLeave={() => this.setState({ menuHover: ''})}
+                    >
+                        <div key='hbu_1' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
+                        <div key='hbu_2' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
+                        <div key='hbu_3' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
+                    </div>
+                    <div key='user_bar' className='user-mainbar'></div>
                 </div>
-                <div
-                    key='user_hamburger'
-                    className='user-hamburber'
-                    onMouseEnter={() => this.setState({ menuHover: 'hover'})}
-                    onMouseLeave={() => this.setState({ menuHover: ''})}
-                >
-                    <div key='hbu_1' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
-                    <div key='hbu_2' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
-                    <div key='hbu_3' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
-                </div>
-                <div key='user_bar' className='user-mainbar'></div>
             </div>
-        </div>);
+        );
+    }
+
+    userBarScroll(): object {
+        let barStyle = { opacity: 0, top: -80 };
+        if (window.pageYOffset > window.innerHeight * 0.25) {
+            barStyle = { opacity: 1, top: 0 };
+        }
+        return barStyle;
     }
 
     render() {

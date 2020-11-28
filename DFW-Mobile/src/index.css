@@ -395,7 +395,7 @@ button.form-button {
   opacity: 0;
   transition: 500ms linear all;
   backdrop-filter: blur(10px);
-  z-index: 9;
+  z-index: 99;
   display: flex;
 }
 
@@ -447,6 +447,7 @@ button.form-button {
   color: #888;
   user-select: none;
   cursor: pointer;
+  z-index: 10;
 }
 .go-top:hover {
   background: #555;
