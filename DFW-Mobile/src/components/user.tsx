@@ -10,6 +10,7 @@ type State = {
     testAny: any,
     menuHover: string,
     userBarOn: boolean,
+    menuOn: boolean,
 };
 
 export default class User extends React.Component<Props, State> {
@@ -23,6 +24,7 @@ export default class User extends React.Component<Props, State> {
             testAny: '',
             userBarOn: false,
             menuHover: '',
+            menuOn: false,
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -56,10 +58,37 @@ export default class User extends React.Component<Props, State> {
     };
 
     userBar():JSX.Element {
-        const { currentUser } = this.state;
+        const { currentUser, menuOn } = this.state;
         const dis_user = (currentUser === '') ?
             'Guest' : currentUser;
         const bgBarStyle = this.userBarScroll();
+        const userMainBarStyle = {
+            'width': (menuOn)
+                ? (window.innerWidth <= 640)
+                    ? '100vw'
+                    : '25vw' 
+                : '0vw',
+            'padding': (menuOn)
+                ? '8px 12px'
+                : '0px'
+        }
+        const hamburgerTop = (menuOn) ? {
+                'transform': 'rotate(45deg) scaleX(1.1)',
+                'transform-origin': '4px 5px'
+            } : {
+                'transform': 'rotate(0) scaleX(1)',
+                'transform-origin': '0px 0px'
+            };
+        const hamburgerCenter = (menuOn)
+            ? { 'opacity': '0' }
+            : { 'opacity': '1' }
+        const hamburgerBottom = (menuOn) ? {
+                'transform': 'rotate(-45deg) scaleX(1.1)',
+                'transform-origin': '2px -1px'
+            } : {
+                'transform': 'rotate(0) scaleX(1)',
+                'transform-origin': '0px 0px'
+            };
 
         return (
             <div key='userbar_main' className='user-bar'>
@@ -73,14 +102,33 @@ export default class User extends React.Component<Props, State> {
                         className='user-hamburber'
                         onMouseEnter={() => this.setState({ menuHover: 'hover'})}
                         onMouseLeave={() => this.setState({ menuHover: ''})}
+                        onClick={() => {this.setState({ menuOn: !menuOn })}}
                     >
-                        <div key='hbu_1' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
-                        <div key='hbu_2' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
-                        <div key='hbu_3' className={`user-hamburger-dash ${this.state.menuHover}`}></div>
+                        <div
+                            key='hbu_1'
+                            className={`user-hamburger-dash ${this.state.menuHover}`}
+                            style={hamburgerTop}
+                        ></div>
+                        <div
+                            key='hbu_2'
+                            className={`user-hamburger-dash ${this.state.menuHover}`}
+                            style={hamburgerCenter}
+                        ></div>
+                        <div
+                            key='hbu_3'
+                            className={`user-hamburger-dash ${this.state.menuHover}`}
+                            style={hamburgerBottom}
+                        ></div>
                     </div>
-                    <div key='user_bar' className='user-mainbar'></div>
+                    <div key='user_bar' className='user-mainbar' style={userMainBarStyle}></div>
                 </div>
             </div>
+        );
+    }
+
+    userMenu(): JSX.Element {
+        return (
+            <></>
         );
     }
 
@@ -93,6 +141,9 @@ export default class User extends React.Component<Props, State> {
     }
 
     render() {
-        return (this.userBar());
+        return (<>
+            {this.userBar()}
+            {this.userMenu()}
+        </>);
     }
 }
