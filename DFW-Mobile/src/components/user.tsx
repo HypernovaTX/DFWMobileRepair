@@ -57,6 +57,31 @@ export default class User extends React.Component<Props, State> {
             });
     };
 
+    /**
+     * @param top - 0: center, 1: top, 2: bottom
+     */
+    hamburgerMenuStyle(top: boolean):object {
+        const { menuOn } = this.state;
+        let result = (menuOn) ? {
+            'transform': 'rotate(-45deg) scaleX(1.1)',
+            'transform-origin': '2px -1px'
+        } : {
+            'transform': 'rotate(0) scaleX(1)',
+            'transform-origin': '0px 0px'
+        };
+
+        if (top === true) {
+            result = (menuOn) ? {
+                'transform': 'rotate(45deg) scaleX(1.1)',
+                'transform-origin': '4px 5px'
+            } : {
+                'transform': 'rotate(0) scaleX(1)',
+                'transform-origin': '0px 0px'
+            };
+        }
+        return result;
+    }
+
     userBar():JSX.Element {
         const { currentUser, menuOn } = this.state;
         const dis_user = (currentUser === '') ?
@@ -64,31 +89,13 @@ export default class User extends React.Component<Props, State> {
         const bgBarStyle = this.userBarScroll();
         const userMainBarStyle = {
             'width': (menuOn)
-                ? (window.innerWidth <= 640)
-                    ? '100vw'
-                    : '25vw' 
+                ? ((window.innerWidth <= 640) ? '100vw' : '25vw')
                 : '0vw',
-            'padding': (menuOn)
-                ? '8px 12px'
-                : '0px'
+            'padding': (menuOn)? '8px 12px' : '0px'
         }
-        const hamburgerTop = (menuOn) ? {
-                'transform': 'rotate(45deg) scaleX(1.1)',
-                'transform-origin': '4px 5px'
-            } : {
-                'transform': 'rotate(0) scaleX(1)',
-                'transform-origin': '0px 0px'
-            };
-        const hamburgerCenter = (menuOn)
-            ? { 'opacity': '0' }
-            : { 'opacity': '1' }
-        const hamburgerBottom = (menuOn) ? {
-                'transform': 'rotate(-45deg) scaleX(1.1)',
-                'transform-origin': '2px -1px'
-            } : {
-                'transform': 'rotate(0) scaleX(1)',
-                'transform-origin': '0px 0px'
-            };
+        const hamburgerTop = this.hamburgerMenuStyle(true);
+        const hamburgerCenter = (menuOn) ? { 'opacity': '0' } : { 'opacity': '1' };
+        const hamburgerBottom = this.hamburgerMenuStyle(false);
 
         return (
             <div key='userbar_main' className='user-bar'>
@@ -126,12 +133,6 @@ export default class User extends React.Component<Props, State> {
         );
     }
 
-    userMenu(): JSX.Element {
-        return (
-            <></>
-        );
-    }
-
     userBarScroll(): object {
         let barStyle = { opacity: 0, top: -80 };
         if (window.pageYOffset > window.innerHeight * 0.25) {
@@ -143,7 +144,6 @@ export default class User extends React.Component<Props, State> {
     render() {
         return (<>
             {this.userBar()}
-            {this.userMenu()}
         </>);
     }
 }
