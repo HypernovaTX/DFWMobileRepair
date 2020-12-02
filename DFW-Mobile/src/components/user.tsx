@@ -102,19 +102,19 @@ export default class User extends React.Component<Props, State> {
         const { menuOn } = this.state;
         let result = (menuOn) ? {
             'transform': 'rotate(-45deg) scaleX(1.1)',
-            'transform-origin': '2px -1px'
+            'transformOrigin': '2px -1px'
         } : {
             'transform': 'rotate(0) scaleX(1)',
-            'transform-origin': '0px 0px'
+            'transformOrigin': '0px 0px'
         };
 
         if (top === true) {
             result = (menuOn) ? {
                 'transform': 'rotate(45deg) scaleX(1.1)',
-                'transform-origin': '4px 5px'
+                'transformOrigin': '4px 5px'
             } : {
                 'transform': 'rotate(0) scaleX(1)',
-                'transform-origin': '0px 0px'
+                'transformOrigin': '0px 0px'
             };
         }
         return result;
@@ -206,12 +206,12 @@ export default class User extends React.Component<Props, State> {
 
     userMenuContents(): JSX.Element[] {
         const { currentUser } = this.state.session;
-        let output = [<></>];
+        let output = [<div key='um_placeholder'></div>];
         if (currentUser === 'Guest') {
             this.listGuest.forEach((item: any[], num: number) => {
                 output.push(
                     <span
-                        key={`guest_i${num}`}
+                        key={`guest_i${num.toString()}`}
                         className='user-menu-item'
                         onClick={() => {
                             item[1]();
@@ -227,7 +227,7 @@ export default class User extends React.Component<Props, State> {
             this.listUser.forEach((item: string[], num: number) => {
                 output.push(
                     <span
-                        key={`user_i${num}`}
+                        key={`user_i${num.toString()}`}
                         className='user-menu-item'
                     >
                         {item[0]}
@@ -253,7 +253,7 @@ export default class User extends React.Component<Props, State> {
 
         return(
             <div key='u_popup_bg' className='popup-overlay' style={opacity}>
-                <div key='popup_box' className='popup-box' style={boxY}>
+                <div key='u_popup_box' className='popup-box' style={boxY}>
                     {content}
                 </div>
             </div>
@@ -281,9 +281,9 @@ export default class User extends React.Component<Props, State> {
                     className = 'form-input-text'
                 ></input>
                 <input
-                    key = 'uform_login_user'
+                    key = 'uform_login_pw'
                     type = 'password'
-                    value = {this.state.login.username}
+                    value = {this.state.login.password}
                     onChange = {(c: any) => {
                         this.setState({
                             login: {
@@ -296,12 +296,12 @@ export default class User extends React.Component<Props, State> {
                     className = 'form-input-text'
                 ></input>
                 <div
-                    key='u_popup_close'
+                    key='uform_login_butt_in'
                     className={`popup-button ${disabledButton}`}
                     onClick={() => {this.login()}}
                 >Log in</div>
                 <div
-                    key='u_popup_close'
+                    key='uform_login_butt_close'
                     className={`popup-button ${disabledButton}`}
                     onClick={() => {this.popupHide()}}
                 >Cancel</div>
@@ -310,16 +310,34 @@ export default class User extends React.Component<Props, State> {
     }
 
     login(): void {
-        const postData = {
+        var postData = new FormData();
+        postData.append('username', this.state.login.username);
+        postData.append('password', this.state.login.password);
+
+        /*const postData = {
             username: this.state.login.username,
             password: this.state.login.password,
-        }
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}`, postData)
+        }*/
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=login`, postData)
         .then((response) => {
             if (response.data === 'MATCH') { console.log('Logged in!'); }
             else if (response.data === 'FAIL') { console.log('Wrong login information!'); }
-            else { console.log('CHECK THE CODES!'); }
+            else {
+                console.log(
+                    'CHECK THE CODES!<br>response.data = ' + 
+                    response.data
+                );
+            }
         });
+    }
+
+    clearData(): void {
+        let { login } = this.state;
+        login = {
+            username: '',
+            password: '',
+        };
+        this.setState({ login });
     }
 
     popupHide(): void {
