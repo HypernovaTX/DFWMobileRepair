@@ -11,6 +11,7 @@ type State = {
     userBarOn: boolean,
     menuOn: boolean,
     popupVisible: number,
+    popupKind: number,
     session: {
         currentUser: string,
         admin: boolean,
@@ -20,13 +21,18 @@ type State = {
         password: string,
     },
 };
+/**
+ * References for state.popupKind:
+ *  0 - Login
+ *  1 - Register
+ */
 
 export default class User extends React.Component<Props, State> {
     private API_Request: NodeJS.Timeout;
     private API_refreshInterval: number;
-    private listGuest: string[][];
-    private listUser: string[][];
-    private listAdmin: string[][];
+    private listGuest: any[][];
+    private listUser: any[][];
+    private listAdmin: any[][];
 
     constructor(p: Props) {
         super(p);
@@ -37,6 +43,7 @@ export default class User extends React.Component<Props, State> {
             menuHover: '',
             menuOn: false, 
             popupVisible: 0, 
+            popupKind: 0,
             session: {
                 currentUser: '',
                 admin: false,
@@ -53,8 +60,8 @@ export default class User extends React.Component<Props, State> {
 
         this.API_refreshInterval = 5000; 
         this.listGuest = [
-            ['Login', 'login'],
-            ['Register', 'register'],
+            ['Login', () => {this.setState({ popupKind: 0 })}],
+            ['Register', () => {this.setState({ popupKind: 1 })}],
         ];
         this.listUser = [
             ['Profile', 'profile'],
@@ -201,11 +208,15 @@ export default class User extends React.Component<Props, State> {
         const { currentUser } = this.state.session;
         let output = [<></>];
         if (currentUser === 'Guest') {
-            this.listGuest.forEach((item: string[], num: number) => {
+            this.listGuest.forEach((item: any[], num: number) => {
                 output.push(
                     <span
                         key={`guest_i${num}`}
                         className='user-menu-item'
+                        onClick={() => {
+                            item[1]();
+                            this.popupShow();
+                        }}
                     >
                         {item[0]}
                     </span>
@@ -228,12 +239,18 @@ export default class User extends React.Component<Props, State> {
         return (output);
     }
 
-    popup(content: JSX.Element | JSX.Element[]): JSX.Element {
-        const { popupVisible } = this.state;
+    popup(): JSX.Element {
+        const { popupVisible, popupKind } = this.state;
         const opacity = (popupVisible === 2)
             ? { opacity: 1 }
             : { opacity: 0 }
         const boxY = { top: (opacity.opacity * 48) - 48 };
+        let content = <></>;
+
+        switch (popupKind) {
+            case (0): content = this.templateLogin(); break;
+        }
+
         return(
             <div key='u_popup_bg' className='popup-overlay' style={opacity}>
                 <div key='popup_box' className='popup-box' style={boxY}>
