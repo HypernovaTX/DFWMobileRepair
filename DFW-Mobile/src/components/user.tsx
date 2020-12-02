@@ -342,7 +342,11 @@ export default class User extends React.Component<Props, State> {
     }
 
     render() {
+        let popup = <></>
+        if (this.state.popupVisible > 0) { popup = this.popup(); }
+
         return (<>
+            {popup}
             {this.userBar()}
         </>);
     }
