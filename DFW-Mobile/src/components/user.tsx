@@ -2,7 +2,6 @@ import React from 'react';
 import '.././resources/user.css';
 import axios from 'axios';
 import * as CONFIG from '../config.json';
-import { JsxEmit } from 'typescript';
 
 type Props = {
 };
@@ -298,10 +297,22 @@ export default class User extends React.Component<Props, State> {
     }
 
     popupHide(): void {
-
+        let { popupVisible } = this.state;
+        if (popupVisible > 0 || popupVisible < 3) {
+            this.setState({popupVisible: 3});
+            setTimeout(() => {
+                this.setState({popupVisible: 0});
+            }, 500);
+        }
     }
     popupShow(): void {
-        
+        let { popupVisible } = this.state;
+        if (popupVisible === 0) {
+            this.setState({popupVisible: 1});
+            setTimeout(() => {
+                this.setState({popupVisible: 2});
+            }, 50);
+        }
     }
 
     render() {
