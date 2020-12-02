@@ -2,6 +2,7 @@ import React from 'react';
 import '.././resources/user.css';
 import axios from 'axios';
 import * as CONFIG from '../config.json';
+import { JsxEmit } from 'typescript';
 
 type Props = {
 };
@@ -12,6 +13,7 @@ type State = {
     userBarOn: boolean,
     menuOn: boolean,
     admin: boolean, 
+    popupVisible: number,
 };
 
 export default class User extends React.Component<Props, State> {
@@ -31,6 +33,7 @@ export default class User extends React.Component<Props, State> {
             menuHover: '',
             menuOn: false, 
             admin: false,
+            popupVisible: 0, 
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -75,9 +78,6 @@ export default class User extends React.Component<Props, State> {
             });
     };
 
-    /**
-     * @param top - 0: center, 1: top, 2: bottom
-     */
     hamburgerMenuStyle(top: boolean):object {
         const { menuOn } = this.state;
         let result = (menuOn) ? {
@@ -212,6 +212,22 @@ export default class User extends React.Component<Props, State> {
             output.shift();
         }
         return (output);
+    }
+
+    popup(content: JSX.Element | JSX.Element[]): JSX.Element {
+        const { popupVisible } = this.state;
+        const opacity = (popupVisible === 2)
+            ? { opacity: 1 }
+            : { opacity: 0 }
+        const boxY = { top: (opacity.opacity * 48) - 48 };
+        const disabledButton = (popupVisible === 3) ? 'disabled' : '';
+        return(
+            <div key='u_popup_bg' className='popup-overlay' style={opacity}>
+                <div key='popup_box' className='popup-box' style={boxY}>
+                    {content}
+                </div>
+            </div>
+        );
     }
 
     render() {
