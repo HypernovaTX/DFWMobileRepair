@@ -293,7 +293,16 @@ export default class User extends React.Component<Props, State> {
     }
 
     login(): void {
-
+        const postData = {
+            username: this.state.login.username,
+            password: this.state.login.password,
+        }
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}`, postData)
+        .then((response) => {
+            if (response.data === 'MATCH') { console.log('Logged in!'); }
+            else if (response.data === 'FAIL') { console.log('Wrong login information!'); }
+            else { console.log('CHECK THE CODES!'); }
+        });
     }
 
     popupHide(): void {
