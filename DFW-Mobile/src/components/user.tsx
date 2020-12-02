@@ -7,13 +7,19 @@ import { JsxEmit } from 'typescript';
 type Props = {
 };
 type State = {
-    currentUser: string,
     testAny: any,
     menuHover: string,
     userBarOn: boolean,
     menuOn: boolean,
-    admin: boolean, 
     popupVisible: number,
+    session: {
+        currentUser: string,
+        admin: boolean,
+    },
+    login: {
+        username: string,
+        password: string,
+    },
 };
 
 export default class User extends React.Component<Props, State> {
@@ -27,13 +33,19 @@ export default class User extends React.Component<Props, State> {
         super(p);
 
         this.state = {
-            currentUser: '',
             testAny: '',
             userBarOn: false,
             menuHover: '',
             menuOn: false, 
-            admin: false,
             popupVisible: 0, 
+            session: {
+                currentUser: '',
+                admin: false,
+            },
+            login: {
+                username: '',
+                password: ''
+            }
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -74,7 +86,9 @@ export default class User extends React.Component<Props, State> {
                 const responseString = (response.data + '' === 'GUEST')
                     ? 'Guest'
                     : response.data + '';
-                this.setState({ currentUser: responseString });
+                this.setState({
+                    session: { currentUser: responseString, admin: this.state.session.admin },
+                });
             });
     };
 
@@ -101,7 +115,8 @@ export default class User extends React.Component<Props, State> {
     }
 
     userBar():JSX.Element {
-        const { currentUser, menuOn } = this.state;
+        const { session, menuOn } = this.state;
+        const { currentUser } = session;
         const dis_user = (currentUser === '') ?
             'Guest' : currentUser;
         const bgBarStyle = this.userBarScroll();
@@ -171,7 +186,7 @@ export default class User extends React.Component<Props, State> {
     }
 
     getUserMenuHeight(): number {
-        const { currentUser, admin } = this.state;
+        const { currentUser, admin } = this.state.session;
         if (currentUser === '') { return 0; }
         else if (currentUser === 'Guest') {
             return this.listGuest.length;
@@ -184,7 +199,7 @@ export default class User extends React.Component<Props, State> {
     }
 
     userMenuContents(): JSX.Element[] {
-        const { currentUser } = this.state;
+        const { currentUser } = this.state.session;
         let output = [<></>];
         if (currentUser === 'Guest') {
             this.listGuest.forEach((item: string[], num: number) => {
@@ -220,7 +235,6 @@ export default class User extends React.Component<Props, State> {
             ? { opacity: 1 }
             : { opacity: 0 }
         const boxY = { top: (opacity.opacity * 48) - 48 };
-        const disabledButton = (popupVisible === 3) ? 'disabled' : '';
         return(
             <div key='u_popup_bg' className='popup-overlay' style={opacity}>
                 <div key='popup_box' className='popup-box' style={boxY}>
@@ -228,6 +242,66 @@ export default class User extends React.Component<Props, State> {
                 </div>
             </div>
         );
+    }
+
+    templateLogin(): JSX.Element {
+        const { popupVisible } = this.state;
+        const disabledButton = (popupVisible === 3) ? 'disabled' : '';
+        return (
+            <>
+                <input
+                    key = 'uform_login_user'
+                    type = 'text'
+                    value = {this.state.login.username}
+                    onChange = {(c: any) => {
+                        this.setState({
+                            login: {
+                                username: c.target.value,
+                                password: this.state.login.password,
+                            }
+                        })
+                    }}
+                    disabled = {false}
+                    className = 'form-input-text'
+                ></input>
+                <input
+                    key = 'uform_login_user'
+                    type = 'password'
+                    value = {this.state.login.username}
+                    onChange = {(c: any) => {
+                        this.setState({
+                            login: {
+                                username: this.state.login.username,
+                                password: c.target.value,
+                            }
+                        })
+                    }}
+                    disabled = {false}
+                    className = 'form-input-text'
+                ></input>
+                <div
+                    key='u_popup_close'
+                    className={`popup-button ${disabledButton}`}
+                    onClick={() => {this.login()}}
+                >Log in</div>
+                <div
+                    key='u_popup_close'
+                    className={`popup-button ${disabledButton}`}
+                    onClick={() => {this.popupHide()}}
+                >Cancel</div>
+            </>
+        )
+    }
+
+    login(): void {
+
+    }
+
+    popupHide(): void {
+
+    }
+    popupShow(): void {
+        
     }
 
     render() {
