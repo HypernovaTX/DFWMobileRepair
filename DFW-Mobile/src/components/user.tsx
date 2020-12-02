@@ -198,6 +198,18 @@ export default class User extends React.Component<Props, State> {
                 );
             });
             output.shift();
+        } else if (currentUser !== '') {
+            this.listUser.forEach((item: string[], num: number) => {
+                output.push(
+                    <span
+                        key={`user_i${num}`}
+                        className='user-menu-item'
+                    >
+                        {item[0]}
+                    </span>
+                );
+            });
+            output.shift();
         }
         return (output);
     }
