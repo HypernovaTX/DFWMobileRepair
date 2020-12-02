@@ -12,6 +12,7 @@
     transition: 200ms linear all;
     backdrop-filter: blur(10px);
     position: fixed;
+    box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.5);
 }
 
 .user-icon {
@@ -28,12 +29,15 @@
     margin: auto 0px;
     color: #333;
     line-height: 2.5em;
+    user-select: none;
 }
 
 .user-hamburber {
     display: inline-grid;
     padding: 12px;
     transition: 200ms linear all;
+    cursor: pointer;
+    user-select: none;
 }
 .user-hamburber:active {
     background: rgba(255, 255, 255, 0.3);
@@ -53,13 +57,27 @@
 
 .user-menu {
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.5);
     transition: 200ms linear all;
     width: auto;
-    padding: 0px 0px;
+    padding: 0px;
     display: grid;
     position: fixed;
     top: 3em;
     right: 0px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.5);
 }
 
+.user-menu-item {
+    font-size: 1.2em;
+    color: #FFF;
+    padding: 8px 12px;
+    border-bottom: 1px solid #999999;
+    cursor: pointer;
+    user-select: none;
+    background: rgba(0, 0, 0, 0);
+    transition: 200ms linear all;
+}
+.user-menu-item:hover { background: rgba(255, 255, 255, 0.2); }
+.user-menu-item:active { background: rgba(255, 255, 255, 0.5); }

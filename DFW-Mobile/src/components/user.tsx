@@ -11,6 +11,7 @@ type State = {
     menuHover: string,
     userBarOn: boolean,
     menuOn: boolean,
+    admin: boolean, 
 };
 
 export default class User extends React.Component<Props, State> {
@@ -28,7 +29,8 @@ export default class User extends React.Component<Props, State> {
             testAny: '',
             userBarOn: false,
             menuHover: '',
-            menuOn: false,
+            menuOn: false, 
+            admin: false,
         }
 
         //Placeholder NodeJS.Timeout to prevent any errors
@@ -145,7 +147,7 @@ export default class User extends React.Component<Props, State> {
 
     userBarScroll(): object {
         let barStyle = { opacity: 0, top: -80 };
-        if (window.pageYOffset > window.innerHeight * 0.25) {
+        if (window.pageYOffset > window.innerHeight * 0) {
             barStyle = { opacity: 1, top: 0 };
         }
         return barStyle;
@@ -153,16 +155,32 @@ export default class User extends React.Component<Props, State> {
 
     userMenu(): JSX.Element {
         const { menuOn } = this.state;
+
+        const height = this.getUserMenuHeight();
         const userMainBarStyle = {
             'height': (menuOn)
-                ? 'auto' : '0px',
-            'padding': (menuOn)? '8px 12px' : '0px'
+                ? `${(height * 3).toString()}em`
+                : '0px'
+            ,
         }
         return (
             <div key='user_menu' className='user-menu' style={userMainBarStyle}>
                 {this.userMenuContents()}
             </div>
         )
+    }
+
+    getUserMenuHeight(): number {
+        const { currentUser, admin } = this.state;
+        if (currentUser === '') { return 0; }
+        else if (currentUser === 'Guest') {
+            return this.listGuest.length;
+        } else {
+            return (admin === true)
+                ? this.listUser.length + this.listAdmin.length
+                : this.listUser.length
+            ;
+        }
     }
 
     userMenuContents(): JSX.Element[] {
