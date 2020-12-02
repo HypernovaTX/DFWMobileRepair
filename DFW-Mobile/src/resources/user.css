@@ -48,14 +48,18 @@
 }
 
 .user-hamburger-dash.hover {
-    background: #FFF;
+    background: #777;
 }
 
-.user-mainbar {
+.user-menu {
     overflow: hidden;
     background: rgba(255, 255, 255, 0.9);
     transition: 200ms linear all;
-    width: 0vw;
+    width: auto;
     padding: 0px 0px;
+    display: grid;
+    position: fixed;
+    top: 3em;
+    right: 0px;
 }
 

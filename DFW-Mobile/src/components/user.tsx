@@ -16,6 +16,10 @@ type State = {
 export default class User extends React.Component<Props, State> {
     private API_Request: NodeJS.Timeout;
     private API_refreshInterval: number;
+    private listGuest: string[][];
+    private listUser: string[][];
+    private listAdmin: string[][];
+
     constructor(p: Props) {
         super(p);
 
@@ -32,6 +36,18 @@ export default class User extends React.Component<Props, State> {
         clearInterval(this.API_Request);
 
         this.API_refreshInterval = 5000; 
+        this.listGuest = [
+            ['Login', 'login'],
+            ['Register', 'register'],
+        ];
+        this.listUser = [
+            ['Profile', 'profile'],
+            ['Settings', 'settings'],
+            ['Log Out', 'logout'],
+        ]
+        this.listAdmin = [
+            ['Quotes', 'quotes'],
+        ]
     }
 
     componentDidMount() {
@@ -87,12 +103,6 @@ export default class User extends React.Component<Props, State> {
         const dis_user = (currentUser === '') ?
             'Guest' : currentUser;
         const bgBarStyle = this.userBarScroll();
-        const userMainBarStyle = {
-            'width': (menuOn)
-                ? ((window.innerWidth <= 640) ? '100vw' : '25vw')
-                : '0vw',
-            'padding': (menuOn)? '8px 12px' : '0px'
-        }
         const hamburgerTop = this.hamburgerMenuStyle(true);
         const hamburgerCenter = (menuOn) ? { 'opacity': '0' } : { 'opacity': '1' };
         const hamburgerBottom = this.hamburgerMenuStyle(false);
@@ -127,8 +137,8 @@ export default class User extends React.Component<Props, State> {
                             style={hamburgerBottom}
                         ></div>
                     </div>
-                    <div key='user_bar' className='user-mainbar' style={userMainBarStyle}></div>
                 </div>
+                {this.userMenu()}
             </div>
         );
     }
@@ -139,6 +149,39 @@ export default class User extends React.Component<Props, State> {
             barStyle = { opacity: 1, top: 0 };
         }
         return barStyle;
+    }
+
+    userMenu(): JSX.Element {
+        const { menuOn } = this.state;
+        const userMainBarStyle = {
+            'height': (menuOn)
+                ? 'auto' : '0px',
+            'padding': (menuOn)? '8px 12px' : '0px'
+        }
+        return (
+            <div key='user_menu' className='user-menu' style={userMainBarStyle}>
+                {this.userMenuContents()}
+            </div>
+        )
+    }
+
+    userMenuContents(): JSX.Element[] {
+        const { currentUser } = this.state;
+        let output = [<></>];
+        if (currentUser === 'Guest') {
+            this.listGuest.forEach((item: string[], num: number) => {
+                output.push(
+                    <span
+                        key={`guest_i${num}`}
+                        className='user-menu-item'
+                    >
+                        {item[0]}
+                    </span>
+                );
+            });
+            output.shift();
+        }
+        return (output);
     }
 
     render() {
