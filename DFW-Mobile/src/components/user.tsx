@@ -33,6 +33,7 @@ export default class User extends React.Component<Props, State> {
     private listGuest: any[][];
     private listUser: any[][];
     private listAdmin: any[][];
+    private focusedInput: React.RefObject<HTMLInputElement>;
 
     constructor(p: Props) {
         super(p);
@@ -67,10 +68,11 @@ export default class User extends React.Component<Props, State> {
             ['Profile', 'profile'],
             ['Settings', 'settings'],
             ['Log Out', 'logout'],
-        ]
+        ];
         this.listAdmin = [
             ['Quotes', 'quotes'],
-        ]
+        ];
+        this.focusedInput = React.createRef();
     }
 
     componentDidMount() {
@@ -78,6 +80,7 @@ export default class User extends React.Component<Props, State> {
         this.getCurrentUser(); //Initial API request
         //Run API request every X amount of time (see "..\config.json" > General > refreshInterval)
         this.API_Request = setInterval(() => this.getCurrentUser(), this.API_refreshInterval);
+        //this.focusedInput.focus();
     }
 
     getCurrentUser = () => {
@@ -264,11 +267,14 @@ export default class User extends React.Component<Props, State> {
         const { popupVisible } = this.state;
         const disabledButton = (popupVisible === 3) ? 'disabled' : '';
         return (
-            <>
+            <form key='login_form'>
+                <span key='uform_title_user' className='input-title'>Username</span>
                 <input
                     key = 'uform_login_user'
                     type = 'text'
                     value = {this.state.login.username}
+                    ref = {(input: any) => { this.focusedInput = input; }} 
+                    autoFocus = {true}
                     onChange = {(c: any) => {
                         this.setState({
                             login: {
@@ -280,6 +286,7 @@ export default class User extends React.Component<Props, State> {
                     disabled = {false}
                     className = 'form-input-text'
                 ></input>
+                <span key='uform_title_pw' className='input-title'>Password</span>
                 <input
                     key = 'uform_login_pw'
                     type = 'password'
@@ -303,9 +310,12 @@ export default class User extends React.Component<Props, State> {
                 <div
                     key='uform_login_butt_close'
                     className={`popup-button ${disabledButton}`}
-                    onClick={() => {this.popupHide()}}
+                    onClick={() => {
+                        this.popupHide();
+                        this.clearData();
+                    }}
                 >Cancel</div>
-            </>
+            </form>
         )
     }
 
@@ -320,11 +330,15 @@ export default class User extends React.Component<Props, State> {
         }*/
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=login`, postData)
         .then((response) => {
-            if (response.data === 'MATCH') { console.log('Logged in!'); }
+            if (response.data === 'MATCH') {
+                this.popupHide();
+                this.getCurrentUser();
+                this.clearData();
+            }
             else if (response.data === 'FAIL') { console.log('Wrong login information!'); }
             else {
                 console.log(
-                    'CHECK THE CODES!<br>response.data = ' + 
+                    'UNKNOWN ERROR!<br>response data: ' + 
                     response.data
                 );
             }

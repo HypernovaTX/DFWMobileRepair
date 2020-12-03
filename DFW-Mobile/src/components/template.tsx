@@ -18,12 +18,12 @@ type State = {
 };
 
 export default class Template extends React.Component<Props, State> {
-    ref_s1: React.RefObject<any>;
-    ref_s2: React.RefObject<any>;
-    ref_s3: React.RefObject<any>;
-    ref_s4: React.RefObject<any>;
-    ref_s5: React.RefObject<any>;
-    ref_top: React.RefObject<any>;
+    ref_s1: React.RefObject<HTMLDivElement>;
+    ref_s2: React.RefObject<HTMLDivElement>;
+    ref_s3: React.RefObject<HTMLDivElement>;
+    ref_s4: React.RefObject<HTMLDivElement>;
+    ref_s5: React.RefObject<HTMLDivElement>;
+    ref_top: React.RefObject<HTMLDivElement>;
     scroll_behavior: { behavior: string; block: string; };
 
     constructor(p: Props) {

@@ -81,3 +81,9 @@
 }
 .user-menu-item:hover { background: rgba(255, 255, 255, 0.2); }
 .user-menu-item:active { background: rgba(255, 255, 255, 0.5); }
+
+.input-title {
+    font-size: 0.9em;
+    color: #333;
+    padding: 4px 12px;
+}
