@@ -2,6 +2,7 @@ import React from 'react';
 import '.././resources/user.css';
 import axios from 'axios';
 import * as CONFIG from '../config.json';
+import Cookies from 'js-cookie';
 
 type Props = {
 };
