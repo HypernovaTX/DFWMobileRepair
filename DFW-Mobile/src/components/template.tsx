@@ -1,7 +1,7 @@
 import React from 'react';
 import * as ServiceList from "./services.json"; 
 import ContactForm from './contact'
-import User from './user'
+//import User from './user'
 import '.././resources/services.css';
 
 type Props = {
@@ -59,7 +59,9 @@ export default class Template extends React.Component<Props, State> {
     }
 
     userBar(): JSX.Element {
-        return (<User />);
+        return (
+            <div key='removedUserBar' style={{'display':'none'}}></div>
+        ); //Removed element: <User />
     }
 
     head(): JSX.Element {
