@@ -2,7 +2,7 @@ import React from 'react';
 import '.././resources/user.css';
 import axios from 'axios';
 import * as CONFIG from '../config.json';
-import Cookies from 'js-cookie';
+import Cookie from 'js-cookie';
 
 type Props = {
 };
@@ -77,6 +77,7 @@ export default class User extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+        axios.defaults.withCredentials = true;
         clearInterval(this.API_Request);
         this.getCurrentUser(); //Initial API request
         //Run API request every X amount of time (see "..\config.json" > General > refreshInterval)
@@ -85,13 +86,11 @@ export default class User extends React.Component<Props, State> {
     }
 
     getCurrentUser = () => {
-        const postData = {
-            headers: {
-                  'Access-Control-Allow-Origin': '*',
-            }
-        }
+        /*const sessionID = Cookie.get('key');
+        let postData = new FormData();
+        postData.append('PHPSESSID', sessionID || '');*/
 
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=check`, postData)
+        axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=check`)
             .then((response) => {
                 const responseString = (response.data + '' === 'GUEST')
                     ? 'Guest'
@@ -321,14 +320,16 @@ export default class User extends React.Component<Props, State> {
     }
 
     login(): void {
-        var postData = new FormData();
+        let postData = new FormData();
         postData.append('username', this.state.login.username);
         postData.append('password', this.state.login.password);
+        //postData.append('withCredentials', 'true');
 
         /*const postData = {
             username: this.state.login.username,
             password: this.state.login.password,
         }*/
+
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=login`, postData)
         .then((response) => {
             if (response.data === 'MATCH') {
@@ -339,9 +340,11 @@ export default class User extends React.Component<Props, State> {
             else if (response.data === 'FAIL') { console.log('Wrong login information!'); }
             else {
                 console.log(
-                    'UNKNOWN ERROR!<br>response data: ' + 
+                    'response data: ' + 
                     response.data
                 );
+                const getSession = JSON.parse(response.data).key;
+                Cookie.set('session', getSession);
             }
         });
     }
