@@ -2,7 +2,6 @@ import React from 'react';
 import '.././resources/user.css';
 import axios from 'axios';
 import * as CONFIG from '../config.json';
-import Cookie from 'js-cookie';
 
 type Props = {
 };
@@ -332,19 +331,18 @@ export default class User extends React.Component<Props, State> {
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=login`, postData)
         .then((response) => {
-            if (response.data === 'MATCH') {
+            if (response.data === 'LOGIN SUCCESS!') {
                 this.popupHide();
                 this.getCurrentUser();
                 this.clearData();
             }
             else if (response.data === 'FAIL') { console.log('Wrong login information!'); }
             else {
+                console.log('UNKNOWN ERROR???')
                 console.log(
                     'response data: ' + 
                     response.data
                 );
-                const getSession = JSON.parse(response.data).key;
-                Cookie.set('session', getSession);
             }
         });
     }
