@@ -25,6 +25,10 @@ type State = {
  * References for state.popupKind:
  *  0 - Login
  *  1 - Register
+ *  2 - ??
+ *  3 - ??
+ *  4 - Logout
+ *  5 - ??
  */
 
 export default class User extends React.Component<Props, State> {
@@ -61,16 +65,16 @@ export default class User extends React.Component<Props, State> {
 
         this.API_refreshInterval = 5000; 
         this.listGuest = [
-            ['Login', () => {this.setState({ popupKind: 0 })}],
-            ['Register', () => {this.setState({ popupKind: 1 })}],
+            ['Login', 0],
+            ['Register', 1],
         ];
         this.listUser = [
-            ['Profile', 'profile'],
-            ['Settings', 'settings'],
-            ['Log Out', 'logout'],
+            ['Profile', 2],
+            ['Settings', 3],
+            ['Log Out', 4],
         ];
         this.listAdmin = [
-            ['Quotes', 'quotes'],
+            ['Quotes', 5],
         ];
         this.focusedInput = React.createRef();
     }
@@ -216,8 +220,7 @@ export default class User extends React.Component<Props, State> {
                         key={`guest_i${num.toString()}`}
                         className='user-menu-item'
                         onClick={() => {
-                            item[1]();
-                            this.popupShow();
+                            this.popupShow(item[1]);
                         }}
                     >
                         {item[0]}
@@ -226,11 +229,14 @@ export default class User extends React.Component<Props, State> {
             });
             output.shift();
         } else if (currentUser !== '') {
-            this.listUser.forEach((item: string[], num: number) => {
+            this.listUser.forEach((item: any[], num: number) => {
                 output.push(
                     <span
                         key={`user_i${num.toString()}`}
                         className='user-menu-item'
+                        onClick={() => {
+                            this.popupShow(item[1]);
+                        }}
                     >
                         {item[0]}
                     </span>
@@ -334,17 +340,25 @@ export default class User extends React.Component<Props, State> {
             if (response.data === 'LOGIN SUCCESS!') {
                 this.popupHide();
                 this.getCurrentUser();
+                this.setState({ menuOn: false });
                 this.clearData();
             }
             else if (response.data === 'FAIL') { console.log('Wrong login information!'); }
             else {
                 console.log('UNKNOWN ERROR???')
-                console.log(
-                    'response data: ' + 
-                    response.data
-                );
+                console.log('response data: ' + response.data);
             }
         });
+    }
+
+    logout(): void {
+        axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=logout`)
+            .then((response) => {
+                if (response.status === 200) {
+                    this.setState({ menuOn: false });
+                    this.getCurrentUser();
+                }
+            });
     }
 
     clearData(): void {
@@ -365,7 +379,13 @@ export default class User extends React.Component<Props, State> {
             }, 500);
         }
     }
-    popupShow(): void {
+    popupShow(kind: number): void {
+        if (kind === 4) {
+            this.logout();
+            return;
+        }
+        this.setState({ popupKind: kind });
+
         let { popupVisible } = this.state;
         if (popupVisible === 0) {
             this.setState({popupVisible: 1});
