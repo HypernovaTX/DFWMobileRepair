@@ -30,6 +30,9 @@ export default class Admin extends React.Component<Props, State> {
             },
         }
     }
+    componentDidMount() {
+        this.getCurrentUser();
+    }
 
     getCurrentUser(): void {
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=check`)
@@ -46,9 +49,30 @@ export default class Admin extends React.Component<Props, State> {
             });
     };
 
+    clearLoginData(): void {
+        
+    }
+
 
     login(): void {
+        let postData = new FormData();
+        postData.append('username', this.state.login.username);
+        postData.append('password', this.state.login.password);
 
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=login`, postData)
+        .then((response) => {
+            if (response.data === 'LOGIN SUCCESS!') {
+                //this.popupHide();
+                this.getCurrentUser();
+                //this.setState({ menuOn: false });
+                this.clearLoginData();
+            }
+            else if (response.data === 'FAIL') { console.log('Wrong login information!'); }
+            else {
+                console.log('UNKNOWN ERROR???')
+                console.log('response data: ' + response.data);
+            }
+        });
     }
 
     template_login(): JSX.Element {
