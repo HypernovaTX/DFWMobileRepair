@@ -1,4 +1,6 @@
 import React from 'react';
+import axios from 'axios';
+import * as CONFIG from '../config.json';
 
 type Props = {
 };
@@ -29,8 +31,24 @@ export default class Admin extends React.Component<Props, State> {
         }
     }
 
+    getCurrentUser(): void {
+        axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=check`)
+            .then((response) => {
+                const responseString = (response.data + '' === 'GUEST')
+                    ? ''
+                    : response.data + '';
+                this.setState({
+                    session: {
+                        currentUser: responseString,
+                        admin: this.state.session.admin
+                    },
+                });
+            });
+    };
+
+
     login(): void {
-        
+
     }
 
     template_login(): JSX.Element {
