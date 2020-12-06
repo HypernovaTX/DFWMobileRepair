@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import './../resources/admin.css'
 import * as CONFIG from '../config.json';
 
 type Props = {
@@ -126,6 +127,13 @@ export default class Admin extends React.Component<Props, State> {
                 >Log in</div>
                 </div>
             </div>
+        );
+    }
+
+    render() {
+        let rendering = this.template_login();
+        return(
+            <>{rendering}</>
         );
     }
 }

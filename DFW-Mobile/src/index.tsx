@@ -15,8 +15,8 @@ import {
 const ALL = (
   <Router>
     <Switch>
-      <Route path="/"><MainPage/></Route>
-      <Route path="/admin"><Admin/></Route>
+      <Route exact path="/"><MainPage /></Route>
+      <Route exact path="/admin"><Admin /></Route>
     </Switch>
   </Router>
 );
