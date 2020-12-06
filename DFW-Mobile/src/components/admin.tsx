@@ -5,6 +5,7 @@ import * as CONFIG from '../config.json';
 type Props = {
 };
 type State = {
+    loading: boolean,
     session: {
         currentUser: string,
         admin: boolean,
@@ -20,6 +21,7 @@ export default class Admin extends React.Component<Props, State> {
         super(p);
 
         this.state = {
+            loading: false,
             session: {
                 currentUser: '',
                 admin: false,
@@ -50,7 +52,12 @@ export default class Admin extends React.Component<Props, State> {
     };
 
     clearLoginData(): void {
-        
+        let { login } = this.state;
+        login = {
+            username: '',
+            password: '',
+        };
+        this.setState({ login });
     }
 
 

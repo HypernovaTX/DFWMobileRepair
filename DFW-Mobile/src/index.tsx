@@ -4,17 +4,19 @@ import './index.css';
 import './resources/mobile.css';
 import * as serviceWorker from './serviceWorker';
 import MainPage from './components/mainpage';
+import Admin from './components/admin';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
 } from 'react-router-dom'
 
+
 const ALL = (
   <Router>
     <Switch>
       <Route path="/"><MainPage/></Route>
-      <Route path="/admin"><MainPage/></Route>
+      <Route path="/admin"><Admin/></Route>
     </Switch>
   </Router>
 );
