@@ -61,6 +61,15 @@ export default class Admin extends React.Component<Props, State> {
         this.setState({ login });
     }
 
+    loading(): JSX.Element {
+        return(
+            <div key='load_bg' className='loading-bg'>
+                <div key='load_throbber' className='loading-throbber'></div>
+                <div key='load_text' className='loading-text'>Loading...</div>
+            </div>
+        )
+    }
+
 
     login(): void {
         let postData = new FormData();
