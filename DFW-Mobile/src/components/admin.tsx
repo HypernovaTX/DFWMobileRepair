@@ -75,6 +75,7 @@ export default class Admin extends React.Component<Props, State> {
         let postData = new FormData();
         postData.append('username', this.state.login.username);
         postData.append('password', this.state.login.password);
+        this.setState({ loading: true });
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=login`, postData)
         .then((response) => {
@@ -141,8 +142,15 @@ export default class Admin extends React.Component<Props, State> {
 
     render() {
         let rendering = this.template_login();
+        let loading = <div key='load_null'></div>
+        if (this.state.loading === true) {
+            loading = this.loading();
+        }
         return(
-            <>{rendering}</>
+            <>
+                {rendering}
+                {loading}
+            </>
         );
     }
 }
