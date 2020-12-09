@@ -9,6 +9,7 @@
 }
 
 .login-screen {
+    z-index: 0;
     display: flex;
     width: 100vw;
     height: 100vh;
@@ -22,6 +23,7 @@
     position: fixed;
     top: 0px;
     left: 0px;
+    z-index: -1;
     backdrop-filter: blur(10px);
     transition: 200ms linear all;
     display: flex;

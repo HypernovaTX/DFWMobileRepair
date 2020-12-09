@@ -7,6 +7,7 @@ type Props = {
 };
 type State = {
     loading: boolean,
+    loadingLast: boolean,
     session: {
         currentUser: string,
         admin: boolean,
@@ -23,6 +24,7 @@ export default class Admin extends React.Component<Props, State> {
 
         this.state = {
             loading: false,
+            loadingLast: false,
             session: {
                 currentUser: '',
                 admin: false,
@@ -62,11 +64,21 @@ export default class Admin extends React.Component<Props, State> {
     }
 
     loading(): JSX.Element {
+        const { loading, loadingLast } = this.state;
+        const styleOff = { 'opacity': 0, 'zIndex': -1 };
+        const styleOn = { 'opacity': 1, 'zIndex': 9 };
+        let style = (loading) ? styleOn : styleOff;
+
+        if (loading !== loadingLast) {
+            if (loadingLast === false) { style = styleOn; }
+            this.setState({ loadingLast: loading });
+        }
+
         return(
-            <div key='load_bg' className='loading-bg'>
+            <div key='load_bg' className='loading-bg' style={style}>
                 <div key='load_content' className='loading-content'>
                     <div key='load_throbber' className='loading-throbber'></div>
-                    <div key='load_text' className='loading-text'>Loading...</div>
+                    <div key='load_text' className='loading-text'>Loading</div>
                 </div>
             </div>
         )
@@ -144,10 +156,7 @@ export default class Admin extends React.Component<Props, State> {
 
     render() {
         let rendering = this.template_login();
-        let loading = <div key='load_null'></div>
-        if (this.state.loading === true) {
-            loading = this.loading();
-        }
+        let loading = this.loading();
         return(
             <>
                 {rendering}
