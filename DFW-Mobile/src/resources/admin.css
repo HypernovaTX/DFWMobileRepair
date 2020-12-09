@@ -14,3 +14,44 @@
     height: 100vh;
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAASElEQVQoU3WOwQ4AMARD5+5bfYDvdt+iGZENJ9GnLanqXnfMDBszx2lRAJ3oFIBJBCAiiKi26R/AJLpzdqhfvkdsC9ROH/AWPnUPKCkRUb29AAAAAElFTkSuQmCC');
 }
+
+.loading-bg {
+    background: rgba(0, 0, 0, 0.7);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    backdrop-filter: blur(10px);
+    transition: 200ms linear all;
+    display: flex;
+}
+.loading-content {
+    margin: auto;
+}
+.loading-throbber {
+    background: url('./images/gear-ts.png');
+    width: 80px;
+    height: 80px;
+    background-size: contain;
+    display: block;
+    animation-name: loadspin;
+    animation-duration: 4000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    margin: 0 auto;
+}
+@keyframes loadspin {
+    from { transform:rotate(0deg); }
+    to { transform:rotate(360deg); }
+}
+
+.loading-text {
+    display: block;
+    color: #FFF;
+    font-size: 1em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 12px;
+    user-select: none;
+}

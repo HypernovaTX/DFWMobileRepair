@@ -64,8 +64,10 @@ export default class Admin extends React.Component<Props, State> {
     loading(): JSX.Element {
         return(
             <div key='load_bg' className='loading-bg'>
-                <div key='load_throbber' className='loading-throbber'></div>
-                <div key='load_text' className='loading-text'>Loading...</div>
+                <div key='load_content' className='loading-content'>
+                    <div key='load_throbber' className='loading-throbber'></div>
+                    <div key='load_text' className='loading-text'>Loading...</div>
+                </div>
             </div>
         )
     }
