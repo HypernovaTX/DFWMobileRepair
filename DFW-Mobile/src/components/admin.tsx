@@ -171,6 +171,14 @@ export default class Admin extends React.Component<Props, State> {
         );
     }
 
+    template_adminpanel(): JSX.Element {
+        return(
+            <div key='admin_main' className='admin-body'>
+                <div key='admin_navbar' className='adminNavbar'></div>
+            </div>
+        )
+    }
+
     loading(): JSX.Element {
         const { loading, loadingLast, loadCanEnd, endLoad } = this.state;
         const styleOff = { 'opacity': 0, 'zIndex': -1 };
@@ -228,10 +236,10 @@ export default class Admin extends React.Component<Props, State> {
     }
 
     render() {
+        const { loggedin } = this.state;
         return(
             <>
                 {this.template_login()}
-                {this.testInfo()}
                 {this.transition()}
                 {this.loading()}
             </>
