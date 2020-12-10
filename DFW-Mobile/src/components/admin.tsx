@@ -159,20 +159,20 @@ export default class Admin extends React.Component<Props, State> {
         if (loading !== loadingLast) {
             if (loadingLast === false) {
                 style = styleOn;
-                setTimeout(
-                    () => {this.setState({ loadCanEnd: true })},
-                    1000
-                );
+                setTimeout(() => {this.setState({ loadCanEnd: true })}, 1000);
             }
-            this.setState({ loadingLast: loading });
+            setTimeout(
+                () => {this.setState({ loadingLast: loading })}, 1);
         }
 
         if (loadCanEnd === true && endLoad === true) {
-            this.setState({
-                loadCanEnd: false,
-                endLoad: false,
-                loading: false,
-            });
+            setTimeout(
+                () => { this.setState({
+                    loadCanEnd: false,
+                    endLoad: false,
+                    loading: false,
+                })},1
+            );
         }
 
         return(
@@ -186,12 +186,10 @@ export default class Admin extends React.Component<Props, State> {
     }
 
     render() {
-        let rendering = this.template_login();
-        let loading = this.loading();
         return(
             <>
-                {rendering}
-                {loading}
+                {this.template_login()}
+                {this.loading()}
             </>
         );
     }
