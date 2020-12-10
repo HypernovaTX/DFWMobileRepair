@@ -8,6 +8,9 @@ type Props = {
 type State = {
     loading: boolean,
     loadingLast: boolean,
+    loadCanEnd: boolean,
+    endLoad: boolean,
+    transition: number,
     session: {
         currentUser: string,
         admin: boolean,
@@ -25,6 +28,9 @@ export default class Admin extends React.Component<Props, State> {
         this.state = {
             loading: false,
             loadingLast: false,
+            loadCanEnd: false,
+            endLoad: false,
+            transition: 0,
             session: {
                 currentUser: '',
                 admin: false,
@@ -63,26 +69,7 @@ export default class Admin extends React.Component<Props, State> {
         this.setState({ login });
     }
 
-    loading(): JSX.Element {
-        const { loading, loadingLast } = this.state;
-        const styleOff = { 'opacity': 0, 'zIndex': -1 };
-        const styleOn = { 'opacity': 1, 'zIndex': 9 };
-        let style = (loading) ? styleOn : styleOff;
-
-        if (loading !== loadingLast) {
-            if (loadingLast === false) { style = styleOn; }
-            this.setState({ loadingLast: loading });
-        }
-
-        return(
-            <div key='load_bg' className='loading-bg' style={style}>
-                <div key='load_content' className='loading-content'>
-                    <div key='load_throbber' className='loading-throbber'></div>
-                    <div key='load_text' className='loading-text'>Loading</div>
-                </div>
-            </div>
-        )
-    }
+    
 
 
     login(): void {
@@ -96,7 +83,7 @@ export default class Admin extends React.Component<Props, State> {
             if (response.data === 'LOGIN SUCCESS!') {
                 //this.popupHide();
                 this.getCurrentUser();
-                //this.setState({ menuOn: false });
+                this.setState({ endLoad: true });
                 this.clearLoginData();
             }
             else if (response.data === 'FAIL') { console.log('Wrong login information!'); }
@@ -107,51 +94,95 @@ export default class Admin extends React.Component<Props, State> {
         });
     }
 
+    /* TEMPLATES */
     template_login(): JSX.Element {
         return(
             <div key='login_screen' className='login-screen'>
                 <div key='login_window' className='login-window'>
-                <span key='login_title_user' className='input-title'>Username</span>
-                <input
-                    key = 'login_form_user'
-                    type = 'text'
-                    value = {this.state.login.username}
-                    autoFocus = {true}
-                    onChange = {(c: any) => {
-                        this.setState({
-                            login: {
-                                username: c.target.value,
-                                password: this.state.login.password,
-                            }
-                        })
-                    }}
-                    disabled = {false}
-                    className = 'form-input-text'
-                ></input>
-                <span key='login_title_pw' className='input-title'>Password</span>
-                <input
-                    key = 'login_form_pw'
-                    type = 'password'
-                    value = {this.state.login.password}
-                    onChange = {(c: any) => {
-                        this.setState({
-                            login: {
-                                username: this.state.login.username,
-                                password: c.target.value,
-                            }
-                        })
-                    }}
-                    disabled = {false}
-                    className = 'form-input-text'
-                ></input>
-                <div
-                    key='uform_login_butt_in'
-                    className={`popup-button`}
-                    onClick={() => {this.login()}}
-                >Log in</div>
+                    <span key='login_title_user' className='input-title'>Username</span>
+                    <input
+                        key = 'login_form_user'
+                        type = 'text'
+                        value = {this.state.login.username}
+                        autoFocus = {true}
+                        onChange = {(c: any) => {
+                            this.setState({
+                                login: {
+                                    username: c.target.value,
+                                    password: this.state.login.password,
+                                }
+                            })
+                        }}
+                        disabled = {false}
+                        className = 'form-input-text'
+                    ></input>
+                    <span key='login_title_pw' className='input-title'>Password</span>
+                    <input
+                        key = 'login_form_pw'
+                        type = 'password'
+                        value = {this.state.login.password}
+                        onChange = {(c: any) => {
+                            this.setState({
+                                login: {
+                                    username: this.state.login.username,
+                                    password: c.target.value,
+                                }
+                            })
+                        }}
+                        disabled = {false}
+                        className = 'form-input-text'
+                    ></input>
+                    <button
+                        key='uform_login_butt_in'
+                        className={`login-button`}
+                        onClick={() => {this.login()}}
+                    >Log in</button>
                 </div>
             </div>
         );
+    }
+
+    transition(): JSX.Element {
+        let { transition } = this.state;
+        const style = { 'opacity': transition / 10 };
+        return (
+            <div key='transition_cover' className = 'transition-cover' style={style}></div>
+        );
+    }
+
+    loading(): JSX.Element {
+        const { loading, loadingLast, loadCanEnd, endLoad } = this.state;
+        const styleOff = { 'opacity': 0, 'zIndex': -1 };
+        const styleOn = { 'opacity': 1, 'zIndex': 10 };
+        let style = (loading) ? styleOn : styleOff;
+
+        if (loading !== loadingLast) {
+            if (loadingLast === false) {
+                style = styleOn;
+                setTimeout(
+                    () => {this.setState({ loadCanEnd: true })},
+                    1000
+                );
+            }
+            this.setState({ loadingLast: loading });
+        }
+
+        if (loadCanEnd === true && endLoad === true) {
+            this.setState({
+                loadCanEnd: false,
+                endLoad: false,
+                loading: false,
+            });
+        }
+
+        return(
+            <div key='load_bg' className='loading-bg' style={style}>
+                <div key='load_content' className='loading-content'>
+                    <div key='load_throbber' className='loading-throbber'></div>
+                    <div key='load_text' className='loading-text'>Loading</div>
+                </div>
+            </div>
+        )
     }
 
     render() {
