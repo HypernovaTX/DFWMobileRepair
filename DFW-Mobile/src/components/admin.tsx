@@ -10,7 +10,12 @@ type State = {
     loadingLast: boolean,
     loadCanEnd: boolean,
     endLoad: boolean,
+
     transition: number,
+    transitionStep: number,
+    transitionCommand: () => void,
+
+    loggedin: boolean,
     session: {
         currentUser: string,
         admin: boolean,
@@ -30,7 +35,12 @@ export default class Admin extends React.Component<Props, State> {
             loadingLast: false,
             loadCanEnd: false,
             endLoad: false,
+
             transition: 0,
+            transitionStep: 0,
+            transitionCommand: () => {},
+
+            loggedin: false,
             session: {
                 currentUser: '',
                 admin: false,
@@ -42,19 +52,24 @@ export default class Admin extends React.Component<Props, State> {
         }
     }
     componentDidMount() {
+        axios.defaults.withCredentials = true;
         this.getCurrentUser();
     }
 
     getCurrentUser(): void {
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=check`)
             .then((response) => {
-                const responseString = (response.data + '' === 'GUEST')
-                    ? ''
-                    : response.data + '';
+                let responseString = '';
+                let loggedin = false;
+                if (response.data + '' !== 'GUEST') {
+                    responseString = response.data + '';
+                    loggedin = true;
+                }
                 this.setState({
+                    loggedin, 
                     session: {
                         currentUser: responseString,
-                        admin: this.state.session.admin
+                        admin: this.state.session.admin,
                     },
                 });
             });
@@ -69,8 +84,21 @@ export default class Admin extends React.Component<Props, State> {
         this.setState({ login });
     }
 
-    
-
+    beginTransition(command: () => void): void {
+        let { transitionCommand } = this.state;
+        this.setState({
+            transition: 1,
+            transitionStep: 1,
+            transitionCommand: command
+        });
+        setTimeout(() => {
+            transitionCommand();
+            this.setState({ transition: 0 });
+            setTimeout(() => {
+                this.setState({ transitionStep: 0 });
+            }, 200);
+        }, 200);
+    }
 
     login(): void {
         let postData = new FormData();
@@ -85,6 +113,7 @@ export default class Admin extends React.Component<Props, State> {
                 this.getCurrentUser();
                 this.setState({ endLoad: true });
                 this.clearLoginData();
+                this.beginTransition(() => { this.setState({ loggedin: true }) });
             }
             else if (response.data === 'FAIL') { console.log('Wrong login information!'); }
             else {
@@ -142,14 +171,6 @@ export default class Admin extends React.Component<Props, State> {
         );
     }
 
-    transition(): JSX.Element {
-        let { transition } = this.state;
-        const style = { 'opacity': transition / 10 };
-        return (
-            <div key='transition_cover' className = 'transition-cover' style={style}></div>
-        );
-    }
-
     loading(): JSX.Element {
         const { loading, loadingLast, loadCanEnd, endLoad } = this.state;
         const styleOff = { 'opacity': 0, 'zIndex': -1 };
@@ -185,10 +206,33 @@ export default class Admin extends React.Component<Props, State> {
         )
     }
 
+    transition(): JSX.Element {
+        let { transition, transitionStep } = this.state;
+        let content = <div key='transition_none'></div>
+        
+        const style = { 'opacity': transition };
+        if (transitionStep > 0) {
+            content = <div key='transition_cover' className = 'transition-cover' style={style}></div>;
+        }
+
+        return (<>{content}</>);
+    }
+
+    testInfo(): JSX.Element {
+        return(
+            <>
+                <div key='test_user'>Username: {this.state.session.currentUser}</div>
+                <div key='test_user_reload' onClick={() => {this.getCurrentUser()}}>[RELOAD USERNAME]</div>
+            </>
+        )
+    }
+
     render() {
         return(
             <>
                 {this.template_login()}
+                {this.testInfo()}
+                {this.transition()}
                 {this.loading()}
             </>
         );

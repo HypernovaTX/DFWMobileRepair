@@ -75,3 +75,14 @@
     margin-top: 12px;
     user-select: none;
 }
+
+.transition-cover {
+    z-index: 8;
+    background: rgb(0, 0, 0);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    transition: 200ms linear all;
+}
