@@ -24,6 +24,7 @@ type State = {
         username: string,
         password: string,
     },
+    adminPanel: string,
 };
 
 export default class Admin extends React.Component<Props, State> {
@@ -49,6 +50,7 @@ export default class Admin extends React.Component<Props, State> {
                 username: '',
                 password: '',
             },
+            adminPanel: 'quote'
         }
     }
     componentDidMount() {
