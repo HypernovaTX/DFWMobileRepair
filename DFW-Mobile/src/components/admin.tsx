@@ -175,10 +175,14 @@ export default class Admin extends React.Component<Props, State> {
 
     template_adminpanel(): JSX.Element {
         const { session } = this.state;
+        let panel = <></>;
         return(
             <div key='admin_main' className='admin-body'>
                 <div key='admin_navbar' className='admin-nav'>
                     <span key='admin_username' className='admin-user'>{session.currentUser}</span>
+                </div>
+                <div key='admin_contain' class name='admin-contain'>
+                    {panel}
                 </div>
             </div>
         )
