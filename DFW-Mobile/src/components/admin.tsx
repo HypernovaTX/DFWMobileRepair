@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import './../resources/admin.css'
+import './../resources/user.css';
 import * as CONFIG from '../config.json';
 
 type Props = {
@@ -25,6 +26,9 @@ type State = {
         password: string,
     },
     adminPanel: string,
+
+    menuHover: string,
+    menuOn: boolean,
 };
 
 export default class Admin extends React.Component<Props, State> {
@@ -50,7 +54,9 @@ export default class Admin extends React.Component<Props, State> {
                 username: '',
                 password: '',
             },
-            adminPanel: 'quote'
+            adminPanel: 'quote',
+            menuHover: '',
+            menuOn: false,
         }
     }
     componentDidMount() {
@@ -174,18 +180,72 @@ export default class Admin extends React.Component<Props, State> {
     }
 
     template_adminpanel(): JSX.Element {
-        const { session } = this.state;
-        let panel = <></>;
+        const { session, menuOn } = this.state;
+        let panel = <div key='admin_none'></div>;
+
+        const hamburgerTop = this.hamburgerMenuStyle(true);
+        const hamburgerCenter = (menuOn) ? { 'opacity': '0' } : { 'opacity': '1' };
+        const hamburgerBottom = this.hamburgerMenuStyle(false);
+
         return(
             <div key='admin_main' className='admin-body'>
-                <div key='admin_navbar' className='admin-nav'>
-                    <span key='admin_username' className='admin-user'>{session.currentUser}</span>
+                <div key='admin_navbar' className='userbar-back' style={{ opacity: 1 }}>
+                    <span key='admin_username' className='user-icon'>
+                        <div key='user_text' className='user-text'>
+                            {session.currentUser}
+                        </div>
+                        <div
+                            key='user_hamburger'
+                            className='user-hamburber'
+                            onMouseEnter={() => this.setState({ menuHover: 'hover'})}
+                            onMouseLeave={() => this.setState({ menuHover: ''})}
+                            onClick={() => {this.setState({ menuOn: !menuOn })}}
+                        >
+                            <div
+                                key='hbu_1'
+                                className={`user-hamburger-dash ${this.state.menuHover}`}
+                                style={hamburgerTop}
+                            ></div>
+                            <div
+                                key='hbu_2'
+                                className={`user-hamburger-dash ${this.state.menuHover}`}
+                                style={hamburgerCenter}
+                            ></div>
+                            <div
+                                key='hbu_3'
+                                className={`user-hamburger-dash ${this.state.menuHover}`}
+                                style={hamburgerBottom}
+                            ></div>
+                        </div>
+                    </span>
                 </div>
-                <div key='admin_contain' class name='admin-contain'>
+                <div key='admin_contain' className='admin-contain'>
                     {panel}
                 </div>
             </div>
         )
+    }
+
+    hamburgerMenuStyle(top: boolean):object {
+        const { menuOn } = this.state;
+        let result = (menuOn) ? {
+            'transform': 'rotate(-45deg) scaleX(1.1)',
+            'transformOrigin': '2px -1px'
+        } : {
+            'transform': 'rotate(0) scaleX(1)',
+            'transformOrigin': '0px 0px'
+        };
+
+        if (top === true) {
+            result = (menuOn) ? {
+                'transform': 'rotate(45deg) scaleX(1.1)',
+                'transformOrigin': '4px 5px'
+            } : {
+                'transform': 'rotate(0) scaleX(1)',
+                'transformOrigin': '0px 0px'
+            };
+        }
+        return result;
     }
 
     loading(): JSX.Element {
@@ -246,9 +306,11 @@ export default class Admin extends React.Component<Props, State> {
 
     render() {
         const { loggedin } = this.state;
+        let content = this.template_login();
+        if (loggedin === true) { content = this.template_adminpanel() }
         return(
             <>
-                {this.template_login()}
+                {content}
                 {this.transition()}
                 {this.loading()}
             </>

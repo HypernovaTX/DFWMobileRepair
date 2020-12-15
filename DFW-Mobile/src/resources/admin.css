@@ -88,3 +88,19 @@
 }
 
 .admin-body {}
+
+
+.admin-nav {
+    width: 100vw;
+    background: rgba(255, 255, 255, 0.75);
+    transition: 200ms linear all;
+    backdrop-filter: blur(10px);
+    position: fixed;
+    box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.5);
+}
+.admin-user {
+    text-transform: uppercase;
+    padding: 10px 24px;
+    display: block;
+    float: right;
+}
