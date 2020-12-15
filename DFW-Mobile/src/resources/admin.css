@@ -87,7 +87,9 @@
     transition: 200ms linear all;
 }
 
-.admin-body {}
+.admin-body {
+    color: #000;
+}
 
 
 .admin-nav {

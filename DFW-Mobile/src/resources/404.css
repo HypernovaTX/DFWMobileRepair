@@ -1,0 +1,54 @@
+body {
+    background: #FFF;  
+}
+.p404-body {
+    background: #FFF;                 
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+.p404-contain {
+    margin: auto;
+}
+.p404-image {
+    margin-top: 48px;
+    width: 50vw;
+    height: 50vh;
+    max-width: 525px;
+    max-height: 336px;
+    background: url('./images/car-broken.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    display: block;
+    margin: auto;
+}
+.p404-text {
+    user-select: none;
+    display: block;
+    color: #444;
+    font-size: 2em;
+    font-family: monospace;
+    font-weight: 600;
+    margin: 24px 20%;
+    text-align: center;
+}
+.p404-btn {
+    display: block;
+    text-align: center;
+    margin: auto;
+    padding: 12px 24px;
+    background: rgb(202, 74, 0);
+    border-radius: 8px;
+    color: #FFF;
+    transition: 200ms linear all;
+    user-select: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 240px;
+    font-weight: 600;
+    margin-bottom: 48px;
+}
+
+.p404-btn:hover { background: rgb(255, 94, 0); }
+.p404-btn:active { background: rgb(255, 147, 85); }
