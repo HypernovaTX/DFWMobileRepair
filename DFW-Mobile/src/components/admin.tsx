@@ -32,6 +32,7 @@ type State = {
 };
 
 export default class Admin extends React.Component<Props, State> {
+    private userMenuItem: [string, number][];
     constructor(p: Props) {
         super(p);
 
@@ -58,6 +59,12 @@ export default class Admin extends React.Component<Props, State> {
             menuHover: '',
             menuOn: false,
         }
+
+        this.userMenuItem = [
+            ['Profile', 2],
+            ['Settings', 3],
+            ['Log Out', 4],
+        ];
     }
     componentDidMount() {
         axios.defaults.withCredentials = true;
@@ -218,6 +225,7 @@ export default class Admin extends React.Component<Props, State> {
                             ></div>
                         </div>
                     </span>
+                    {this.userMenu()}
                 </div>
                 <div key='admin_contain' className='admin-contain'>
                     {panel}
@@ -246,6 +254,42 @@ export default class Admin extends React.Component<Props, State> {
             };
         }
         return result;
+    }
+
+    userMenu(): JSX.Element {
+        const { menuOn } = this.state;
+
+        const height = this.userMenuItem.length;
+        const userMainBarStyle = {
+            'height': (menuOn)
+                ? `${(height * 3).toString()}em`
+                : '0px'
+            ,
+        }
+        return (
+            <div key='user_menu' className='user-menu' style={userMainBarStyle}>
+                {this.userMenuContents()}
+            </div>
+        )
+    }
+
+    userMenuContents(): JSX.Element[] {
+        let output = [<div key='um_placeholder'></div>];
+        this.userMenuItem.forEach((item: any[], num: number) => {
+            output.push(
+                <span
+                    key={`guest_i${num.toString()}`}
+                    className='user-menu-item'
+                    onClick={() => {
+                        
+                    }}
+                >
+                    {item[0]}
+                </span>
+            );
+        });
+        output.shift();
+        return (output);
     }
 
     loading(): JSX.Element {

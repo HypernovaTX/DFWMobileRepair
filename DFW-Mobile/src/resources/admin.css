@@ -104,3 +104,10 @@
     display: block;
     float: right;
 }
+.user-text {
+    text-transform: uppercase;
+}
+.user-menu {
+    text-align: center;
+    width: 196px;
+}
