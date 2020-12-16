@@ -225,6 +225,9 @@ export default class Admin extends React.Component<Props, State> {
                             ></div>
                         </div>
                     </span>
+                    <span key='nav_item1' className='nav-items'>Manage Quotes</span>
+                    <span key='nav_item2' className='nav-items'>Manage User</span>
+                    <span key='nav_item3' className='nav-items'>Refresh</span>
                     {this.userMenu()}
                 </div>
                 <div key='admin_contain' className='admin-contain'>

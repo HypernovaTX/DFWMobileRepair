@@ -111,5 +111,20 @@
 }
 .user-menu {
     text-align: center;
-    width: 196px;
+    width: 196px !important;
 }
+.nav-items {
+    font-size: 1.2em;
+    display: inline-block;
+    padding: 0px 16px;
+    margin: auto 0px;
+    color: #333;
+    line-height: 2.5em;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    transition: 200ms linear all;
+    background: rgba(0, 0, 0, 0);
+}
+.nav-items:hover { background: rgba(0, 0, 0, 0.1); }
+.nav-items:active { background: rgba(0, 0, 0, 0.2); }
