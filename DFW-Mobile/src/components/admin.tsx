@@ -3,6 +3,7 @@ import axios from 'axios';
 import './../resources/admin.css'
 import './../resources/user.css';
 import * as CONFIG from '../config.json';
+import ManageQuotes from './admin/managequotes'
 
 type Props = {
 };
@@ -187,8 +188,11 @@ export default class Admin extends React.Component<Props, State> {
     }
 
     template_adminpanel(): JSX.Element {
-        const { session, menuOn } = this.state;
+        const { session, menuOn, adminPanel, loggedin } = this.state;
         let panel = <div key='admin_none'></div>;
+        switch (adminPanel) {
+            default: panel = <ManageQuotes loggedIn={loggedin}/>; break;
+        }
 
         const hamburgerTop = this.hamburgerMenuStyle(true);
         const hamburgerCenter = (menuOn) ? { 'opacity': '0' } : { 'opacity': '1' };
