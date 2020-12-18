@@ -33,7 +33,7 @@ type State = {
 };
 
 export default class Admin extends React.Component<Props, State> {
-    private userMenuItem: [string, number][];
+    private userMenuItem: [string, () => any][];
     constructor(p: Props) {
         super(p);
 
@@ -62,9 +62,9 @@ export default class Admin extends React.Component<Props, State> {
         }
 
         this.userMenuItem = [
-            ['Profile', 2],
-            ['Settings', 3],
-            ['Log Out', 4],
+            ['Profile', () => {}],
+            ['Settings', () => {}],
+            ['Log Out', () => {this.logout()}],
         ];
     }
     componentDidMount() {
@@ -297,9 +297,7 @@ export default class Admin extends React.Component<Props, State> {
                 <span
                     key={`guest_i${num.toString()}`}
                     className='user-menu-item'
-                    onClick={() => {
-                        
-                    }}
+                    onClick={item[1]()}
                 >
                     {item[0]}
                 </span>
