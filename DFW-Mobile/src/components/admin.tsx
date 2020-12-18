@@ -139,6 +139,16 @@ export default class Admin extends React.Component<Props, State> {
         });
     }
 
+    logout(): void {
+        axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=logout`)
+            .then((response) => {
+                if (response.status === 200) {
+                    this.setState({ menuOn: false });
+                    this.getCurrentUser();
+                }
+            });
+    }
+
     /* TEMPLATES */
     template_login(): JSX.Element {
         return(
