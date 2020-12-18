@@ -33,7 +33,7 @@ type State = {
 };
 
 export default class Admin extends React.Component<Props, State> {
-    private userMenuItem: [string, () => any][];
+    private userMenuItem: [string, number][];
     constructor(p: Props) {
         super(p);
 
@@ -62,9 +62,9 @@ export default class Admin extends React.Component<Props, State> {
         }
 
         this.userMenuItem = [
-            ['Profile', () => {}],
-            ['Settings', () => {}],
-            ['Log Out', () => {this.logout()}],
+            ['Profile', 0],
+            ['Settings', 1],
+            ['Log Out', 2],
         ];
     }
     componentDidMount() {
@@ -91,6 +91,14 @@ export default class Admin extends React.Component<Props, State> {
             });
     };
 
+    userMenuFunction(input: number): void {
+        let test = 1;
+        switch (input) {
+            default: test = 2; break;
+            case (2): this.logout(); break;
+        }
+    }
+
     clearLoginData(): void {
         let { login } = this.state;
         login = {
@@ -113,7 +121,7 @@ export default class Admin extends React.Component<Props, State> {
             setTimeout(() => {
                 this.setState({ transitionStep: 0 });
             }, 200);
-        }, 200);
+        }, 400);
     }
 
     login(): void {
@@ -292,12 +300,12 @@ export default class Admin extends React.Component<Props, State> {
 
     userMenuContents(): JSX.Element[] {
         let output = [<div key='um_placeholder'></div>];
-        this.userMenuItem.forEach((item: any[], num: number) => {
+        this.userMenuItem.forEach((item: [string, number], num: number) => {
             output.push(
                 <span
                     key={`guest_i${num.toString()}`}
                     className='user-menu-item'
-                    onClick={item[1]()}
+                    onClick={() => {this.userMenuFunction(item[1])}}
                 >
                     {item[0]}
                 </span>
