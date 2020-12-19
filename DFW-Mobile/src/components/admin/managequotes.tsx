@@ -25,7 +25,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&u=year`)
             .then((response) => {
                 let responseString = response.data.split(',');
-                //this.setState({});
+                let years = new Set();
             });
     };
 
