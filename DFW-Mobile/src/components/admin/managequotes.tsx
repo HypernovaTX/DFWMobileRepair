@@ -68,8 +68,8 @@ export default class ManageQuotes extends React.Component<Props, State> {
     template_listYears(): JSX.Element {
         const { list } = this.state;
         let years = <div key='year_load' className='quotelist-load'></div>;
-        const yearList = Object.keys(list);
-        return <>{yearList.join('X')}</>;
+        const yearList = Object.keys(list).reverse();
+        return <>{yearList.join(', ')}</>;
     }
 
     render() {
