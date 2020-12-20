@@ -6,7 +6,6 @@ type Props = {
     loggedIn: boolean;
 };
 type State = {
-    listYear: String[],
     list: {[index: string]: any},
     selection: {[index: string]: any},
 };
@@ -17,7 +16,6 @@ export default class ManageQuotes extends React.Component<Props, State> {
         super(p);
 
         this.state = {
-            listYear: [],
             list: {},
             selection: {},
         }
@@ -32,11 +30,10 @@ export default class ManageQuotes extends React.Component<Props, State> {
             .then((response) => {
                 let { list } = this.state;
                 const responseArray = response.data.split(',');
-                responseArray.forEach((key: any) => {
-                    list[key] = '';
+                responseArray.forEach((year: any) => {
+                    list[year] = {};
                 });
-                //list = responseArray.reduce((a: any, year: string) => (a[year] = '', a));
-                this.setState({ listYear: responseArray, list })
+                this.setState({ list })
             });
     };
 
@@ -52,14 +49,16 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&${requestParam}`, postData)
             .then((response) => {
-                //INCOMPLETE
                 let { list } = this.state;
                 const responseArray = response.data.split(',');
-                responseArray.forEach((key: any) => {
-                    list[key] = '';
+                responseArray.forEach((model: any) => {
+                    list[year][make] = {};
+                    if (isMake === false) {
+                        list[year][make][model] = {}
+                    }
+                    
                 });
-                //list = responseArray.reduce((a: any, year: string) => (a[year] = '', a));
-                this.setState({ listYear: responseArray, list })
+                this.setState({ list });
             });
     }
 
