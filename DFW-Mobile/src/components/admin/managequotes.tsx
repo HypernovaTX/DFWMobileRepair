@@ -6,6 +6,7 @@ type Props = {
     loggedIn: boolean;
 };
 type State = {
+    listYear: String[],
     list: object,
     selection: object,
 };
@@ -16,16 +17,21 @@ export default class ManageQuotes extends React.Component<Props, State> {
         super(p);
 
         this.state = {
+            listYear: [],
             list: {},
             selection: {},
         }
     }
 
+    componentDidMount() {
+        this.getYears();
+    }
+
     getYears(): void {
-        axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&u=year`)
+        axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=year`)
             .then((response) => {
-                let responseString = response.data.split(',');
-                let years = new Set();
+                const responseString = response.data.split(',');
+                this.setState({listYear: responseString})
             });
     };
 
