@@ -33,16 +33,16 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 responseArray.forEach((year: any) => {
                     list[year] = {};
                 });
-                this.setState({ list })
+                this.setState({ list });
             });
     };
 
-    getMakeModel(isMake: Boolean, year: string, make: string): void {
+    getMakeModel(year: string, make: string | undefined): void {
         const postData = new FormData();
         postData.append('year', year);
 
         let requestParam = 'q=make';
-        if (isMake === false) {
+        if (make !== undefined) {
             requestParam = 'q=model';
             postData.append('make', make);
         }
@@ -51,19 +51,25 @@ export default class ManageQuotes extends React.Component<Props, State> {
             .then((response) => {
                 let { list } = this.state;
                 const responseArray = response.data.split(',');
-                responseArray.forEach((model: any) => {
-                    list[year][make] = {};
-                    if (isMake === false) {
-                        list[year][make][model] = {}
+                responseArray.forEach((key: any) => {
+                    list[year][key] = {};
+                    if (make !== undefined) {
+                        list[year][make][key] = {};
                     }
-                    
                 });
                 this.setState({ list });
             });
     }
 
     template(): JSX.Element {
-        return <div key='mq_body' className='mq-body'></div>;
+        return <div key='mq_body' className='mq-body'>{this.template_listYears()}</div>;
+    }
+
+    template_listYears(): JSX.Element {
+        const { list } = this.state;
+        let years = <div key='year_load' className='quotelist-load'></div>;
+        const yearList = Object.keys(list);
+        return <>{yearList.join('X')}</>;
     }
 
     render() {

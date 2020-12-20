@@ -128,3 +128,8 @@
 }
 .nav-items:hover { background: rgba(0, 0, 0, 0.1); }
 .nav-items:active { background: rgba(0, 0, 0, 0.2); }
+
+.admin-contain {
+    padding: 96px;
+    padding-top: 80px;
+}
