@@ -133,3 +133,15 @@
     padding: 96px;
     padding-top: 80px;
 }
+
+/* ---------- QUOTE SECTION ---------- */
+
+.year-list {
+    width: 100%;
+    font-size: 1.5em;
+    background: #EEE;
+    margin-bottom: 24px;
+    padding: 12px 24px;
+    transition: 200ms linear all;
+    user-select: none;
+}
