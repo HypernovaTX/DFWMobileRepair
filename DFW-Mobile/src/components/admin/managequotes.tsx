@@ -40,6 +40,29 @@ export default class ManageQuotes extends React.Component<Props, State> {
             });
     };
 
+    getMakeModel(isMake: Boolean, year: string, make: string): void {
+        const postData = new FormData();
+        postData.append('year', year);
+
+        let requestParam = 'q=make';
+        if (isMake === false) {
+            requestParam = 'q=model';
+            postData.append('make', make);
+        }
+
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&${requestParam}`, postData)
+            .then((response) => {
+                //INCOMPLETE
+                let { list } = this.state;
+                const responseArray = response.data.split(',');
+                responseArray.forEach((key: any) => {
+                    list[key] = '';
+                });
+                //list = responseArray.reduce((a: any, year: string) => (a[year] = '', a));
+                this.setState({ listYear: responseArray, list })
+            });
+    }
+
     template(): JSX.Element {
         return <div key='mq_body' className='mq-body'></div>;
     }
