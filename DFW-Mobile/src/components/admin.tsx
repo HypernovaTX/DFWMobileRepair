@@ -92,9 +92,10 @@ export default class Admin extends React.Component<Props, State> {
     };
 
     userMenuFunction(input: number): void {
-        let test = 1;
+        let test = 'please remove test in line 95 of admin.tsx when done.';
+        console.log(test);
         switch (input) {
-            default: test = 2; break;
+            default: test = 'xxx'; break;
             case (2): this.logout(); break;
         }
     }
