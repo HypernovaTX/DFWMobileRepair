@@ -145,3 +145,5 @@
     transition: 200ms linear all;
     user-select: none;
 }
+.year-list:hover { background: #DADADA; }
+.year-list:active { background: #DDD; }
