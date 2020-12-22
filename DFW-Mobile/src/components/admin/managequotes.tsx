@@ -61,6 +61,14 @@ export default class ManageQuotes extends React.Component<Props, State> {
             });
     }
 
+    expandYear(year: string): void {
+        let selection = this.state.selection;
+        if (!selection.hasOwnProperty(year)) {
+            selection[year] = {};
+        }
+        this.setState({ selection });
+    }
+
     template(): JSX.Element {
         return <div key='mq_body' className='mq-body'>{this.template_listYears()}</div>;
     }
