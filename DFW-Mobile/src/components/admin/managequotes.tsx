@@ -68,6 +68,15 @@ export default class ManageQuotes extends React.Component<Props, State> {
         }
         this.setState({ selection });
     }
+    removeKey(year: string, make: string | undefined) {
+        let selection = this.state.selection;
+        if (make !== undefined) {
+            delete selection[year][make];
+        } else {
+            delete selection[year];
+        }
+        this.setState({ selection });
+    }
 
     template(): JSX.Element {
         return <div key='mq_body' className='mq-body'>{this.template_listYears()}</div>;
