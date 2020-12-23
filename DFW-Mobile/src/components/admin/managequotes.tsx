@@ -87,8 +87,25 @@ export default class ManageQuotes extends React.Component<Props, State> {
         const yearList = Object.keys(list).reverse();
         let output = [<div key='year_load' className='quotelist-load'></div>];
         if (yearList.length > 0) { output = []; }
+
         yearList.forEach((year: string) => {
-            output.push(<div key={`yearlist_${year}`} className='year-list'>{year}</div>);
+            output.push(<div
+                key={`yearlist_${year}`}
+                className='year-list'
+                onClick={() => {}}
+            >{year}</div>);
+        });
+        return <>{output}</>;
+    }
+
+    template_listMake(year: string): JSX.Element {
+        const { list } = this.state;
+        const makeList = Object.keys(list[year]).reverse();
+        let output = [<div key='make_load' className='quotelist-load2'></div>];
+        if (makeList.length > 0) { output = []; }
+
+        makeList.forEach((make: string) => {
+            output.push(<div key={`makelist_${year}_${make}`} className='make-list'>{make}</div>);
         });
         return <>{output}</>;
     }
