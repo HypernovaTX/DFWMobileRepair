@@ -137,13 +137,37 @@
 /* ---------- QUOTE SECTION ---------- */
 
 .year-list {
-    width: 100%;
     font-size: 1.5em;
     background: #EEE;
-    margin-bottom: 24px;
+    margin-top: 12px;
     padding: 12px 24px;
     transition: 200ms linear all;
     user-select: none;
 }
-.year-list:hover { background: #DADADA; }
+.year-list:hover { background: #d7d7d7; }
 .year-list:active { background: #DDD; }
+
+.make-list {
+    font-size: 1.25em;
+    background: #CCC;
+    padding: 0px 48px;
+    transition: 200ms linear all;
+    user-select: none;
+    overflow: hidden;
+    height: 0px;
+}
+.make-list.active {
+    padding: 12px 48px;
+    height: auto;
+}
+.make-list:hover { background: #BABABA; }
+.make-list:active { background: #BBB; }
+
+.quotelist-load {
+    font-size: 1.5em;
+    background: #EEE;
+    margin-top: 12px;
+    padding: 12px 24px;
+    transition: 200ms linear all;
+    user-select: none;
+}

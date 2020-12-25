@@ -65,9 +65,6 @@ export default class ManageQuotes extends React.Component<Props, State> {
             list[year]['_show'] = false;
         }
         list[year]['_show'] = !list[year]['_show'];
-        if (Object.keys(list[year]).length <= 1) {
-            this.getMakeModel(year);
-        }
         this.setState({ list });
     }
 
@@ -97,22 +94,28 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 className='year-list'
                 onClick={() => {this.toggleDisplayYear(year)}}
             >{year}</div>);
-            if (list[year]['_show'] === true) {
-                output.push(this.template_listMake(year));
-            }
+            output.push(this.template_listMake(year));
         });
         return <>{output}</>;
     }
 
     template_listMake(year: string): JSX.Element {
         const { list } = this.state;
+
+        if (Object.keys(list[year]).length <= 1) {
+            this.getMakeModel(year);
+        }
+
         const makeList = Object.keys(list[year]).reverse();
         let output = [<div key='make_load' className='quotelist-load2'></div>];
         if (makeList.length > 0) { output = []; }
 
+        let divClassName = '';
+        if (list[year]['_show'] === true) { divClassName = 'active'; }
+
         makeList.forEach((make: string) => {
             if (make !== '_show') {
-                output.push(<div key={`makelist_${year}_${make}`} className='make-list'>{make}</div>);
+                output.push(<div key={`makelist_${year}_${make}`} className={`make-list ${divClassName}`}>{make}</div>); 
             }
         });
         return <>{output}</>;
