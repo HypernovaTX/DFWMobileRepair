@@ -97,6 +97,9 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 className='year-list'
                 onClick={() => {this.toggleDisplayYear(year)}}
             >{year}</div>);
+            if (list[year]['_show'] === true) {
+                output.push(this.template_listMake(year));
+            }
         });
         return <>{output}</>;
     }
@@ -108,7 +111,9 @@ export default class ManageQuotes extends React.Component<Props, State> {
         if (makeList.length > 0) { output = []; }
 
         makeList.forEach((make: string) => {
-            output.push(<div key={`makelist_${year}_${make}`} className='make-list'>{make}</div>);
+            if (make !== '_show') {
+                output.push(<div key={`makelist_${year}_${make}`} className='make-list'>{make}</div>);
+            }
         });
         return <>{output}</>;
     }
