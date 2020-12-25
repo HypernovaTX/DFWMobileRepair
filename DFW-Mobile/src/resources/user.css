@@ -65,7 +65,7 @@
     position: fixed;
     top: 3em;
     right: 0px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
     box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.5);
 }
 

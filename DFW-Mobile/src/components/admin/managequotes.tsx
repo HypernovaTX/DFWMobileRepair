@@ -7,7 +7,6 @@ type Props = {
 };
 type State = {
     list: {[index: string]: any},
-    selection: {[index: string]: any},
 };
 
 
@@ -17,7 +16,6 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
         this.state = {
             list: {},
-            selection: {},
         }
     }
 
@@ -31,18 +29,18 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 let { list } = this.state;
                 const responseArray = response.data.split(',');
                 responseArray.forEach((year: any) => {
-                    list[year] = {};
+                    list[year] = { '_show': false };
                 });
                 this.setState({ list });
             });
     };
 
-    getMakeModel(year: string, make: string | undefined): void {
+    getMakeModel(year: string, make: string | null = null): void {
         const postData = new FormData();
         postData.append('year', year);
 
         let requestParam = 'q=make';
-        if (make !== undefined) {
+        if (make !== null) {
             requestParam = 'q=model';
             postData.append('make', make);
         }
@@ -52,23 +50,28 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 let { list } = this.state;
                 const responseArray = response.data.split(',');
                 responseArray.forEach((key: any) => {
-                    list[year][key] = {};
-                    if (make !== undefined) {
-                        list[year][make][key] = {};
+                    list[year][key] = { '_show': false };
+                    if (make !== null) {
+                        list[year][make][key] = { '_show': false };
                     }
                 });
                 this.setState({ list });
             });
     }
 
-    expandYear(year: string): void {
-        let selection = this.state.selection;
-        if (!selection.hasOwnProperty(year)) {
-            selection[year] = {};
+    toggleDisplayYear(year: string): void {
+        let { list } = this.state;
+        if (!list.hasOwnProperty(year)) {
+            list[year]['_show'] = false;
         }
-        this.setState({ selection });
+        list[year]['_show'] = !list[year]['_show'];
+        if (Object.keys(list[year]).length <= 1) {
+            this.getMakeModel(year);
+        }
+        this.setState({ list });
     }
-    removeKey(year: string, make: string | undefined) {
+
+    /*removeKey(year: string, make: string | undefined) {
         let selection = this.state.selection;
         if (make !== undefined) {
             delete selection[year][make];
@@ -76,7 +79,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
             delete selection[year];
         }
         this.setState({ selection });
-    }
+    }*/
 
     template(): JSX.Element {
         return <div key='mq_body' className='mq-body'>{this.template_listYears()}</div>;
@@ -92,7 +95,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
             output.push(<div
                 key={`yearlist_${year}`}
                 className='year-list'
-                onClick={() => {}}
+                onClick={() => {this.toggleDisplayYear(year)}}
             >{year}</div>);
         });
         return <>{output}</>;
