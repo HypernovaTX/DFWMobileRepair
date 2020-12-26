@@ -136,7 +136,7 @@
 
 /* ---------- QUOTE SECTION ---------- */
 
-.year-list {
+.year-list, .make-list, .model-list {
     font-size: 1.5em;
     background: #EEE;
     margin-top: 12px;
@@ -151,10 +151,9 @@
     font-size: 1.25em;
     background: #CCC;
     padding: 0px 48px;
-    transition: 200ms linear all;
-    user-select: none;
     overflow: hidden;
     height: 0px;
+    margin-top: 0px;
 }
 .make-list.active {
     padding: 12px 48px;
@@ -163,11 +162,26 @@
 .make-list:hover { background: #BABABA; }
 .make-list:active { background: #BBB; }
 
+.model-list {
+    font-size: 1.25em;
+    background: #AAA;
+    padding: 0px 72px;
+    overflow: hidden;
+    height: 0px;
+    margin-top: 0px;
+}
+.make-list.active {
+    padding: 12px 48px;
+    height: auto;
+}
+.make-list:hover { background: #A7A7A7; }
+.make-list:active { background: #9A9A9A; }
+
 .quotelist-load {
     font-size: 1.5em;
     background: #EEE;
-    margin-top: 12px;
     padding: 12px 24px;
+    margin: 0px;
     transition: 200ms linear all;
     user-select: none;
 }
