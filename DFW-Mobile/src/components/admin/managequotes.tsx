@@ -147,7 +147,9 @@ export default class ManageQuotes extends React.Component<Props, State> {
         if (makeList.length > 0) { output = []; }
 
         let divClassName = '';
-        if (list[year][make]['_show'] === true) { divClassName = 'active'; }
+        if (list[year]['_show'] === true && list[year][make]['_show'] === true) {
+            divClassName = 'active';
+        }
 
         makeList.forEach((model: string) => {
             if (model !== '_show') {
