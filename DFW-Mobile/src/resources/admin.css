@@ -150,7 +150,7 @@
 .make-list {
     font-size: 1.25em;
     background: #CCC;
-    padding: 0px 48px;
+    padding: 0px 72px;
     overflow: hidden;
     height: 0px;
     margin-top: 0px;
@@ -165,17 +165,17 @@
 .model-list {
     font-size: 1.25em;
     background: #AAA;
-    padding: 0px 72px;
+    padding: 0px 96px;
     overflow: hidden;
     height: 0px;
     margin-top: 0px;
 }
-.make-list.active {
-    padding: 12px 48px;
+.model-list.active {
+    padding: 12px 72px;
     height: auto;
 }
-.make-list:hover { background: #A7A7A7; }
-.make-list:active { background: #9A9A9A; }
+.model-list:hover { background: #A7A7A7; }
+.model-list:active { background: #9A9A9A; }
 
 .quotelist-load {
     font-size: 1.5em;

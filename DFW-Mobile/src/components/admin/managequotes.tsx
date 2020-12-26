@@ -73,9 +73,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
         if (!list[year].hasOwnProperty(make)) {
             list[year][make]['_show'] = false;
         }
-        if (Object.keys(list[year][make]).length <= 1) {
-            this.getMakeModel(year, make);
-        }
+        
         list[year][make]['_show'] = !list[year][make]['_show'];
         this.setState({ list });
     }
@@ -132,7 +130,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                     className={`make-list ${divClassName}`}
                     onClick={() => {this.toggleDisplayMake(year, make)}}
                 >{make}</div>)
-                //output.push(this.template_listModel(year, make));
+                output.push(this.template_listModel(year, make));
             }
         });
         return <>{output}</>;
@@ -140,8 +138,12 @@ export default class ManageQuotes extends React.Component<Props, State> {
     template_listModel(year: string, make: string): JSX.Element {
         const { list } = this.state;
 
+        if (Object.keys(list[year][make]).length <= 1) {
+            this.getMakeModel(year, make);
+        }
+
         const makeList = Object.keys(list[year][make]).reverse();
-        let output = [<div key='make_load' className='quotelist-load2'></div>];
+        let output = [<div key='model_load' className='quotelist-load2'></div>];
         if (makeList.length > 0) { output = []; }
 
         let divClassName = '';
@@ -150,8 +152,8 @@ export default class ManageQuotes extends React.Component<Props, State> {
         makeList.forEach((model: string) => {
             if (model !== '_show') {
                 output.push(<div
-                    key={`makelist_${year}_${make}_${model}`}
-                    className={`make-list ${divClassName}`}
+                    key={`modellist_${year}_${make}_${model}`}
+                    className={`model-list ${divClassName}`}
                 >{model}</div>); 
             }
         });
