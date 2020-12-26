@@ -146,6 +146,20 @@
 }
 .year-list:hover { background: #d7d7d7; }
 .year-list:active { background: #DDD; }
+.menu-tick {
+    /*content: '\25b6';*/
+    font-size: 0.5em;
+    vertical-align: middle;
+    display: inline-block;
+    height: 100%;
+    top: -0.3em;
+    position: relative;
+    margin-right: 12px;
+    transition: 200ms linear all;
+}
+.menu-tick.on {
+    transform: rotate(90deg);
+}
 
 .make-list {
     font-size: 1.25em;

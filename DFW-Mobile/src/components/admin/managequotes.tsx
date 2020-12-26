@@ -99,11 +99,15 @@ export default class ManageQuotes extends React.Component<Props, State> {
         if (yearList.length > 0) { output = []; }
 
         yearList.forEach((year: string) => {
+            let on = '';
+            if (list[year]['_show'] === true) { on = 'on'; }
+            const tick = <span key={`yearlistT_${year}`} className={`menu-tick ${on}`}>▶</span>
+
             output.push(<div
                 key={`yearlist_${year}`}
-                className='year-list'
+                className={`year-list`}
                 onClick={() => {this.toggleDisplayYear(year)}}
-            >{year}</div>);
+            >{tick}{year}</div>);
             output.push(this.template_listMake(year));
         });
         return <>{output}</>;
@@ -125,11 +129,15 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
         makeList.forEach((make: string) => {
             if (make !== '_show') {
+                let on = '';
+                if (list[year][make]['_show'] === true) { on = 'on'; }
+                const tick = <span key={`makelistT_${year}`} className={`menu-tick ${on}`}>▶</span>
+
                 output.push(<div
                     key={`makelist_${year}_${make}`}
                     className={`make-list ${divClassName}`}
                     onClick={() => {this.toggleDisplayMake(year, make)}}
-                >{make}</div>)
+                >{tick}{make}</div>)
                 output.push(this.template_listModel(year, make));
             }
         });
