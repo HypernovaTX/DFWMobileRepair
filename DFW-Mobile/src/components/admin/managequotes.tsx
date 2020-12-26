@@ -50,9 +50,10 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 let { list } = this.state;
                 const responseArray = response.data.split(',');
                 responseArray.forEach((key: any) => {
-                    list[year][key] = { '_show': false };
                     if (make !== null) {
                         list[year][make][key] = { '_show': false };
+                    } else {
+                        list[year][key] = { '_show': false };
                     }
                 });
                 this.setState({ list });
@@ -65,6 +66,17 @@ export default class ManageQuotes extends React.Component<Props, State> {
             list[year]['_show'] = false;
         }
         list[year]['_show'] = !list[year]['_show'];
+        this.setState({ list });
+    }
+    toggleDisplayMake(year: string, make: string): void {
+        let { list } = this.state;
+        if (!list[year].hasOwnProperty(make)) {
+            list[year][make]['_show'] = false;
+        }
+        if (Object.keys(list[year][make]).length <= 1) {
+            this.getMakeModel(year, make);
+        }
+        list[year][make]['_show'] = !list[year][make]['_show'];
         this.setState({ list });
     }
 
@@ -115,7 +127,32 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
         makeList.forEach((make: string) => {
             if (make !== '_show') {
-                output.push(<div key={`makelist_${year}_${make}`} className={`make-list ${divClassName}`}>{make}</div>); 
+                output.push(<div
+                    key={`makelist_${year}_${make}`}
+                    className={`make-list ${divClassName}`}
+                    onClick={() => {this.toggleDisplayMake(year, make)}}
+                >{make}</div>)
+                //output.push(this.template_listModel(year, make));
+            }
+        });
+        return <>{output}</>;
+    }
+    template_listModel(year: string, make: string): JSX.Element {
+        const { list } = this.state;
+
+        const makeList = Object.keys(list[year][make]).reverse();
+        let output = [<div key='make_load' className='quotelist-load2'></div>];
+        if (makeList.length > 0) { output = []; }
+
+        let divClassName = '';
+        if (list[year][make]['_show'] === true) { divClassName = 'active'; }
+
+        makeList.forEach((model: string) => {
+            if (model !== '_show') {
+                output.push(<div
+                    key={`makelist_${year}_${make}_${model}`}
+                    className={`make-list ${divClassName}`}
+                >{model}</div>); 
             }
         });
         return <>{output}</>;

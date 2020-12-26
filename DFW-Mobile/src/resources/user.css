@@ -57,7 +57,7 @@
 
 .user-menu {
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(80, 80, 80, 0.95);
     transition: 200ms linear all;
     width: auto;
     padding: 0px;
@@ -65,7 +65,7 @@
     position: fixed;
     top: 3em;
     right: 0px;
-    backdrop-filter: blur(8px);
+    /*backdrop-filter: blur(8px);*/
     box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.5);
 }
 
