@@ -53,7 +53,8 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 const responseArray = response.data.split(',');
                 responseArray.forEach((key: any) => {
                     if (make !== null) {
-                        list[year][make][key] = { '_show': false };
+                        const splitInfo = key.split(/\[sep\]/);
+                        list[year][make][splitInfo[0]] = { '_show': false, id: splitInfo[1] };
                     } else {
                         list[year][key] = { '_show': false };
                     }
@@ -168,11 +169,11 @@ export default class ManageQuotes extends React.Component<Props, State> {
                     <span
                         key={`${keyName}_edit`}
                         className='edit-icon'
-                    ><FontAwesomeIcon icon={faEdit} /></span>
+                    ><FontAwesomeIcon icon={faEdit} /> Edit</span>
                     <span
                         key={`${keyName}_trash`}
                         className='edit-icon'
-                    ><FontAwesomeIcon icon={faTrash} /></span>
+                    ><FontAwesomeIcon icon={faTrash} /> Delete</span>
                 </div>
             );
 
