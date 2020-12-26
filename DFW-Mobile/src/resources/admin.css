@@ -143,6 +143,7 @@
     padding: 12px 24px;
     transition: 200ms linear all;
     user-select: none;
+    cursor: pointer;
 }
 .year-list:hover { background: #d7d7d7; }
 .year-list:active { background: #DDD; }
@@ -183,12 +184,12 @@
     overflow: hidden;
     height: 0px;
     margin-top: 0px;
+    cursor: default;
 }
 .model-list.active {
     padding: 12px 72px;
     height: auto;
 }
-.model-list:hover { background: #A7A7A7; }
 .model-list:active { background: #9A9A9A; }
 
 .quotelist-load {
@@ -199,3 +200,23 @@
     transition: 200ms linear all;
     user-select: none;
 }
+
+.model-edit-section {
+    display: inline-flex;
+    float: right;
+}
+.edit-icon {
+    font-size: 0.75em;
+    background: #ca4a00;
+    color: #FFF;
+    width: 8em;
+    margin: 0 4px;
+    height: 1.5em;
+    text-align: center;
+    line-height: 1.5em;
+    border-radius: 1em;
+    transition: 200ms linear all;
+    cursor: pointer;
+}
+.edit-icon:hover { background: #ff5e00; }
+.edit-icon:active { background: #ff8945; }

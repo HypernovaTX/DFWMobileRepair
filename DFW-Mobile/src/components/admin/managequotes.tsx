@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 import * as CONFIG from '../../config.json';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
     loggedIn: boolean;
@@ -160,11 +162,25 @@ export default class ManageQuotes extends React.Component<Props, State> {
         }
 
         makeList.forEach((model: string) => {
+            const keyName = `modellist_${year}_${make}_${model}`;
+            const icons = (
+                <div key={`${keyName}_icons`} className='model-edit-section'>
+                    <span
+                        key={`${keyName}_edit`}
+                        className='edit-icon'
+                    ><FontAwesomeIcon icon={faEdit} /></span>
+                    <span
+                        key={`${keyName}_trash`}
+                        className='edit-icon'
+                    ><FontAwesomeIcon icon={faTrash} /></span>
+                </div>
+            );
+
             if (model !== '_show') {
                 output.push(<div
-                    key={`modellist_${year}_${make}_${model}`}
+                    key={keyName}
                     className={`model-list ${divClassName}`}
-                >{model}</div>); 
+                >{icons}{model}</div>); 
             }
         });
         return <>{output}</>;
