@@ -61,7 +61,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                     if (make !== null) {
                         const splitInfo = key.split(/\[sep\]/);
                         if (list[year][make][splitInfo[0]] === undefined) {
-                            list[year][make][splitInfo[0]] = { '_show': false, id: splitInfo[1] };
+                            list[year][make][splitInfo[0]] = { '_no_delete': false, '_no_edit': false, id: splitInfo[1] };
                         }
                     } else if (list[year][key] === undefined) {
                         list[year][key] = { '_show': false };
@@ -134,7 +134,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
             >{tick}{year}</div>);
             output.push(this.template_listMake(year));
         });
-        return <>{output}</>;
+        return <div key={`year-contain`}>{output}</div>;
     }
 
     template_listMake(year: string): JSX.Element {
@@ -165,7 +165,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 output.push(this.template_listModel(year, make));
             }
         });
-        return <>{output}</>;
+        return <div key={`make-contain${year}`}>{output}</div>;
     }
 
     template_listModel(year: string, make: string): JSX.Element {
@@ -186,16 +186,24 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
         makeList.forEach((model: string) => {
             const keyName = `modellist_${year}_${make}_${model}`;
+            const vehicle = list[year][make][model];
             const icons = (
                 <div key={`${keyName}_icons`} className='model-edit-section'>
-                    <span
+                    <button
+                        type='button'
                         key={`${keyName}_edit`}
                         className='edit-icon'
-                    ><FontAwesomeIcon icon={faEdit} /> Edit</span>
-                    <span
+                        disabled={vehicle['_no_edit']}
+                        onClick={() => {
+                            console.log(`${year} ${make} ${model} edit pressed!`);
+                        }}
+                    ><FontAwesomeIcon icon={faEdit} /> Edit</button>
+                    <button
+                        type='button'
                         key={`${keyName}_trash`}
                         className='edit-icon'
-                    ><FontAwesomeIcon icon={faTrash} /> Delete</span>
+                        disabled={vehicle['_no_delete']}
+                    ><FontAwesomeIcon icon={faTrash} /> Delete</button>
                 </div>
             );
 
@@ -206,7 +214,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 >{icons}{model}</div>); 
             }
         });
-        return <>{output}</>;
+        return <div key={`model-contain${year}${make}`}>{output}</div>;
     }
 
     /************************************************** RENDER **************************************************/

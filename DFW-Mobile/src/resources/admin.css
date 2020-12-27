@@ -217,6 +217,12 @@
     border-radius: 1em;
     transition: 200ms linear all;
     cursor: pointer;
+    border: none;
 }
 .edit-icon:hover { background: #ff5e00; }
 .edit-icon:active { background: #ff8945; }
+.edit-icon:disabled {
+    background: #888;
+    color: #444;
+    cursor: default;
+}
