@@ -9,6 +9,7 @@ type Props = {
 };
 type State = {
     list: {[index: string]: any},
+    editing: string,
 };
 
 
@@ -18,6 +19,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
         this.state = {
             list: {},
+            editing: '',
         }
     }
 
@@ -25,13 +27,17 @@ export default class ManageQuotes extends React.Component<Props, State> {
         this.getYears();
     }
 
+    /************************************************** REQUESTS **************************************************/
+
     getYears(): void {
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=year`)
             .then((response) => {
                 let { list } = this.state;
                 const responseArray = response.data.split(',');
                 responseArray.forEach((year: any) => {
-                    list[year] = { '_show': false };
+                    if (list[year] === undefined) {
+                        list[year] = { '_show': false };
+                    }
                 });
                 this.setState({ list });
             });
@@ -54,14 +60,18 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 responseArray.forEach((key: any) => {
                     if (make !== null) {
                         const splitInfo = key.split(/\[sep\]/);
-                        list[year][make][splitInfo[0]] = { '_show': false, id: splitInfo[1] };
-                    } else {
+                        if (list[year][make][splitInfo[0]] === undefined) {
+                            list[year][make][splitInfo[0]] = { '_show': false, id: splitInfo[1] };
+                        }
+                    } else if (list[year][key] === undefined) {
                         list[year][key] = { '_show': false };
                     }
                 });
                 this.setState({ list });
             });
     }
+
+    /************************************************** TOGGLES **************************************************/
 
     toggleDisplayYear(year: string): void {
         let { list } = this.state;
@@ -81,15 +91,26 @@ export default class ManageQuotes extends React.Component<Props, State> {
         this.setState({ list });
     }
 
-    /*removeKey(year: string, make: string | undefined) {
-        let selection = this.state.selection;
-        if (make !== undefined) {
-            delete selection[year][make];
-        } else {
-            delete selection[year];
-        }
-        this.setState({ selection });
-    }*/
+    /************************************************** EDITING **************************************************/
+
+    deleteVehicle(id: string, year: string, make: string, model: string): void {
+        const postData = new FormData();
+        postData.append('id', id);
+
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&delete`, postData).then(() => {
+            this.removeKey(year, make, model);
+        });
+    }
+
+    removeKey(year: string, make: string | undefined, model: string | undefined): void {
+        let list = this.state.list;
+        if (model !== undefined && make !== undefined) { delete list[year][make][model]; }
+        else if (make !== undefined) { delete list[year][make]; }
+        else { delete list[year]; }
+        this.setState({ list });
+    }
+
+    /************************************************** TEMPLATE **************************************************/
 
     template(): JSX.Element {
         return <div key='mq_body' className='mq-body'>{this.template_listYears()}</div>;
@@ -146,6 +167,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
         });
         return <>{output}</>;
     }
+
     template_listModel(year: string, make: string): JSX.Element {
         const { list } = this.state;
 
@@ -187,6 +209,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
         return <>{output}</>;
     }
 
+    /************************************************** RENDER **************************************************/
     render() {
         return this.template();
     }
