@@ -3,6 +3,7 @@ import axios from 'axios';
 import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import AdminPrompt from './prompt';
 
 type Props = {
     loggedIn: boolean;
@@ -10,6 +11,9 @@ type Props = {
 type State = {
     list: {[index: string]: any},
     editing: string,
+    pm_visible: boolean,
+    pm_message: string,
+    pm_action: () => any,
 };
 
 
@@ -20,6 +24,9 @@ export default class ManageQuotes extends React.Component<Props, State> {
         this.state = {
             list: {},
             editing: '',
+            pm_visible: false,
+            pm_message: '',
+            pm_action: () => {},
         }
     }
 
@@ -113,7 +120,15 @@ export default class ManageQuotes extends React.Component<Props, State> {
     /************************************************** TEMPLATE **************************************************/
 
     template(): JSX.Element {
-        return <div key='mq_body' className='mq-body'>{this.template_listYears()}</div>;
+        const { pm_visible, pm_message, pm_action } = this.state;
+        return <div key='mq_body' className='mq-body'>
+            {this.template_listYears()}
+            {<AdminPrompt
+                visible={pm_visible}
+                message={pm_message}
+                action={pm_action}
+            />}
+        </div>;
     }
 
     template_listYears(): JSX.Element {
