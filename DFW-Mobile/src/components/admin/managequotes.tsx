@@ -149,7 +149,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
             >{tick}{year}</div>);
             output.push(this.template_listMake(year));
         });
-        return <div key={`year-contain`}>{output}</div>;
+        return <React.Fragment key={`year-contain`}>{output}</React.Fragment>;
     }
 
     template_listMake(year: string): JSX.Element {
@@ -180,7 +180,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 output.push(this.template_listModel(year, make));
             }
         });
-        return <div key={`make-contain${year}`}>{output}</div>;
+        return <React.Fragment key={`make-contain${year}`}>{output}</React.Fragment>;
     }
 
     template_listModel(year: string, make: string): JSX.Element {
@@ -229,7 +229,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 >{icons}{model}</div>); 
             }
         });
-        return <div key={`model-contain${year}${make}`}>{output}</div>;
+        return <React.Fragment key={`model-contain${year}${make}`}>{output}</React.Fragment>;
     }
 
     /************************************************** RENDER **************************************************/
