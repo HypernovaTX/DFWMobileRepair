@@ -104,7 +104,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
         const postData = new FormData();
         postData.append('id', id);
 
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&delete`, postData).then(() => {
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=delete`, postData).then(() => {
             this.removeKey(year, make, model);
         });
     }
@@ -218,6 +218,11 @@ export default class ManageQuotes extends React.Component<Props, State> {
                         key={`${keyName}_trash`}
                         className='edit-icon'
                         disabled={vehicle['_no_delete']}
+                        onClick={() => {
+                            list[year][make][model]['_no_delete'] = true;
+                            this.setState({ list });
+                            this.deleteVehicle(vehicle['id'], year, make, model);
+                        }}
                     ><FontAwesomeIcon icon={faTrash} /> Delete</button>
                 </div>
             );
