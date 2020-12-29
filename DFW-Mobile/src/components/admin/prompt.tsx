@@ -1,5 +1,4 @@
 import React from 'react';
-//import * as CONFIG from '../../config.json';
 
 type Props = {
     message: string,
@@ -60,7 +59,7 @@ export default class AdminPrompt extends React.Component<Props, State> {
     }
 
     close(): void {
-        let { show, yes } = this.state;
+        let { show } = this.state;
         if (show === 2) {
             this.setState({
                 show: 3,
@@ -73,6 +72,7 @@ export default class AdminPrompt extends React.Component<Props, State> {
                     propsBG: this.props_bg_off,
                     propsM: { 'top': '-64px', 'opacity': '0' },
                 });
+                let { yes } = this.state;
                 if (yes === true) { this.props.action() }
                 else { this.props.cancel() }
             }, 250);
