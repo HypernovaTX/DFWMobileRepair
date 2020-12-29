@@ -11,9 +11,10 @@ type Props = {
 type State = {
     list: {[index: string]: any},
     editing: string,
-    pm_visible: boolean,
     pm_message: string,
     pm_action: () => any,
+    pm_cancel: () => any,
+    toDelete: {[index: string]: any},
 };
 
 
@@ -25,9 +26,15 @@ export default class ManageQuotes extends React.Component<Props, State> {
         this.state = {
             list: {},
             editing: '',
-            pm_visible: false,
             pm_message: '',
             pm_action: () => {},
+            pm_cancel: () => {},
+            toDelete: {
+                'id': '',
+                'year': '',
+                'make': '',
+                'model': '',
+            }
         }
 
         this.dialogue_ref = React.createRef();
@@ -115,19 +122,33 @@ export default class ManageQuotes extends React.Component<Props, State> {
     diagDeleteVehicle(id: string, year: string, make: string, model: string): void {
         this.setState({
             pm_message: `Confirm to delete all of the quotes of "${year} ${make} ${model}"?`,
-            pm_action: () => {this.deleteVehicle(id, year, make, model)}
+            pm_action: () => {this.deleteVehicle()}, 
+            pm_cancel: () => {this.cancelDelete()}, 
+            toDelete: {
+                'id': id,
+                'year': year,
+                'make': make,
+                'model': model,
+            },
         });
         if (this.dialogue_ref.current !== null) {
             this.dialogue_ref.current.open();
         }
     }
 
-    deleteVehicle(id: string, year: string, make: string, model: string): void {
+    cancelDelete(): void {
+        let { list,toDelete } = this.state;
+        list[toDelete.year][toDelete.make][toDelete.model]['_no_delete'] = false;
+        this.setState({ list });
+    }
+
+    deleteVehicle(): void {
+        const { toDelete } = this.state;
         const postData = new FormData();
-        postData.append('id', id);
+        postData.append('id', toDelete.id);
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=delete`, postData).then(() => {
-            this.removeKey(year, make, model);
+            this.removeKey(toDelete.year, toDelete.make, toDelete.model);
         });
     }
 
@@ -154,12 +175,13 @@ export default class ManageQuotes extends React.Component<Props, State> {
     /************************************************** TEMPLATE **************************************************/
 
     template(): JSX.Element {
-        const { pm_visible, pm_message, pm_action } = this.state;
+        const { pm_message, pm_action, pm_cancel } = this.state;
         return <div key='mq_body' className='mq-body'>
             {this.template_listYears()}
             {<AdminPrompt
                 message={pm_message}
                 action={pm_action}
+                cancel={pm_cancel}
 
                 ref={this.dialogue_ref}
             />}
