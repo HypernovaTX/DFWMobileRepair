@@ -85,6 +85,11 @@ export default class ManageQuotes extends React.Component<Props, State> {
         if (!list.hasOwnProperty(year)) {
             list[year]['_show'] = false;
         }
+
+        if (Object.keys(list[year]).length <= 1) {
+            this.getMakeModel(year);
+        }
+
         list[year]['_show'] = !list[year]['_show'];
         this.setState({ list });
     }
@@ -92,6 +97,10 @@ export default class ManageQuotes extends React.Component<Props, State> {
         let { list } = this.state;
         if (!list[year].hasOwnProperty(make)) {
             list[year][make]['_show'] = false;
+        }
+
+        if (Object.keys(list[year][make]).length <= 1) {
+            this.getMakeModel(year, make);
         }
         
         list[year][make]['_show'] = !list[year][make]['_show'];
@@ -109,11 +118,23 @@ export default class ManageQuotes extends React.Component<Props, State> {
         });
     }
 
-    removeKey(year: string, make: string | undefined, model: string | undefined): void {
+    removeKey(year: string, make: string | null = null, model: string | null = null): void {
         let list = this.state.list;
-        if (model !== undefined && make !== undefined) { delete list[year][make][model]; }
-        else if (make !== undefined) { delete list[year][make]; }
-        else { delete list[year]; }
+        if (model !== null && make !== null) {
+            delete list[year][make][model];
+            if (Object.keys(list[year][make]).length <= 1) {
+                this.removeKey(year, make);
+            }
+        }
+        else if (make !== null) {
+            delete list[year][make];
+            if (Object.keys(list[year]).length <= 1) {
+                this.removeKey(year);
+            }
+        }
+        else {
+            delete list[year];
+        }
         this.setState({ list });
     }
 
@@ -155,10 +176,6 @@ export default class ManageQuotes extends React.Component<Props, State> {
     template_listMake(year: string): JSX.Element {
         const { list } = this.state;
 
-        if (Object.keys(list[year]).length <= 1) {
-            this.getMakeModel(year);
-        }
-
         const makeList = Object.keys(list[year]).reverse();
         let output = [<div key='make_load' className='quotelist-load2'></div>];
         if (makeList.length > 0) { output = []; }
@@ -185,10 +202,6 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
     template_listModel(year: string, make: string): JSX.Element {
         const { list } = this.state;
-
-        if (Object.keys(list[year][make]).length <= 1) {
-            this.getMakeModel(year, make);
-        }
 
         const makeList = Object.keys(list[year][make]).reverse();
         let output = [<div key='model_load' className='quotelist-load2'></div>];
