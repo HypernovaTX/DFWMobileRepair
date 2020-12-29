@@ -226,3 +226,15 @@
     color: #444;
     cursor: default;
 }
+
+.admin-pm-body {
+    z-index: -20;
+    background: rgba(0, 0, 0, 0.5);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    backdrop-filter: blur(8px);
+    transition: 200ms linear all;
+}

@@ -13,6 +13,7 @@
     backdrop-filter: blur(10px);
     position: fixed;
     box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.5);
+    z-index: 10;
 }
 
 .user-icon {

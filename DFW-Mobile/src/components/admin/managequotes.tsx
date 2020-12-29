@@ -18,6 +18,7 @@ type State = {
 
 
 export default class ManageQuotes extends React.Component<Props, State> {
+    private dialogue_ref: React.RefObject<AdminPrompt>;
     constructor(p: Props) {
         super(p);
 
@@ -28,6 +29,8 @@ export default class ManageQuotes extends React.Component<Props, State> {
             pm_message: '',
             pm_action: () => {},
         }
+
+        this.dialogue_ref = React.createRef();
     }
 
     componentDidMount() {
@@ -109,6 +112,16 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
     /************************************************** EDITING **************************************************/
 
+    diagDeleteVehicle(id: string, year: string, make: string, model: string): void {
+        this.setState({
+            pm_message: `Confirm to delete all of the quotes of "${year} ${make} ${model}"?`,
+            pm_action: () => {this.deleteVehicle(id, year, make, model)}
+        });
+        if (this.dialogue_ref.current !== null) {
+            this.dialogue_ref.current.open();
+        }
+    }
+
     deleteVehicle(id: string, year: string, make: string, model: string): void {
         const postData = new FormData();
         postData.append('id', id);
@@ -145,9 +158,10 @@ export default class ManageQuotes extends React.Component<Props, State> {
         return <div key='mq_body' className='mq-body'>
             {this.template_listYears()}
             {<AdminPrompt
-                visible={pm_visible}
                 message={pm_message}
                 action={pm_action}
+
+                ref={this.dialogue_ref}
             />}
         </div>;
     }
@@ -234,7 +248,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                         onClick={() => {
                             list[year][make][model]['_no_delete'] = true;
                             this.setState({ list });
-                            this.deleteVehicle(vehicle['id'], year, make, model);
+                            this.diagDeleteVehicle(vehicle['id'], year, make, model);
                         }}
                     ><FontAwesomeIcon icon={faTrash} /> Delete</button>
                 </div>
