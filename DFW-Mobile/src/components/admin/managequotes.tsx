@@ -15,6 +15,7 @@ type State = {
     pm_action: () => any,
     pm_cancel: () => any,
     toDelete: {[index: string]: any},
+    toEdit: {[index: string]: any},
 };
 
 
@@ -34,7 +35,13 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 'year': '',
                 'make': '',
                 'model': '',
-            }
+            },
+            toEdit: {
+                'id': '',
+                'year': '',
+                'make': '',
+                'model': '',
+            },
         }
 
         this.dialogue_ref = React.createRef();
