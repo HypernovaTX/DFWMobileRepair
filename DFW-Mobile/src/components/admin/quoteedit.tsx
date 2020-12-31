@@ -1,7 +1,10 @@
 import React from 'react';
+import axios from 'axios';
+import * as CONFIG from '../../config.json';
 
 type Props = {
     vehicleID: string;
+    vehicleName: string;
 };
 type State = {
     show: number,
@@ -44,7 +47,22 @@ export default class QuoteEdit extends React.Component<Props, State> {
             EDITING: {},
         }
     }
+    /** API */
+    getData(): void {
+        const postData = new FormData();
+        postData.append('id', this.props.vehicleID);
 
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=quote`)
+            .then((response) => {
+                this.setState({ EDITING: response.data });
+            });
+    };
+
+    saveData(): void {
+        
+    }
+
+    /** WINDOW */
     open(): void {
         this.setState({
             show: 1,
@@ -74,21 +92,23 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
     }
 
+    /** TEMPLATE */
     template(): JSX.Element {
         const { propsM } = this.state;
-        return(<div key='admin_pm_dbox' className='admin-pm-box' style={propsM}>
-            <div key='admin_pm_msg' className='admin-pm-msg'>{}</div>
-            <div key='admin_pm_bc'  className='admin-pm-buttonbox'>
+        return(<div key='admin_qe_dbox' className='admin-qe-box' style={propsM}>
+            <div key='admin_qe_title' className='admin-qe-title'>{this.props.vehicleName}</div>
+            {}
+            <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
                 <button
-                    key='admin_pm_confirm'
+                    key='admin_qe_confirm'
                     onClick={() => { this.close(); }}
-                    className='admin-pm-btn main'
-                >Yes</button>
+                    className='admin-qe-btn main'
+                >Update</button>
                 <button
-                    key='admin_pm_cancel'
+                    key='admin_qe_cancel'
                     onClick={() => { this.close(); }}
-                    className='admin-pm-btn'
-                >No</button>
+                    className='admin-qe-btn'
+                >Cancel</button>
             </div>
         </div>
         );
