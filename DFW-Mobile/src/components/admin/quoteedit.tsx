@@ -7,7 +7,7 @@ type State = {
     show: number,
     propsBG: {[index: string]: any},
     propsM: {[index: string]: any},
-    
+    EDITING: {[index: string]: any},
 };
 
 export default class QuoteEdit extends React.Component<Props, State> {
@@ -25,7 +25,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         };
         this.props_bg_down = {
             'background': 'rgba(0, 0, 0, 0)',
-            'zIndex': '10',
+            'zIndex': '20',
             'opacity': '1',
             'backdrop-filter': 'blur(0px)',
         };
@@ -41,7 +41,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             show: 0,
             propsBG: this.props_bg_off,
             propsM: { 'top': '-64px', 'opacity': '0' },
-            
+            EDITING: {},
         }
     }
 
