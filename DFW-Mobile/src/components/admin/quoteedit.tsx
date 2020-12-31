@@ -7,6 +7,7 @@ type Props = {
     vehicleYear: string;
     vehicleMake: string;
     vehicleModel: string;
+    newQuote: boolean;
 };
 type State = {
     show: number,
@@ -75,8 +76,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
         postData.append('make', this.state.MAKE);
         postData.append('model', this.state.MODEL);
         postData.append('data', this.state.DATA.stringify());
-        
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=quote`, postData)
+
+        let param = 'update';
+        if (this.props.newQuote === true) { param = 'create'; }
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=${param}`, postData)
         .then(() => {
             close();
         });
