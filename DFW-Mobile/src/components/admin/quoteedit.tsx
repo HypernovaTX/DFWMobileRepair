@@ -4,13 +4,19 @@ import * as CONFIG from '../../config.json';
 
 type Props = {
     vehicleID: string;
-    vehicleName: string;
+    vehicleYear: string;
+    vehicleMake: string;
+    vehicleModel: string;
 };
 type State = {
     show: number,
     propsBG: {[index: string]: any},
     propsM: {[index: string]: any},
-    EDITING: {[index: string]: any},
+
+    YEAR: string,
+    MAKE: string,
+    MODEL: string,
+    DATA: {[index: string]: any},
 };
 
 export default class QuoteEdit extends React.Component<Props, State> {
@@ -44,7 +50,11 @@ export default class QuoteEdit extends React.Component<Props, State> {
             show: 0,
             propsBG: this.props_bg_off,
             propsM: { 'top': '-64px', 'opacity': '0' },
-            EDITING: {},
+
+            YEAR: this.props.vehicleYear,
+            MAKE: this.props.vehicleMake,
+            MODEL: this.props.vehicleModel,
+            DATA: {},
         }
     }
     /** API */
@@ -52,14 +62,24 @@ export default class QuoteEdit extends React.Component<Props, State> {
         const postData = new FormData();
         postData.append('id', this.props.vehicleID);
 
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=quote`)
-            .then((response) => {
-                this.setState({ EDITING: response.data });
-            });
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=quote`, postData)
+        .then((response) => {
+            this.setState({ DATA: response.data });
+        });
     };
 
     saveData(): void {
+        const postData = new FormData();
+        postData.append('id', this.props.vehicleID);
+        postData.append('year', this.state.YEAR);
+        postData.append('make', this.state.MAKE);
+        postData.append('model', this.state.MODEL);
+        postData.append('data', this.state.DATA.stringify());
         
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=quote`, postData)
+        .then(() => {
+            close();
+        });
     }
 
     /** WINDOW */
@@ -95,9 +115,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
     /** TEMPLATE */
     template(): JSX.Element {
         const { propsM } = this.state;
+        const vehicleName = `${this.props.vehicleYear} ${this.props.vehicleMake} ${this.props.vehicleModel}`;
         return(<div key='admin_qe_dbox' className='admin-qe-box' style={propsM}>
-            <div key='admin_qe_title' className='admin-qe-title'>{this.props.vehicleName}</div>
-            {}
+            <div key='admin_qe_title' className='admin-qe-title'>{vehicleName}</div>
+            <div key='admin_qe_content' className='admin-qe-content'>
+                {}
+            </div>
             <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
                 <button
                     key='admin_qe_confirm'
