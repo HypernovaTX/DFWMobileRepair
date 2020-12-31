@@ -116,6 +116,11 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     /** TEMPLATE */
+    template_formatData(): JSX.Element {
+        const { DATA } = this.state;
+        Object.entries
+        return (<></>);
+    }
     template(): JSX.Element {
         const { propsM } = this.state;
         const vehicleName = `${this.props.vehicleYear} ${this.props.vehicleMake} ${this.props.vehicleModel}`;
