@@ -302,7 +302,13 @@
     transition: 200ms linear all;
     user-select: none;
 }
-
+.admin-qe-ttext {
+    color: #333;
+    font-size: 0.8em;
+    font-weight: 600;
+    margin: 16px;
+    margin-bottom: 0px;
+}
 .admin-qe-buttonbox {
     width: 100%;
     margin: auto;
@@ -334,4 +340,27 @@
     background: #888;
     color: #444;
     cursor: default;
+}
+.admin-qe-title {
+    display: flex;
+    margin: 4px 12px;
+    margin-bottom: 0px;
+}
+.admin-qe-title-txt {
+    width: auto;
+    font-size: 1.2em;
+    border-radius: 12px;
+    border: none;
+    color: #333;
+    margin: auto 4px;
+    padding: 4px 12px;
+}
+.admin-qe-title-txt[type=number]{
+    width: 4em;
+} 
+.admin-qe-content {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 24px;
+    margin: 4px 16px;
+    min-height: 25vh;
 }

@@ -102,11 +102,14 @@ export default class QuoteEdit extends React.Component<Props, State> {
             show: 1,
             propsBG: this.props_bg_on,
             propsM: { 'top': '0px', 'opacity': '1' },
-            YEAR: this.props.vehicleYear,
-            MAKE: this.props.vehicleMake,
-            MODEL: this.props.vehicleModel,
         });
         setTimeout(() => {
+            //Have to delay getData since it take a delay to have vehicle props to be sent over
+            this.setState({
+                YEAR: this.props.vehicleYear,
+                MAKE: this.props.vehicleMake,
+                MODEL: this.props.vehicleModel,
+            })
             this.getData();
             setTimeout(() => {
                 this.setState({ show: 2 });
@@ -135,7 +138,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     reset(): void {
         const { OLD_DATA } = this.state;
-        this.setState({ DATA: OLD_DATA });
+        this.setState({
+            DATA: OLD_DATA,
+            YEAR: this.props.vehicleYear,
+            MAKE: this.props.vehicleMake,
+            MODEL: this.props.vehicleModel,
+        });
     }
 
     /** TEMPLATE */
@@ -187,15 +195,45 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
         output.push(<div key='qe_addmore' className='qe-cat add'>Add Category</div>);
         output.shift();
-        return (<React.Fragment key='qe_list'>output</React.Fragment>);
+        return (<React.Fragment key='qe_list'>{output}</React.Fragment>);
     }
     template(): JSX.Element {
         const { propsM, YEAR, MAKE, MODEL } = this.state;
-        const vehicleName = `${this.props.vehicleYear} ${this.props.vehicleMake} ${this.props.vehicleModel}`;
         return(<div key='admin_qe_dbox' className='admin-qe-box' style={propsM}>
-            <div key='admin_qe_title' className='admin-qe-title'>{vehicleName}</div>
+            <div key='admin_qe_title_sub' className='admin-qe-ttext'>Vehicle Make/Model:</div>
+            <div key='admin_qe_title' className='admin-qe-title'>
+                <input
+                    key={`admin_qe_year`}
+                    className='admin-qe-title-txt'
+                    value={YEAR}
+                    type='number'
+                    placeholder='year'
+                    size={1}
+                    onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                        this.setState({ YEAR: e.currentTarget.value.replace(/\D/, '') });
+                    }}></input>
+                <input
+                    key={`admin_qe_make`}
+                    className='admin-qe-title-txt'
+                    value={MAKE}
+                    placeholder='make'
+                    size={10}
+                    onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                        this.setState({ MAKE: e.currentTarget.value });
+                    }}></input>
+                <input
+                    key={`admin_qe_model`}
+                    className='admin-qe-title-txt'
+                    value={MODEL}
+                    placeholder='model'
+                    size={20}
+                    onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                        this.setState({ MODEL: e.currentTarget.value });
+                    }}></input>
+            </div>
+            <div key='admin_qe_content_sub' className='admin-qe-ttext'>List of quotes:</div>
             <div key='admin_qe_content' className='admin-qe-content'>
-                {}
+                {this.template_formatData()}
             </div>
             <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
                 <button
