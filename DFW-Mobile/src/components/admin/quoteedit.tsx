@@ -173,6 +173,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     
 
     /** TEMPLATE */
+    //Template for all of the quote items on the editing windoe
     template_formatData(): JSX.Element {
         const { DATA } = this.state;
         let output = [<div key='qe_placeholder_cat'></div>];
@@ -251,6 +252,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
         output.shift();
         return (<React.Fragment key='qe_list'>{output}</React.Fragment>);
     }
+    
+    //Main template
     template(): JSX.Element {
         const { propsM, YEAR, MAKE, MODEL } = this.state;
         return(<div key='admin_qe_dbox' className='admin-qe-box' style={propsM}>
