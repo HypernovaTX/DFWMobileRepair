@@ -1,6 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 import * as CONFIG from '../../config.json';
+import AdminPrompt from './prompt';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronCircleUp, faChevronCircleDown, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+
+///TO-DO: Need to convert OBJ to arrays for this.state.DATA for better ordering capabilities
 
 type Props = {
     vehicleID: string,
@@ -9,6 +14,7 @@ type Props = {
     vehicleModel: string,
     newQuote: boolean,
     endEditAction: () => void,
+    promptRef: React.RefObject<AdminPrompt>,
 };
 type State = {
     show: number,
@@ -20,13 +26,14 @@ type State = {
     MODEL: string,
     DATA: {[index: string]: any},
     OLD_DATA: {[index: string]: any},
-    editing: string,
+    editing: {[index: string]: any},
 };
 
 export default class QuoteEdit extends React.Component<Props, State> {
     private props_bg_off: {};
     private props_bg_on: {};
     private props_bg_down: {};
+    private message_box: React.RefObject<AdminPrompt>;
     constructor(p: Props) {
         super(p);
 
@@ -38,7 +45,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         };
         this.props_bg_down = {
             'background': 'rgba(0, 0, 0, 0)',
-            'zIndex': '20',
+            'zIndex': '10',
             'opacity': '1',
             'backdropFilter': 'blur(0px)',
         };
@@ -60,8 +67,14 @@ export default class QuoteEdit extends React.Component<Props, State> {
             MODEL: '',
             DATA: {},
             OLD_DATA: {},
-            editing: '',
+            editing: {
+                'edit': false,
+                'cat': '',
+                'item': '',
+            },
         }
+
+        this.message_box = this.props.promptRef;
     }
     /** EVENTS */
 
@@ -139,7 +152,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     /** EDITING */
-
     reset(): void {
         const { OLD_DATA } = this.state;
         this.setState({
@@ -149,6 +161,16 @@ export default class QuoteEdit extends React.Component<Props, State> {
             MODEL: this.props.vehicleModel,
         });
     }
+
+    delete(cat: string, item: string | null = null): void {
+        const { DATA } = this.state;
+        if (item !== null) {
+            delete DATA[cat][item]; }
+        else {
+            delete DATA[cat]; }
+        this.setState({ DATA });
+    }
+    
 
     /** TEMPLATE */
     template_formatData(): JSX.Element {
@@ -161,17 +183,63 @@ export default class QuoteEdit extends React.Component<Props, State> {
             if (DATA[category] !== {}) {
                 for (const item in DATA[category]) { //EWWW! Nested "for" loops!
                     const forKey = `${category}${item}`;
-                    let itemContent = <span key={`qe_cat_${forKey}`} className='qe-bar-text'>{item}</span>
+
+                    let itemName = 
+                        <span key={`qe_item_${forKey}`} className='qe-bar-text left'>
+                            {item}
+                            <span
+                                key={`qe_item_e_${forKey}`}
+                                className='qe-bar-button'
+                                onClick={() => {}}
+                            ><FontAwesomeIcon icon={faPen}/></span>
+                        </span>;
+
+                    let itemValue = 
+                        <span key={`qe_itemV_${forKey}`} className='qe-bar-text'>
+                            ${DATA[category][item]}
+                            <span
+                                key={`qe_itemV_e_${forKey}`}
+                                className='qe-bar-button'
+                                onClick={() => {}}
+                            ><FontAwesomeIcon icon={faPen}/></span>
+                        </span>;
+                    
+                    let itemBar = 
+                        <span key={`qe_itemI_${forKey}`} className='qe-bar-text right'>
+                            <span
+                                key={`qe_itemI_d_${forKey}`}
+                                className='qe-bar-button'
+                                onClick={() => {}}
+                            ><FontAwesomeIcon icon={faChevronCircleDown}/></span>
+                            <span
+                                key={`qe_itemI_u_${forKey}`}
+                                className='qe-bar-button'
+                                onClick={() => {}}
+                            ><FontAwesomeIcon icon={faChevronCircleUp}/></span>
+                            <span
+                                key={`qe_itemI_t_${forKey}`}
+                                className='qe-bar-button'
+                                onClick={() => {}}
+                            ><FontAwesomeIcon icon={faTrash}/></span>
+                        </span>;
+                    
                     addon.push(
                         <div key={`qe_item_${forKey}`} className='qe-item'>
-                            {itemContent}
+                            {itemName} {itemValue} {itemBar}
                         </div>
                     );
                 }
                 addon.push(<div key={`qe_addmore_i_${category}`} className='qe-item add'>Add Quote</div>);
                 addon.shift();
             }
-            let catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>{category}</span>
+
+            let catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
+                {category}
+                <span
+                    key={`qe_car_e_${category}`}
+                    className='qe-bar-button'
+                ><FontAwesomeIcon icon={faPen}/></span>
+            </span>;
             output.push(
                 <div key={`qe_cat_${category}`} className='qe-cat'>
                     {catContent}

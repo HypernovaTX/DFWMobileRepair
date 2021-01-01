@@ -224,6 +224,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 vehicleModel={toEdit.model}
                 newQuote={toEdit.edit}
                 endEditAction={() => {this.endEdit()}}
+                promptRef={this.dialogue_ref}
 
                 ref={this.edit_ref}
             />

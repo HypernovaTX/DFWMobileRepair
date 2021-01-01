@@ -362,7 +362,8 @@
     background: rgba(0, 0, 0, 0.2);
     border-radius: 12px;
     margin: 4px 16px;
-    max-height: 25vh;
+    min-height: 50vh;
+    max-height: 50vh;
     padding: 8px;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -378,6 +379,7 @@
 }
 .qe-item {
     background: #FFF;
+    display: flex;
 }
 .qe-cat.add, .qe-item.add {
     background: #EEE;
@@ -391,4 +393,19 @@
 .qe-cat.add:hover, .qe-item.add:hover {
     background: #FFF;
     color: #444;
+}
+span.qe-bar-button {
+    cursor: pointer;
+    margin: 0px 4px;
+}
+.qe-bar-text {
+    margin: auto;
+}
+.qe-bar-text.left {
+    float: left;
+    margin: initial;
+}
+.qe-bar-text.right {
+    float: right;
+    margin: initial;
 }
