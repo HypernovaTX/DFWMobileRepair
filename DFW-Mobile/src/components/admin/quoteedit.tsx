@@ -54,9 +54,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
             propsBG: this.props_bg_off,
             propsM: { 'top': '-64px', 'opacity': '0' },
 
-            YEAR: this.props.vehicleYear,
-            MAKE: this.props.vehicleMake,
-            MODEL: this.props.vehicleModel,
+            YEAR: '',
+            MAKE: '',
+            MODEL: '',
             DATA: {},
             OLD_DATA: {},
         }
@@ -102,10 +102,16 @@ export default class QuoteEdit extends React.Component<Props, State> {
             show: 1,
             propsBG: this.props_bg_on,
             propsM: { 'top': '0px', 'opacity': '1' },
+            YEAR: this.props.vehicleYear,
+            MAKE: this.props.vehicleMake,
+            MODEL: this.props.vehicleModel,
         });
         setTimeout(() => {
-            this.setState({ show: 2 });
-        }, 300);
+            this.getData();
+            setTimeout(() => {
+                this.setState({ show: 2 });
+            }, 300);
+        }, 5);
     }
 
     close(): void {
