@@ -20,6 +20,7 @@ type State = {
     MODEL: string,
     DATA: {[index: string]: any},
     OLD_DATA: {[index: string]: any},
+    editing: string,
 };
 
 export default class QuoteEdit extends React.Component<Props, State> {
@@ -59,6 +60,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             MODEL: '',
             DATA: {},
             OLD_DATA: {},
+            editing: '',
         }
     }
     /** EVENTS */
@@ -136,6 +138,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
     }
 
+    /** EDITING */
+
     reset(): void {
         const { OLD_DATA } = this.state;
         this.setState({
@@ -157,38 +161,20 @@ export default class QuoteEdit extends React.Component<Props, State> {
             if (DATA[category] !== {}) {
                 for (const item in DATA[category]) { //EWWW! Nested "for" loops!
                     const forKey = `${category}${item}`;
+                    let itemContent = <span key={`qe_cat_${forKey}`} className='qe-bar-text'>{item}</span>
                     addon.push(
-                        <div key={`qe_item_${forKey}`} className='qe-cat'>
-                            <input
-                                key={`qe_item_input_${forKey}`}
-                                value={item}
-                                onChange={
-                                    (e: React.FormEvent<HTMLInputElement>) => {
-                                        DATA[category][e.currentTarget.value] = DATA[category][item];
-                                        delete DATA[category][item];
-                                        this.setState({ DATA });
-                                    }
-                                }
-                            ></input>
+                        <div key={`qe_item_${forKey}`} className='qe-item'>
+                            {itemContent}
                         </div>
                     );
                 }
                 addon.push(<div key={`qe_addmore_i_${category}`} className='qe-item add'>Add Quote</div>);
                 addon.shift();
             }
+            let catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>{category}</span>
             output.push(
                 <div key={`qe_cat_${category}`} className='qe-cat'>
-                    <input
-                        key={`qe_cat_input_${category}`}
-                        value={category}
-                        onChange={
-                            (e: React.FormEvent<HTMLInputElement>) => {
-                                DATA[e.currentTarget.value] = DATA[category];
-                                delete DATA[category];
-                                this.setState({ DATA });
-                            }
-                        }
-                    ></input>
+                    {catContent}
                     {addon}
                 </div>
             );

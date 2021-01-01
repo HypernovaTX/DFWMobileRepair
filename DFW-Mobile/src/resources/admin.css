@@ -360,7 +360,35 @@
 } 
 .admin-qe-content {
     background: rgba(0, 0, 0, 0.2);
-    border-radius: 24px;
+    border-radius: 12px;
     margin: 4px 16px;
-    min-height: 25vh;
+    max-height: 25vh;
+    padding: 8px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.qe-cat, .qe-item {
+    margin: 8px 12px;
+    background: #CCC;
+    padding: 8px;
+    border-radius: 12px;
+    color: #333;
+    line-height: 1.5em;
+}
+.qe-item {
+    background: #FFF;
+}
+.qe-cat.add, .qe-item.add {
+    background: #EEE;
+    color: #444;
+    font-size: 0.9em;
+    line-height: 1em;
+    text-align: center;
+    transition: 150ms linear all;
+    cursor: pointer;
+}
+.qe-cat.add:hover, .qe-item.add:hover {
+    background: #FFF;
+    color: #444;
 }
