@@ -147,8 +147,29 @@ export default class ManageQuotes extends React.Component<Props, State> {
         }
     }
 
+    startEditing(id: string, year: string, make: string, model: string, New: boolean): void {
+        this.setState({
+            toEdit: {
+                'id': id,
+                'year': year,
+                'make': make,
+                'model': model,
+                'new': New,
+            },
+        });
+
+        if (this.edit_ref.current !== null) {
+            this.edit_ref.current.open();
+        }
+    }
+    endEdit(): void {
+        const { list, toEdit } = this.state;
+        list[toEdit.year][toEdit.make][toEdit.model]['_no_edit'] = false;
+        this.setState({ list });
+    }
+
     cancelDelete(): void {
-        let { list,toDelete } = this.state;
+        const { list, toDelete } = this.state;
         list[toDelete.year][toDelete.make][toDelete.model]['_no_delete'] = false;
         this.setState({ list });
     }
@@ -287,7 +308,9 @@ export default class ManageQuotes extends React.Component<Props, State> {
                         className='edit-icon'
                         disabled={vehicle['_no_edit']}
                         onClick={() => {
-                            console.log(`${year} ${make} ${model} edit pressed!`);
+                            list[year][make][model]['_no_edit'] = true;
+                            this.setState({ list });
+                            this.startEditing(vehicle['id'], year, make, model, false);
                         }}
                     ><FontAwesomeIcon icon={faEdit} /> Edit</button>
                     <button

@@ -108,7 +108,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     close(): void {
-        let { show } = this.state;
+        const { show } = this.state;
         if (show === 2) {
             this.setState({
                 show: 3,
@@ -127,7 +127,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     /** TEMPLATE */
     template_formatData(): JSX.Element {
-        let { DATA } = this.state;
+        const { DATA } = this.state;
         let output = [<div key='qe_placeholder_cat'></div>];
         //For each of the category (this is the worst codes I have made)
         for (const category in DATA) {
