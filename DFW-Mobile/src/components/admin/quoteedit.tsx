@@ -127,6 +127,11 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
     }
 
+    reset(): void {
+        const { OLD_DATA } = this.state;
+        this.setState({ DATA: OLD_DATA });
+    }
+
     /** TEMPLATE */
     template_formatData(): JSX.Element {
         const { DATA } = this.state;
@@ -179,7 +184,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return (<React.Fragment key='qe_list'>output</React.Fragment>);
     }
     template(): JSX.Element {
-        const { propsM } = this.state;
+        const { propsM, YEAR, MAKE, MODEL } = this.state;
         const vehicleName = `${this.props.vehicleYear} ${this.props.vehicleMake} ${this.props.vehicleModel}`;
         return(<div key='admin_qe_dbox' className='admin-qe-box' style={propsM}>
             <div key='admin_qe_title' className='admin-qe-title'>{vehicleName}</div>
@@ -197,6 +202,11 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     onClick={() => { this.close(); }}
                     className='admin-qe-btn'
                 >Cancel</button>
+                <button
+                    key='admin_qe_reset'
+                    onClick={() => { this.reset(); }}
+                    className='admin-qe-btn'
+                >Reset</button>
             </div>
         </div>
         );
