@@ -23,19 +23,19 @@ export default class AdminPrompt extends React.Component<Props, State> {
             'background': 'rgba(0, 0, 0, 0)',
             'zIndex': '-10',
             'opacity': '0',
-            'backdrop-filter': 'blur(0px)',
+            'backdropFilter': 'blur(0px)',
         };
         this.props_bg_down = {
             'background': 'rgba(0, 0, 0, 0)',
             'zIndex': '10',
             'opacity': '1',
-            'backdrop-filter': 'blur(0px)',
+            'backdropFilter': 'blur(0px)',
         };
         this.props_bg_on = {
             'background': 'rgba(0, 0, 0, 0.5)',
             'zIndex': '10',
             'opacity': '1',
-            'backdrop-filter': 'blur(8px)',
+            'backdropFilter': 'blur(8px)',
         };
         
 

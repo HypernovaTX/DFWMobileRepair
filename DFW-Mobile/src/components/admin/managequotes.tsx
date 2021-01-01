@@ -4,6 +4,7 @@ import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import AdminPrompt from './prompt';
+import QuoteEdit from './quoteedit';
 
 type Props = {
     loggedIn: boolean;
@@ -21,6 +22,7 @@ type State = {
 
 export default class ManageQuotes extends React.Component<Props, State> {
     private dialogue_ref: React.RefObject<AdminPrompt>;
+    private edit_ref: React.RefObject<QuoteEdit>;
     constructor(p: Props) {
         super(p);
 
@@ -37,14 +39,16 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 'model': '',
             },
             toEdit: {
-                'id': '',
-                'year': '',
-                'make': '',
-                'model': '',
+                'id': '1',
+                'year': '2020',
+                'make': 'Ford',
+                'model': 'Mustang GT',
+                'new': false,
             },
         }
 
         this.dialogue_ref = React.createRef();
+        this.edit_ref = React.createRef();
     }
 
     componentDidMount() {
@@ -182,7 +186,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
     /************************************************** TEMPLATE **************************************************/
 
     template(): JSX.Element {
-        const { pm_message, pm_action, pm_cancel } = this.state;
+        const { pm_message, pm_action, pm_cancel, toEdit } = this.state;
         return <div key='mq_body' className='mq-body'>
             {this.template_listYears()}
             {<AdminPrompt
@@ -192,6 +196,23 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
                 ref={this.dialogue_ref}
             />}
+            {<QuoteEdit
+                vehicleID={toEdit.id}
+                vehicleYear={toEdit.year}
+                vehicleMake={toEdit.make}
+                vehicleModel={toEdit.model}
+                newQuote={toEdit.edit}
+
+                ref={this.edit_ref}
+            />}
+            <button
+                key='testEdit'
+                onClick={() => {
+                    if (this.edit_ref.current !== null) {
+                        this.edit_ref.current.getData();
+                    }
+                }}
+            >CLICK TEST EDIT DATA (SEE CONSOLE)</button>
         </div>;
     }
 

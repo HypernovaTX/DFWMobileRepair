@@ -31,19 +31,19 @@ export default class QuoteEdit extends React.Component<Props, State> {
             'background': 'rgba(0, 0, 0, 0)',
             'zIndex': '-10',
             'opacity': '0',
-            'backdrop-filter': 'blur(0px)',
+            'backdropFilter': 'blur(0px)',
         };
         this.props_bg_down = {
             'background': 'rgba(0, 0, 0, 0)',
             'zIndex': '20',
             'opacity': '1',
-            'backdrop-filter': 'blur(0px)',
+            'backdropFilter': 'blur(0px)',
         };
         this.props_bg_on = {
             'background': 'rgba(0, 0, 0, 0.5)',
             'zIndex': '10',
             'opacity': '1',
-            'backdrop-filter': 'blur(8px)',
+            'backdropFilter': 'blur(8px)',
         };
         
 
@@ -58,14 +58,25 @@ export default class QuoteEdit extends React.Component<Props, State> {
             DATA: {},
         }
     }
+    /** EVENTS */
+
+    handleKeypress = (ev: KeyboardEvent) => {
+        if (ev.key === 'Escape') {
+          this.getData();
+        }
+    }
+
     /** API */
     getData(): void {
         const postData = new FormData();
         postData.append('id', this.props.vehicleID);
 
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=quote`, postData)
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=data`, postData)
         .then((response) => {
             this.setState({ DATA: response.data });
+            for (const property in response.data) {
+                console.log(`${property}: ${response.data[property]}`);
+            }
         });
     };
 
@@ -81,7 +92,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         if (this.props.newQuote === true) { param = 'create'; }
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=${param}`, postData)
         .then(() => {
-            close();
+            this.close();
         });
     }
 
@@ -118,7 +129,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     /** TEMPLATE */
     template_formatData(): JSX.Element {
         const { DATA } = this.state;
-        Object.entries
+        //Object.entries
         return (<></>);
     }
     template(): JSX.Element {
