@@ -3,11 +3,12 @@ import axios from 'axios';
 import * as CONFIG from '../../config.json';
 
 type Props = {
-    vehicleID: string;
-    vehicleYear: string;
-    vehicleMake: string;
-    vehicleModel: string;
-    newQuote: boolean;
+    vehicleID: string,
+    vehicleYear: string,
+    vehicleMake: string,
+    vehicleModel: string,
+    newQuote: boolean,
+    endEditAction: () => void,
 };
 type State = {
     show: number,
@@ -121,6 +122,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     propsBG: this.props_bg_off,
                     propsM: { 'top': '-64px', 'opacity': '0' },
                 });
+                this.props.endEditAction();
             }, 250);
         }
     }
@@ -171,7 +173,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     {addon}
                 </div>
             );
-            //console.log(`${category}: ${DATA.data[category]}`);
         }
         output.push(<div key='qe_addmore' className='qe-cat add'>Add Category</div>);
         output.shift();

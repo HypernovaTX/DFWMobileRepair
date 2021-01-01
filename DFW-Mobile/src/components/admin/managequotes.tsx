@@ -210,30 +210,23 @@ export default class ManageQuotes extends React.Component<Props, State> {
         const { pm_message, pm_action, pm_cancel, toEdit } = this.state;
         return <div key='mq_body' className='mq-body'>
             {this.template_listYears()}
-            {<AdminPrompt
+            <AdminPrompt
                 message={pm_message}
                 action={pm_action}
                 cancel={pm_cancel}
 
                 ref={this.dialogue_ref}
-            />}
-            {<QuoteEdit
+            />
+            <QuoteEdit
                 vehicleID={toEdit.id}
                 vehicleYear={toEdit.year}
                 vehicleMake={toEdit.make}
                 vehicleModel={toEdit.model}
                 newQuote={toEdit.edit}
+                endEditAction={() => {this.endEdit()}}
 
                 ref={this.edit_ref}
-            />}
-            <button
-                key='testEdit'
-                onClick={() => {
-                    if (this.edit_ref.current !== null) {
-                        this.edit_ref.current.getData();
-                    }
-                }}
-            >CLICK TEST EDIT DATA (SEE CONSOLE)</button>
+            />
         </div>;
     }
 
