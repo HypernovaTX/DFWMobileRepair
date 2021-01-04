@@ -71,6 +71,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 'edit': false,
                 'cat': '',
                 'item': '',
+                'value': '',
+                'price': '',
             },
         }
 
@@ -152,6 +154,18 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     /** EDITING */
+    startEdit(value: string, category: string, item: string | null = null, price: string | null = null): void {
+        this.setState({
+            editing: {
+                'edit': true,
+                'cat': category,
+                'item': (item !== null) ? item : '',
+                'value': value,
+                'price': (price !== null) ? price : '',
+            }
+        })
+    }
+
     reset(): void {
         const { OLD_DATA } = this.state;
         this.setState({
@@ -190,7 +204,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                             <span
                                 key={`qe_item_e_${forKey}`}
                                 className='qe-bar-button'
-                                onClick={() => {}}
+                                onClick={() => { this.startEdit(item, category, item) }}
                             ><FontAwesomeIcon icon={faPen}/></span>
                         </span>;
 
@@ -200,22 +214,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
                             <span
                                 key={`qe_itemV_e_${forKey}`}
                                 className='qe-bar-button'
-                                onClick={() => {}}
+                                onClick={() => { this.startEdit(item, category, item, DATA[category][item]) }}
                             ><FontAwesomeIcon icon={faPen}/></span>
                         </span>;
                     
                     let itemBar = 
                         <span key={`qe_itemI_${forKey}`} className='qe-bar-text right'>
-                            <span
-                                key={`qe_itemI_d_${forKey}`}
-                                className='qe-bar-button'
-                                onClick={() => {}}
-                            ><FontAwesomeIcon icon={faChevronCircleDown}/></span>
-                            <span
-                                key={`qe_itemI_u_${forKey}`}
-                                className='qe-bar-button'
-                                onClick={() => {}}
-                            ><FontAwesomeIcon icon={faChevronCircleUp}/></span>
                             <span
                                 key={`qe_itemI_t_${forKey}`}
                                 className='qe-bar-button'
@@ -238,6 +242,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 <span
                     key={`qe_car_e_${category}`}
                     className='qe-bar-button'
+                    onClick={() => { this.startEdit(category, category) }}
                 ><FontAwesomeIcon icon={faPen}/></span>
             </span>;
             output.push(
