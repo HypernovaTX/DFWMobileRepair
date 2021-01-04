@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as CONFIG from '../../config.json';
 import AdminPrompt from './prompt';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronCircleUp, faChevronCircleDown, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 ///TO-DO: Need to convert OBJ to arrays for this.state.DATA for better ordering capabilities
 
