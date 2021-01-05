@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as CONFIG from '../../config.json';
 import AdminPrompt from './prompt';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCross, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 ///TO-DO: Need to convert OBJ to arrays for this.state.DATA for better ordering capabilities
 
@@ -166,6 +166,30 @@ export default class QuoteEdit extends React.Component<Props, State> {
         })
     }
 
+    saveEdit(): void {
+        ///INCOMPLETE!!!! - NEEDS TO RENAME KEY
+        const { editing, DATA } = this.state;
+        if (editing['item'] === '') {
+            DATA[editing['cat']] = editing['value'];
+        } else if (editing['price'] === '') {
+            DATA[editing['cat']][editing['item']] = editing['value'];
+        } else {
+
+        }
+    }
+
+    quitEdit(): void {
+        this.setState({
+            editing: {
+                'edit': false,
+                'cat': '',
+                'item': '',
+                'value': '',
+                'price': '',
+            }
+        })
+    }
+
     reset(): void {
         const { OLD_DATA } = this.state;
         this.setState({
@@ -189,7 +213,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     /** TEMPLATE */
     //Template for all of the quote items on the editing windoe
     template_formatData(): JSX.Element {
-        const { DATA } = this.state;
+        const { DATA, editing } = this.state;
         let output = [<div key='qe_placeholder_cat'></div>];
         //For each of the category (this is the worst codes I have made)
         for (const category in DATA) {
@@ -246,6 +270,31 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     onClick={() => { this.startEdit(category, category) }}
                 ><FontAwesomeIcon icon={faPen}/></span>
             </span>;
+
+            if (editing['cat'] === category && editing['item'] === '') {
+                catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
+                    <input
+                        key={`qe_cat_input_${category}`}
+                        className='edit-item-txt'
+                        value={editing['value']}
+                        onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
+                            editing['value'] = change.target.value;
+                            this.setState({});
+                        }}
+                    ></input>
+                    <span
+                        key={`qe_car_ed_${category}`}
+                        className='qe-bar-button'
+                        onClick={() => { this.quitEdit() }} //END EDIT CAT GOES HERE
+                    ><FontAwesomeIcon icon={faCheck}/></span>
+                    <span
+                        key={`qe_car_eq_${category}`}
+                        className='qe-bar-button'
+                        onClick={() => { this.quitEdit() }} //END EDIT CAT GOES HERE
+                    ><FontAwesomeIcon icon={faCross}/></span>
+                </span>;
+            }
+            
             output.push(
                 <div key={`qe_cat_${category}`} className='qe-cat'>
                     {catContent}
