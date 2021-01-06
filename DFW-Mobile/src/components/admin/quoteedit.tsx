@@ -1,9 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 import * as CONFIG from '../../config.json';
-import AdminPrompt from './prompt';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faCross, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faTimes, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 ///TO-DO: Need to convert OBJ to arrays for this.state.DATA for better ordering capabilities
 
@@ -14,7 +13,7 @@ type Props = {
     vehicleModel: string,
     newQuote: boolean,
     endEditAction: () => void,
-    promptRef: React.RefObject<AdminPrompt>,
+    promptOpen: (msg: string, action: () => any, cancel: () => any) => void,
 };
 type State = {
     show: number,
@@ -25,7 +24,7 @@ type State = {
     MAKE: string,
     MODEL: string,
     DATA: {[index: string]: any},
-    OLD_DATA: {[index: string]: any},
+    OLD: string,
     editing: {[index: string]: any},
 };
 
@@ -33,7 +32,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
     private props_bg_off: {};
     private props_bg_on: {};
     private props_bg_down: {};
-    private message_box: React.RefObject<AdminPrompt>;
     constructor(p: Props) {
         super(p);
 
@@ -66,7 +64,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             MAKE: '',
             MODEL: '',
             DATA: {},
-            OLD_DATA: {},
+            OLD: '',
             editing: {
                 'edit': false,
                 'cat': '',
@@ -75,25 +73,28 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 'price': '',
             },
         }
-
-        this.message_box = this.props.promptRef;
     }
-    /** EVENTS */
+    /************************************************** QE - EVENTS **************************************************/
+    componentDidMount() {
+        window.addEventListener('keydown', this.handleKeypress);
+    }
 
+    //Keyboard stuffs
     handleKeypress = (ev: KeyboardEvent) => {
+        //Esc to close the editing window
         if (ev.key === 'Escape') {
-          this.getData();
+            this.close();
         }
     }
 
-    /** API */
+    /************************************************** QE - REQUESTS **************************************************/
     getData(): void {
         const postData = new FormData();
         postData.append('id', this.props.vehicleID);
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=data`, postData)
         .then((response) => {
-            this.setState({ DATA: response.data, OLD_DATA: response.data });
+            this.setState({ DATA: response.data, OLD: JSON.stringify(response.data) });
         });
     };
 
@@ -127,7 +128,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 MAKE: this.props.vehicleMake,
                 MODEL: this.props.vehicleModel,
             })
-            this.getData();
+            if (this.state.show === 1) { this.getData(); }
             setTimeout(() => {
                 this.setState({ show: 2 });
             }, 300);
@@ -153,7 +154,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
     }
 
-    /** EDITING */
+    /************************************************** QE - EDITING **************************************************/
     startEdit(value: string, category: string, item: string | null = null, price: string | null = null): void {
         this.setState({
             editing: {
@@ -167,15 +168,23 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     saveEdit(): void {
-        ///INCOMPLETE!!!! - NEEDS TO RENAME KEY
         const { editing, DATA } = this.state;
+        //Update category
         if (editing['item'] === '') {
-            DATA[editing['cat']] = editing['value'];
-        } else if (editing['price'] === '') {
-            DATA[editing['cat']][editing['item']] = editing['value'];
-        } else {
-
+            DATA[editing['value']] = DATA[editing['cat']];
+            delete DATA[editing['cat']];
         }
+        //Update item
+        else if (editing['price'] === '') {
+            DATA[editing['cat']][editing['value']] = DATA[editing['cat']][editing['item']];
+            delete DATA[editing['cat']][editing['item']];
+        }
+        //update quote value
+        else {
+            DATA[editing['cat']][editing['item']] = editing['value'];
+        }
+
+        this.quitEdit();
     }
 
     quitEdit(): void {
@@ -191,9 +200,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     reset(): void {
-        const { OLD_DATA } = this.state;
         this.setState({
-            DATA: OLD_DATA,
+            DATA: JSON.parse(this.state.OLD),
             YEAR: this.props.vehicleYear,
             MAKE: this.props.vehicleMake,
             MODEL: this.props.vehicleModel,
@@ -210,7 +218,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
     
 
-    /** TEMPLATE */
+    /************************************************** QE - TEMPLATE **************************************************/
     //Template for all of the quote items on the editing windoe
     template_formatData(): JSX.Element {
         const { DATA, editing } = this.state;
@@ -223,6 +231,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 for (const item in DATA[category]) { //EWWW! Nested "for" loops!
                     const forKey = `${category}${item}`;
 
+                    //Name of the quote
                     let itemName = 
                         <span key={`qe_item_${forKey}`} className='qe-bar-text left'>
                             {item}
@@ -233,6 +242,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                             ><FontAwesomeIcon icon={faPen}/></span>
                         </span>;
 
+                    //Quote pricing
                     let itemValue = 
                         <span key={`qe_itemV_${forKey}`} className='qe-bar-text'>
                             ${DATA[category][item]}
@@ -243,6 +253,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                             ><FontAwesomeIcon icon={faPen}/></span>
                         </span>;
                     
+                    //Delete
                     let itemBar = 
                         <span key={`qe_itemI_${forKey}`} className='qe-bar-text right'>
                             <span
@@ -262,6 +273,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 addon.shift();
             }
 
+            //Category template (NOT EDITING)
             let catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
                 {category}
                 <span
@@ -271,7 +283,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 ><FontAwesomeIcon icon={faPen}/></span>
             </span>;
 
-            if (editing['cat'] === category && editing['item'] === '') {
+            //Category template (EDITING)
+            if (editing['cat'] === category && editing['item'] === '' && editing['edit'] === true) {
                 catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
                     <input
                         key={`qe_cat_input_${category}`}
@@ -285,13 +298,13 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     <span
                         key={`qe_car_ed_${category}`}
                         className='qe-bar-button'
-                        onClick={() => { this.quitEdit() }} //END EDIT CAT GOES HERE
+                        onClick={() => { this.saveEdit() }} //END EDIT CAT GOES HERE
                     ><FontAwesomeIcon icon={faCheck}/></span>
                     <span
                         key={`qe_car_eq_${category}`}
                         className='qe-bar-button'
                         onClick={() => { this.quitEdit() }} //END EDIT CAT GOES HERE
-                    ><FontAwesomeIcon icon={faCross}/></span>
+                    ><FontAwesomeIcon icon={faTimes}/></span>
                 </span>;
             }
             
@@ -359,7 +372,11 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 >Cancel</button>
                 <button
                     key='admin_qe_reset'
-                    onClick={() => { this.reset(); }}
+                    onClick={() => {this.props.promptOpen(
+                        'Are you sure you want to reset all of the data to how it is?',
+                        () => { this.reset(); },
+                        () => {}
+                    )}}
                     className='admin-qe-btn'
                 >Reset</button>
             </div>

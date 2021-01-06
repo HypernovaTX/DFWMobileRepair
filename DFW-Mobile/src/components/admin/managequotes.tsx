@@ -99,6 +99,17 @@ export default class ManageQuotes extends React.Component<Props, State> {
             });
     }
 
+    specialMessage = (msg: string, action: () => any, cancel: () => any) => {
+        this.setState({
+            pm_message: msg,
+            pm_action: action, 
+            pm_cancel: cancel
+        });
+        if (this.dialogue_ref.current !== null) {
+            this.dialogue_ref.current.open();
+        }
+    };
+
     /************************************************** TOGGLES **************************************************/
 
     toggleDisplayYear(year: string): void {
@@ -224,7 +235,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 vehicleModel={toEdit.model}
                 newQuote={toEdit.edit}
                 endEditAction={() => {this.endEdit()}}
-                promptRef={this.dialogue_ref}
+                promptOpen={this.specialMessage}
 
                 ref={this.edit_ref}
             />
