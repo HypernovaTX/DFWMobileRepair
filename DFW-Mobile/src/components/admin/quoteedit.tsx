@@ -258,7 +258,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         <span key={`qe_itemI_${forKey}`} className='qe-bar-text right'>
                             <span
                                 key={`qe_itemI_t_${forKey}`}
-                                className='qe-bar-button'
+                                className='qe-bar-button delete'
                                 onClick={() => {}}
                             ><FontAwesomeIcon icon={faTrash}/></span>
                         </span>;
@@ -297,7 +297,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     ></input>
                     <span
                         key={`qe_car_ed_${category}`}
-                        className='qe-bar-button'
+                        className='qe-bar-button ok'
                         onClick={() => { this.saveEdit() }} //END EDIT CAT GOES HERE
                     ><FontAwesomeIcon icon={faCheck}/></span>
                     <span

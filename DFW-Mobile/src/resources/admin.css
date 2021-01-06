@@ -394,10 +394,25 @@
     background: #FFF;
     color: #444;
 }
-span.qe-bar-button {
+.qe-bar-button {
     cursor: pointer;
-    margin: 0px 4px;
+    margin-left: 8px;
+    font-size: 14px;
+    padding: 1px 4px;
+    background: #555;
+    border-radius: 8px;
+    color: #FFF;
+    min-width: 2em;
+    display: inline-table;
+    text-align: center;
+    transition: 200ms linear all;
 }
+.qe-bar-button:hover { background: #888; }
+.qe-bar-button.delete { background: rgb(175, 51, 51); }
+.qe-bar-button.delete:hover { background: rgb(223, 87, 87); }
+.qe-bar-button.ok { background: rgb(101, 160, 94); }
+.qe-bar-button.ok:hover { background: rgb(112, 182, 104); }
+
 .qe-bar-text {
     margin: auto;
 }
@@ -409,6 +424,7 @@ span.qe-bar-button {
     float: right;
     margin: initial;
 }
+
 .edit-item-txt {
     font-size: 1em;
     border: 1px solid #AAA;
