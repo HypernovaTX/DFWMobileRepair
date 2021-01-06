@@ -43,7 +43,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             show: 0,
             propsBG: this.props_bg_off,
             propsM: { 'top': '-64px', 'opacity': '0' },
-            
+
             YEAR: '',
             MAKE: '',
             MODEL: '',
@@ -78,7 +78,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=data`, postData)
         .then((response) => {
-            this.setState({ DATA: response.data, OLD: JSON.stringify(response.data) });
+            let sortedData = this.sortObj(response.data);
+            this.setState({ DATA: sortedData, OLD: JSON.stringify(sortedData) });
         });
     };
 
@@ -154,20 +155,25 @@ export default class QuoteEdit extends React.Component<Props, State> {
     saveEdit(): void {
         const { editing, DATA } = this.state;
         //Update category
-        if (editing['item'] === '') {
+        if (editing['item'] === '' && !DATA.hasOwnProperty(editing['value'])) {
             DATA[editing['value']] = DATA[editing['cat']];
             delete DATA[editing['cat']];
         }
         //Update item
-        else if (editing['price'] === '') {
-            DATA[editing['cat']][editing['value']] = DATA[editing['cat']][editing['item']];
-            delete DATA[editing['cat']][editing['item']];
+        else if (editing['price'] === '' && editing['item'] !== '') {
+            try { //Putting try/catch can prevent the runtime error of this function, I cannot figure out an alternative I have to leave this rubbish here
+                let itemCatObj = DATA[editing['cat']];
+                if (!itemCatObj.hasOwnProperty(editing['value'])) {
+                    DATA[editing['cat']][editing['value']] = DATA[editing['cat']][editing['item']];
+                    delete DATA[editing['cat']][editing['item']];
+                }
+            } catch(e) {}
         }
         //update quote value
-        else {
+        else if (editing['price'] !== '') {
             DATA[editing['cat']][editing['item']] = editing['value'];
         }
-
+        this.setState({ DATA: this.sortObj(DATA) });
         this.quitEdit();
     }
 
@@ -200,6 +206,21 @@ export default class QuoteEdit extends React.Component<Props, State> {
             delete DATA[cat]; }
         this.setState({ DATA });
     }
+
+    sortObj = (object: {[index: string]: any}): {[index: string]: any} => {
+        let keys = Object.keys(object);
+        keys.sort();
+        let newObject: {[index: string]: any} = {};
+        for (var i = 0; i < keys.length; i ++) {
+            //Only applies to objects recursively to prevent infinite loops
+            if (typeof object[keys[i]] === 'object') { 
+                newObject[keys[i]] = this.sortObj(object[keys[i]]);
+            } else {
+                newObject[keys[i]] = object[keys[i]];
+            }
+        }
+        return newObject;
+    };
     
 
     /************************************************** QE - TEMPLATE **************************************************/
@@ -223,14 +244,13 @@ export default class QuoteEdit extends React.Component<Props, State> {
                                 <FontAwesomeIcon icon={faPen}/>
                             </span>
                         </span>;
-
                     // |QUOTE NAME --------> (EDITING)
                     if (editing['cat'] === category && editing['item'] === item && editing['price'] === '' && editing['edit'] === true) {
                         itemName = <span key={`qe_item_${forKey}`} className='qe-bar-text left'>
                             <input key={`qe_item_input_${forKey}`} className='edit-item-txt' value={editing['value']}
                                 onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
                                     editing['value'] = change.target.value;
-                                    this.setState({});
+                                    this.setState({ editing });
                                 }}
                             ></input>
                             <span key={`qe_item_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
@@ -249,9 +269,26 @@ export default class QuoteEdit extends React.Component<Props, State> {
                             <span
                                 key={`qe_itemV_e_${forKey}`}
                                 className='qe-bar-button'
-                                onClick={() => { this.startEdit(item, category, item, DATA[category][item]) }}
+                                onClick={() => { this.startEdit(DATA[category][item], category, item, DATA[category][item]) }}
                             ><FontAwesomeIcon icon={faPen}/></span>
                         </span>;
+                    // |QUOTE PRICING --------> (EDITING)
+                    if (editing['cat'] === category && editing['item'] === item && editing['price'] === DATA[category][item] && editing['edit'] === true) {
+                        itemValue = <span key={`qe_itemp_${forKey}`} className='qe-bar-text'>
+                            <input key={`qe_item_inputp_${forKey}`} className='edit-item-txt short' value={editing['value']}
+                                onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
+                                    editing['value'] = change.target.value;
+                                    this.setState({ editing });
+                                }}
+                            ></input>
+                            <span key={`qe_itemp_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
+                                <FontAwesomeIcon icon={faCheck}/>
+                            </span>
+                            <span key={`qe_itemp_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                                <FontAwesomeIcon icon={faTimes}/>
+                            </span>
+                        </span>;
+                    }
                     
                     //Delete
                     let itemBar = 
@@ -287,7 +324,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     <input key={`qe_cat_input_${category}`} className='edit-item-txt' value={editing['value']}
                         onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
                             editing['value'] = change.target.value;
-                            this.setState({});
+                            this.setState({ editing });
                         }}
                     ></input>
                     <span key={`qe_car_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
