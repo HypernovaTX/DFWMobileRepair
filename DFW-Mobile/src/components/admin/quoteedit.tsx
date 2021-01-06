@@ -35,31 +35,15 @@ export default class QuoteEdit extends React.Component<Props, State> {
     constructor(p: Props) {
         super(p);
 
-        this.props_bg_off = {
-            'background': 'rgba(0, 0, 0, 0)',
-            'zIndex': '-10',
-            'opacity': '0',
-            'backdropFilter': 'blur(0px)',
-        };
-        this.props_bg_down = {
-            'background': 'rgba(0, 0, 0, 0)',
-            'zIndex': '10',
-            'opacity': '1',
-            'backdropFilter': 'blur(0px)',
-        };
-        this.props_bg_on = {
-            'background': 'rgba(0, 0, 0, 0.5)',
-            'zIndex': '10',
-            'opacity': '1',
-            'backdropFilter': 'blur(8px)',
-        };
+        this.props_bg_off = { 'background': 'rgba(0, 0, 0, 0)', 'zIndex': '-10', 'opacity': '0', 'backdropFilter': 'blur(0px)' };
+        this.props_bg_down = { 'background': 'rgba(0, 0, 0, 0)', 'zIndex': '10', 'opacity': '1', 'backdropFilter': 'blur(0px)' };
+        this.props_bg_on = { 'background': 'rgba(0, 0, 0, 0.5)', 'zIndex': '10', 'opacity': '1', 'backdropFilter': 'blur(8px)' };
         
-
         this.state = {
             show: 0,
             propsBG: this.props_bg_off,
             propsM: { 'top': '-64px', 'opacity': '0' },
-
+            
             YEAR: '',
             MAKE: '',
             MODEL: '',
@@ -235,12 +219,28 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     let itemName = 
                         <span key={`qe_item_${forKey}`} className='qe-bar-text left'>
                             {item}
-                            <span
-                                key={`qe_item_e_${forKey}`}
-                                className='qe-bar-button'
-                                onClick={() => { this.startEdit(item, category, item) }}
-                            ><FontAwesomeIcon icon={faPen}/></span>
+                            <span key={`qe_item_e_${forKey}`} className='qe-bar-button' onClick={() => { this.startEdit(item, category, item) }}>
+                                <FontAwesomeIcon icon={faPen}/>
+                            </span>
                         </span>;
+
+                    // |QUOTE NAME --------> (EDITING)
+                    if (editing['cat'] === category && editing['item'] === item && editing['price'] === '' && editing['edit'] === true) {
+                        itemName = <span key={`qe_item_${forKey}`} className='qe-bar-text left'>
+                            <input key={`qe_item_input_${forKey}`} className='edit-item-txt' value={editing['value']}
+                                onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
+                                    editing['value'] = change.target.value;
+                                    this.setState({});
+                                }}
+                            ></input>
+                            <span key={`qe_item_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
+                                <FontAwesomeIcon icon={faCheck}/>
+                            </span>
+                            <span key={`qe_item_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                                <FontAwesomeIcon icon={faTimes}/>
+                            </span>
+                        </span>;
+                    }
 
                     //Quote pricing
                     let itemValue = 
@@ -276,35 +276,26 @@ export default class QuoteEdit extends React.Component<Props, State> {
             //Category template (NOT EDITING)
             let catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
                 {category}
-                <span
-                    key={`qe_car_e_${category}`}
-                    className='qe-bar-button'
-                    onClick={() => { this.startEdit(category, category) }}
-                ><FontAwesomeIcon icon={faPen}/></span>
+                <span key={`qe_car_e_${category}`} className='qe-bar-button' onClick={() => { this.startEdit(category, category) }}>
+                    <FontAwesomeIcon icon={faPen}/>
+                </span>
             </span>;
 
             //Category template (EDITING)
             if (editing['cat'] === category && editing['item'] === '' && editing['edit'] === true) {
                 catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
-                    <input
-                        key={`qe_cat_input_${category}`}
-                        className='edit-item-txt'
-                        value={editing['value']}
+                    <input key={`qe_cat_input_${category}`} className='edit-item-txt' value={editing['value']}
                         onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
                             editing['value'] = change.target.value;
                             this.setState({});
                         }}
                     ></input>
-                    <span
-                        key={`qe_car_ed_${category}`}
-                        className='qe-bar-button ok'
-                        onClick={() => { this.saveEdit() }} //END EDIT CAT GOES HERE
-                    ><FontAwesomeIcon icon={faCheck}/></span>
-                    <span
-                        key={`qe_car_eq_${category}`}
-                        className='qe-bar-button'
-                        onClick={() => { this.quitEdit() }} //END EDIT CAT GOES HERE
-                    ><FontAwesomeIcon icon={faTimes}/></span>
+                    <span key={`qe_car_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
+                        <FontAwesomeIcon icon={faCheck}/>
+                    </span>
+                    <span key={`qe_car_eq_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                        <FontAwesomeIcon icon={faTimes}/>
+                    </span>
                 </span>;
             }
             

@@ -288,6 +288,10 @@
     color: #444;
     cursor: default;
 }
+.admin-pm-btn::first-letter {
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.5);
+}
 
 
 
@@ -430,4 +434,5 @@
     border: 1px solid #AAA;
     border-radius: 4px;
     padding: 2px 8px;
+    width: 10em;
 }

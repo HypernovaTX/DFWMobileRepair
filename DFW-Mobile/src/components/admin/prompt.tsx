@@ -19,24 +19,9 @@ export default class AdminPrompt extends React.Component<Props, State> {
     constructor(p: Props) {
         super(p);
 
-        this.props_bg_off = {
-            'background': 'rgba(0, 0, 0, 0)',
-            'zIndex': '-10',
-            'opacity': '0',
-            'backdropFilter': 'blur(0px)',
-        };
-        this.props_bg_down = {
-            'background': 'rgba(0, 0, 0, 0)',
-            'zIndex': '20',
-            'opacity': '1',
-            'backdropFilter': 'blur(0px)',
-        };
-        this.props_bg_on = {
-            'background': 'rgba(0, 0, 0, 0.5)',
-            'zIndex': '20',
-            'opacity': '1',
-            'backdropFilter': 'blur(8px)',
-        };
+        this.props_bg_off = { 'background': 'rgba(0, 0, 0, 0)', 'zIndex': '-10', 'opacity': '0', 'backdropFilter': 'blur(0px)', };
+        this.props_bg_down = { 'background': 'rgba(0, 0, 0, 0)', 'zIndex': '20', 'opacity': '1', 'backdropFilter': 'blur(0px)', };
+        this.props_bg_on = { 'background': 'rgba(0, 0, 0, 0.5)', 'zIndex': '20', 'opacity': '1', 'backdropFilter': 'blur(8px)', };
         
 
         this.state = {
@@ -46,6 +31,18 @@ export default class AdminPrompt extends React.Component<Props, State> {
             yes: false,
         }
     }
+
+    componentDidMount() {
+        window.addEventListener('keydown', this.keypress);
+    }
+    keypress = (ev: KeyboardEvent) => {
+        if (this.state.show === 2) {
+            if (ev.key === 'y') { this.setState({ yes: true }); this.close(); } 
+            if (ev.key === 'n') { this.setState({ yes: false }); this.close(); } 
+        }
+    };
+
+
 
     open(): void {
         this.setState({
