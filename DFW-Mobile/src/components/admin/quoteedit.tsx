@@ -71,6 +71,26 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
     }
 
+    /************************************************** QE - LIB **************************************************/
+    sortObj = (object: {[index: string]: any}): {[index: string]: any} => {
+        let keys = Object.keys(object);
+        keys.sort();
+        let newObject: {[index: string]: any} = {};
+        for (var i = 0; i < keys.length; i ++) {
+            //Only applies to objects recursively to prevent infinite loops
+            if (typeof object[keys[i]] === 'object') { 
+                newObject[keys[i]] = this.sortObj(object[keys[i]]);
+            } else {
+                newObject[keys[i]] = object[keys[i]];
+            }
+        }
+        return newObject;
+    };
+    objKeyExists(obj: object, prop: string): boolean {
+        if (obj.hasOwnProperty(prop)) { return true; }
+        return false;
+    }
+
     /************************************************** QE - REQUESTS **************************************************/
     getData(): void {
         const postData = new FormData();
@@ -155,23 +175,18 @@ export default class QuoteEdit extends React.Component<Props, State> {
     saveEdit(): void {
         const { editing, DATA } = this.state;
         //Update category
-        if (editing['item'] === '' && !DATA.hasOwnProperty(editing['value'])) {
-            DATA[editing['value']] = DATA[editing['cat']];
-            delete DATA[editing['cat']];
+        if (editing.item === '' && !DATA.hasOwnProperty(editing.value)) {
+            DATA[editing.value] = DATA[editing.cat];
+            delete DATA[editing.cat];
         }
         //Update item
-        else if (editing['price'] === '' && editing['item'] !== '') {
-            try { //Putting try/catch can prevent the runtime error of this function, I cannot figure out an alternative I have to leave this rubbish here
-                let itemCatObj = DATA[editing['cat']];
-                if (!itemCatObj.hasOwnProperty(editing['value'])) {
-                    DATA[editing['cat']][editing['value']] = DATA[editing['cat']][editing['item']];
-                    delete DATA[editing['cat']][editing['item']];
-                }
-            } catch(e) {}
+        else if (editing.price === '' && editing.item !== '' && !this.objKeyExists(DATA[editing.cat], editing.item)) {
+            DATA[editing.cat][editing.value] = DATA[editing.cat][editing.item];
+            delete DATA[editing.cat][editing.item];
         }
         //update quote value
-        else if (editing['price'] !== '') {
-            DATA[editing['cat']][editing['item']] = editing['value'];
+        else if (editing.price !== '') {
+            DATA[editing['cat']][editing['item']] = editing.value;
         }
         this.setState({ DATA: this.sortObj(DATA) });
         this.quitEdit();
@@ -206,21 +221,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
             delete DATA[cat]; }
         this.setState({ DATA });
     }
-
-    sortObj = (object: {[index: string]: any}): {[index: string]: any} => {
-        let keys = Object.keys(object);
-        keys.sort();
-        let newObject: {[index: string]: any} = {};
-        for (var i = 0; i < keys.length; i ++) {
-            //Only applies to objects recursively to prevent infinite loops
-            if (typeof object[keys[i]] === 'object') { 
-                newObject[keys[i]] = this.sortObj(object[keys[i]]);
-            } else {
-                newObject[keys[i]] = object[keys[i]];
-            }
-        }
-        return newObject;
-    };
     
 
     /************************************************** QE - TEMPLATE **************************************************/
