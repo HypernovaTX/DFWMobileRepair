@@ -17,6 +17,7 @@ type Props = {
 };
 type State = {
     show: number,
+    inBackground: boolean,
     propsBG: {[index: string]: any},
     propsM: {[index: string]: any},
 
@@ -41,6 +42,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         
         this.state = {
             show: 0,
+            inBackground: false,
             propsBG: this.props_bg_off,
             propsM: { 'top': '-64px', 'opacity': '0' },
 
@@ -66,8 +68,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
     //Keyboard stuffs
     handleKeypress = (ev: KeyboardEvent) => {
         //Esc to close the editing window
-        if (ev.key === 'Escape') {
-            this.close();
+        if (ev.key === 'Escape' && this.state.inBackground === false) {
+            if (this.state.editing.edit === false) {
+                this.close();
+            } else {
+                this.quitEdit();
+            }
         }
     }
 
@@ -400,11 +406,14 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 >Cancel</button>
                 <button
                     key='admin_qe_reset'
-                    onClick={() => {this.props.promptOpen(
-                        'Are you sure you want to reset all of the data to how it is?',
-                        () => { this.reset(); },
-                        () => {}
-                    )}}
+                    onClick={() => {
+                        this.props.promptOpen(
+                            'Are you sure you want to reset all of the data to how it is?',
+                            () => { this.reset(); this.setState({ inBackground: false }); },
+                            () => { this.setState({ inBackground: false }); }
+                        );
+                        this.setState({ inBackground: true });
+                    }}
                     className='admin-qe-btn'
                 >Reset</button>
             </div>
