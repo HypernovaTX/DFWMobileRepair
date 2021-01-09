@@ -13,7 +13,7 @@ type Props = {
     vehicleModel: string,
     newQuote: boolean,
     endEditAction: () => void,
-    promptOpen: (msg: string, action: () => any, cancel: () => any) => void,
+    promptOpen: (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => void,
 };
 type State = {
     show: number,
@@ -57,6 +57,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 'item': '',
                 'value': '',
                 'price': '',
+                'error': false,
             },
         }
     }
@@ -180,6 +181,13 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     saveEdit(): void {
         const { editing, DATA } = this.state;
+
+        //EMPTY VALUE
+        if (editing.value === '') {
+            this.props.promptOpen('Inputs cannot be empty!', () => {}, () => {}, true);
+            return;
+        }
+
         //Update category
         if (editing.item === '' && !DATA.hasOwnProperty(editing.value)) {
             DATA[editing.value] = DATA[editing.cat];
@@ -281,7 +289,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     // |QUOTE PRICING --------> (EDITING)
                     if (editing['cat'] === category && editing['item'] === item && editing['price'] === DATA[category][item] && editing['edit'] === true) {
                         itemValue = <span key={`qe_itemp_${forKey}`} className='qe-bar-text'>
-                            <input key={`qe_item_inputp_${forKey}`} className='edit-item-txt short' value={editing['value']}
+                            $<input key={`qe_item_inputp_${forKey}`} className='edit-item-txt short' value={editing['value']} type='number' min='0.01'
                                 onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
                                     editing['value'] = change.target.value;
                                     this.setState({ editing });
@@ -408,9 +416,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     key='admin_qe_reset'
                     onClick={() => {
                         this.props.promptOpen(
-                            'Are you sure you want to reset all of the data to how it is?',
-                            () => { this.reset(); this.setState({ inBackground: false }); },
-                            () => { this.setState({ inBackground: false }); }
+                            'Are you sure you want to reset all of the data to how it is?', 
+                            () => { this.reset(); this.setState({ inBackground: false }); }, 
+                            () => { this.setState({ inBackground: false }); },
+                            false
                         );
                         this.setState({ inBackground: true });
                     }}

@@ -15,6 +15,7 @@ type State = {
     pm_message: string,
     pm_action: () => any,
     pm_cancel: () => any,
+    pm_noCancel: boolean,
     toDelete: {[index: string]: any},
     toEdit: {[index: string]: any},
 };
@@ -32,6 +33,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
             pm_message: '',
             pm_action: () => {},
             pm_cancel: () => {},
+            pm_noCancel: false,
             toDelete: {
                 'id': '',
                 'year': '',
@@ -99,11 +101,12 @@ export default class ManageQuotes extends React.Component<Props, State> {
             });
     }
 
-    specialMessage = (msg: string, action: () => any, cancel: () => any) => {
+    specialMessage = (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => {
         this.setState({
             pm_message: msg,
             pm_action: action, 
-            pm_cancel: cancel
+            pm_cancel: cancel,
+            pm_noCancel: confirmOnly,
         });
         if (this.dialogue_ref.current !== null) {
             this.dialogue_ref.current.open();
@@ -218,13 +221,14 @@ export default class ManageQuotes extends React.Component<Props, State> {
     /************************************************** TEMPLATE **************************************************/
 
     template(): JSX.Element {
-        const { pm_message, pm_action, pm_cancel, toEdit } = this.state;
+        const { pm_message, pm_action, pm_cancel, pm_noCancel, toEdit } = this.state;
         return <div key='mq_body' className='mq-body'>
             {this.template_listYears()}
             <AdminPrompt
                 message={pm_message}
                 action={pm_action}
                 cancel={pm_cancel}
+                noCancel={pm_noCancel}
 
                 ref={this.dialogue_ref}
             />

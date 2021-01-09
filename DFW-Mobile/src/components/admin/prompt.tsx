@@ -4,6 +4,7 @@ type Props = {
     message: string,
     action: () => any,
     cancel: () => any,
+    noCancel?: boolean | null,
 };
 type State = {
     show: number,
@@ -79,6 +80,17 @@ export default class AdminPrompt extends React.Component<Props, State> {
     template(): JSX.Element {
         const { message } = this.props;
         const { propsM } = this.state;
+        let cancel =
+            <button
+                key='admin_pm_cancel'
+                onClick={() => { this.setState({ yes: false }); this.close(); }}
+                className='admin-pm-btn'
+            >No</button>;
+        let okayButtonText = 'Yes';
+        if (this.props?.noCancel === true) {
+            cancel = <React.Fragment key='cxl_placeholder'></React.Fragment>;
+            okayButtonText = 'Okay';
+        }
         return(<div key='admin_pm_dbox' className='admin-pm-box' style={propsM}>
             <div key='admin_pm_msg' className='admin-pm-msg'>{message}</div>
             <div key='admin_pm_bc'  className='admin-pm-buttonbox'>
@@ -86,12 +98,8 @@ export default class AdminPrompt extends React.Component<Props, State> {
                     key='admin_pm_confirm'
                     onClick={() => { this.setState({ yes: true }); this.close(); }}
                     className='admin-pm-btn main'
-                >Yes</button>
-                <button
-                    key='admin_pm_cancel'
-                    onClick={() => { this.setState({ yes: false }); this.close(); }}
-                    className='admin-pm-btn'
-                >No</button>
+                >{okayButtonText}</button>
+                {cancel}
             </div>
         </div>
         );
