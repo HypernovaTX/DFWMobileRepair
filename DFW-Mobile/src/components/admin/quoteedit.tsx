@@ -56,6 +56,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 'cat': '',
                 'item': '',
                 'value': '',
+                'value2': '',
                 'price': '',
                 'error': false,
             },
@@ -194,7 +195,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         //EMPTY VALUE
         if (editing.value === '') {
-            this.props.promptOpen('Inputs cannot be empty!', () => {}, () => {}, true);
+            this.props.promptOpen('Input cannot be empty!', () => {}, () => {}, true);
             return;
         }
 
@@ -216,6 +217,29 @@ export default class QuoteEdit extends React.Component<Props, State> {
         this.quitEdit();
     }
 
+    createKey():void {
+        const { editing, DATA } = this.state;
+
+        const creationErrorMessage = (): void => {
+            this.props.promptOpen('Inputs cannot be empty!', () => {}, () => {}, true);
+        }
+
+        //create quote item
+        if (editing.item !== '') {
+            if (editing.value === '' || editing.value2 === '') { creationErrorMessage(); return; }
+            DATA[editing.cat][editing.value] = editing.value2;
+            this.setState({ DATA });
+        }
+        //create category
+        else {
+            if (editing.value === '') { creationErrorMessage(); return; }
+            DATA[editing.cat] = {};
+            this.setState({ DATA });
+        }
+
+        this.quitEdit();
+    }
+
     quitEdit(): void {
         this.setState({
             editing: {
@@ -223,6 +247,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 'cat': '',
                 'item': '',
                 'value': '',
+                'value2': '',
                 'price': '',
             }
         })
@@ -248,7 +273,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     
 
     /************************************************** QE - TEMPLATE **************************************************/
-    //Template for all of the quote items on the editing windoe
+    //Template for all of the quote items on the editing window (it is a mess unfortunately)
     template_formatData(): JSX.Element {
         const { DATA, editing } = this.state;
         let output = [<div key='qe_placeholder_cat'></div>];
@@ -321,7 +346,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                                 key={`qe_itemI_t_${forKey}`}
                                 className='qe-bar-button delete'
                                 onClick={() => {
-                                    this.props.promptOpen(`Confirm to delete ${category} - ${item}?`, () => {
+                                    this.props.promptOpen(`Confirm to delete "${category} - ${item}"?`, () => {
                                         this.deleteKey(category, item);
                                     }, () => {}, false);
                                 }}
@@ -334,7 +359,48 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         </div>
                     );
                 }
-                addon.push(<div key={`qe_addmore_i_${category}`} className='qe-item add'>Add Quote</div>);
+
+                //ITEM - Add quote bar 
+                // ----- EDITING -----
+                if (editing.cat === category && editing.item === '_<!!NewItem!!>_' && editing.edit === true) {
+                    addon.push(<div key={`qe_addmore_i_${category}`} className='qe-item'>
+                        <span key={`qe_item_add_name_${category}`} className='qe-bar-text left'>
+                            <input key={`qe_item_add_name_i_${category}`} className='edit-item-txt' value={editing.value}
+                                onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
+                                    editing['value'] = change.target.value;
+                                    this.setState({ editing });
+                                }}
+                            ></input>
+                        </span>
+                        <span key={`qe_item_add_price_${category}`} className='qe-bar-text'>
+                            $<input key={`qe_item_add_price_i_${category}`} className='edit-item-txt short' value={editing.value2} type='number' min='0.01'
+                                onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
+                                    editing['value2'] = change.target.value;
+                                    this.setState({ editing });
+                                }}
+                            ></input>
+                        </span>
+                        <span key={`qe_item_add_e_${category}`} className='qe-bar-text right'>
+                            <span key={`qe_item_add_eq_${category}`} className='qe-bar-button ok' onClick={() => { this.createKey() }}>
+                                <FontAwesomeIcon icon={faCheck}/>
+                            </span>
+                            <span key={`qe_item_add_ed_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                                <FontAwesomeIcon icon={faTimes}/>
+                            </span>
+                        </span>
+                    </div>);
+                }
+                // ----- BUTTON -----
+                else {
+                    addon.push(<div
+                        key={`qe_addmore_i_${category}`}
+                        className='qe-item add'
+                        onClick={() => {
+                            editing.cat = category; editing.item = '_<!!NewItem!!>_'; editing.edit = true;
+                            this.setState({ editing });
+                        }}
+                    >Add Quote</div>);
+                }
                 addon.shift();
             }
 
