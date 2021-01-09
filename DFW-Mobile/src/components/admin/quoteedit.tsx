@@ -331,7 +331,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     // |QUOTE PRICING --------> (EDITING)
                     if (editing['cat'] === category && editing['item'] === item && editing['price'] === DATA[category][item] && editing['edit'] === true) {
                         itemValue = <span key={`qe_itemp_${forKey}`} className='qe-bar-text'>
-                            $<input key={`qe_item_inputp_${forKey}`} className='edit-item-txt short' value={editing['value']} type='number' min='0.01'
+                            $<input key={`qe_item_inputp_${forKey}`} className='edit-item-txt short' value={editing['value']} type='number' min='0.00'
                                 onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
                                     editing['value'] = change.target.value;
                                     this.setState({ editing });
@@ -407,7 +407,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                             editing.item = '_<!!NewItem!!>_';
                             editing.edit = true;
                             editing.value = '';
-                            editing.value2 = '';
+                            editing.value2 = '0.00';
                             this.setState({ editing });
                         }}
                     >Add Quote</div>);
