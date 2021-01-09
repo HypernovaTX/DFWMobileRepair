@@ -38,8 +38,12 @@ export default class AdminPrompt extends React.Component<Props, State> {
     }
     keypress = (ev: KeyboardEvent) => {
         if (this.state.show === 2) {
-            if (ev.key === 'y' || ev.key === 'Enter') { this.setState({ yes: true }); this.close(); } 
-            if (ev.key === 'n' || ev.key === 'Escape') { this.setState({ yes: false }); this.close(); } 
+            if (this.props?.noCancel === false || this.props?.noCancel === undefined) {
+                if (ev.key === 'y' || ev.key === 'Enter') { this.setState({ yes: true }); this.close(); } 
+                if (ev.key === 'n' || ev.key === 'Escape') { this.setState({ yes: false }); this.close(); } 
+            } else {
+                if (ev.key === 'o' || ev.key === 'Enter') { this.setState({ yes: true }); this.close(); } 
+            }
         }
     };
 

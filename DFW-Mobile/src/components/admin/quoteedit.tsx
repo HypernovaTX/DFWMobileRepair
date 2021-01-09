@@ -126,7 +126,17 @@ export default class QuoteEdit extends React.Component<Props, State> {
         });
     }
 
-    /** WINDOW */
+    deleteKey(cat: string, item: string | null = null): void {
+        const { DATA } = this.state;
+        if (item !== null)
+            { delete DATA[cat][item]; }
+        else
+            { delete DATA[cat]; }
+        
+        this.setState({ DATA });
+    }
+
+    /************************************************** QE - WINDOW **************************************************/
     open(): void {
         this.setState({
             show: 1,
@@ -310,7 +320,11 @@ export default class QuoteEdit extends React.Component<Props, State> {
                             <span
                                 key={`qe_itemI_t_${forKey}`}
                                 className='qe-bar-button delete'
-                                onClick={() => {}}
+                                onClick={() => {
+                                    this.props.promptOpen(`Confirm to delete ${category} - ${item}?`, () => {
+                                        this.deleteKey(category, item);
+                                    }, () => {}, false);
+                                }}
                             ><FontAwesomeIcon icon={faTrash}/></span>
                         </span>;
                     
@@ -324,12 +338,22 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 addon.shift();
             }
 
+            //Category delete
+            const catDelete =
+                <span key={`qe_cat_s_${category}`} className='qe-bar-text right'>
+                    <span key={`qe_cat_st_${category}`} className='qe-bar-button delete'
+                        onClick={() => { this.props.promptOpen(`Confirm to delete "${category}"?`, () => {
+                            this.deleteKey(category);
+                        }, () => {}, false);}}
+                    ><FontAwesomeIcon icon={faTrash}/></span></span>;
+
             //Category template (NOT EDITING)
             let catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
                 {category}
                 <span key={`qe_car_e_${category}`} className='qe-bar-button' onClick={() => { this.startEdit(category, category) }}>
                     <FontAwesomeIcon icon={faPen}/>
                 </span>
+                {catDelete}
             </span>;
 
             //Category template (EDITING)
@@ -347,6 +371,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     <span key={`qe_car_eq_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
                         <FontAwesomeIcon icon={faTimes}/>
                     </span>
+                    {catDelete}
                 </span>;
             }
             
