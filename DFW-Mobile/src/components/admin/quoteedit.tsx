@@ -233,7 +233,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         //create category
         else {
             if (editing.value === '') { creationErrorMessage(); return; }
-            DATA[editing.cat] = {};
+            DATA[editing.value] = {};
             this.setState({ DATA });
         }
 
@@ -396,7 +396,11 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         key={`qe_addmore_i_${category}`}
                         className='qe-item add'
                         onClick={() => {
-                            editing.cat = category; editing.item = '_<!!NewItem!!>_'; editing.edit = true;
+                            editing.cat = category;
+                            editing.item = '_<!!NewItem!!>_';
+                            editing.edit = true;
+                            editing.value = '';
+                            editing.value2 = '';
                             this.setState({ editing });
                         }}
                     >Add Quote</div>);
@@ -448,7 +452,42 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 </div>
             );
         }
-        output.push(<div key='qe_addmore' className='qe-cat add'>Add Category</div>);
+
+        //CAT - Add category bar 
+        //----- editing
+        if (editing.cat === '_<!!NewCategory!!>_' && editing.edit === true) {
+            output.push(<div key={`qe_addmore`} className='qe-cat'>
+                <span key={`qe_addmore_name`} className='qe-bar-text left'>
+                    <input key={`qe_addmore_name_i`} className='edit-item-txt' value={editing.value}
+                        onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
+                            editing['value'] = change.target.value;
+                            this.setState({ editing });
+                        }}
+                    ></input>
+                </span>
+                <span key={`qe_addmore_e`} className='qe-bar-text right'>
+                    <span key={`qe_addmore_eq`} className='qe-bar-button ok' onClick={() => { this.createKey() }}>
+                        <FontAwesomeIcon icon={faCheck}/>
+                    </span>
+                    <span key={`qe_addmore_ed`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                        <FontAwesomeIcon icon={faTimes}/>
+                    </span>
+                </span>
+            </div>);
+        }
+        //----- button
+        else {
+            output.push(<div key='qe_addmore' className='qe-cat add' onClick={() => {
+                editing.item = '';
+                editing.cat = '_<!!NewCategory!!>_';
+                editing.edit = true;
+                editing.value = '';
+                this.setState({ editing });
+            }}>Add Category</div>);
+        }
+
+
+
         output.shift();
         return (<React.Fragment key='qe_list'>{output}</React.Fragment>);
     }
