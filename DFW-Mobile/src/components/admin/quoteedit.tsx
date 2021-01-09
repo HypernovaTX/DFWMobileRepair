@@ -112,12 +112,19 @@ export default class QuoteEdit extends React.Component<Props, State> {
     };
 
     saveData(): void {
+        const { YEAR, MAKE, MODEL, DATA } = this.state;
+
+        if (YEAR === '' || MAKE === '' || MODEL === '') {
+            this.props.promptOpen(`Vehicle's "Year", "Make", and "Model" cannot be empty!`, () => {}, () => {}, true);
+            return;
+        }
+
         const postData = new FormData();
         postData.append('id', this.props.vehicleID);
-        postData.append('year', this.state.YEAR);
-        postData.append('make', this.state.MAKE);
-        postData.append('model', this.state.MODEL);
-        postData.append('data', this.state.DATA.stringify());
+        postData.append('year', YEAR);
+        postData.append('make', MAKE);
+        postData.append('model', MODEL);
+        postData.append('data', JSON.stringify(DATA));
 
         let param = 'update';
         if (this.props.newQuote === true) { param = 'create'; }
@@ -288,7 +295,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     //Name of the quote
                     let itemName = 
                         <span key={`qe_item_${forKey}`} className='qe-bar-text left'>
-                            {item}
+                            <span key={`qe_item_et_${forKey}`} className='qe-bar-text-span'>{item}</span>
                             <span key={`qe_item_e_${forKey}`} className='qe-bar-button' onClick={() => { this.startEdit(item, category, item) }}>
                                 <FontAwesomeIcon icon={faPen}/>
                             </span>
@@ -419,7 +426,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
             //Category template (NOT EDITING)
             let catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
-                {category}
+                <span key={`qe_cat_et_${category}`} className='qe-bar-text-span'>{category}</span>
                 <span key={`qe_car_e_${category}`} className='qe-bar-button' onClick={() => { this.startEdit(category, category) }}>
                     <FontAwesomeIcon icon={faPen}/>
                 </span>
@@ -534,7 +541,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
                 <button
                     key='admin_qe_confirm'
-                    onClick={() => { this.close(); }}
+                    onClick={() => { this.saveData(); }}
                     className='admin-qe-btn main'
                 >Update</button>
                 <button

@@ -429,6 +429,12 @@
     float: right;
     margin: initial;
 }
+.qe-bar-text-span {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 120px;
+    overflow: hidden;
+}
 
 .edit-item-txt {
     font-size: 1em;
