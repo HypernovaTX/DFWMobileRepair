@@ -503,65 +503,67 @@ export default class QuoteEdit extends React.Component<Props, State> {
     template(): JSX.Element {
         const { propsM, YEAR, MAKE, MODEL } = this.state;
         return(<div key='admin_qe_dbox' className='admin-qe-box' style={propsM}>
-            <div key='admin_qe_title_sub' className='admin-qe-ttext'>Vehicle Make/Model:</div>
-            <div key='admin_qe_title' className='admin-qe-title'>
-                <input
-                    key={`admin_qe_year`}
-                    className='admin-qe-title-txt'
-                    value={YEAR}
-                    type='number'
-                    placeholder='year'
-                    size={1}
-                    onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                        this.setState({ YEAR: e.currentTarget.value.replace(/\D/, '') });
-                    }}></input>
-                <input
-                    key={`admin_qe_make`}
-                    className='admin-qe-title-txt'
-                    value={MAKE}
-                    placeholder='make'
-                    size={10}
-                    onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                        this.setState({ MAKE: e.currentTarget.value });
-                    }}></input>
-                <input
-                    key={`admin_qe_model`}
-                    className='admin-qe-title-txt'
-                    value={MODEL}
-                    placeholder='model'
-                    size={20}
-                    onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                        this.setState({ MODEL: e.currentTarget.value });
-                    }}></input>
-            </div>
-            <div key='admin_qe_content_sub' className='admin-qe-ttext'>List of quotes:</div>
-            <div key='admin_qe_content' className='admin-qe-content'>
-                {this.template_formatData()}
-            </div>
-            <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
-                <button
-                    key='admin_qe_confirm'
-                    onClick={() => { this.saveData(); }}
-                    className='admin-qe-btn main'
-                >Update</button>
-                <button
-                    key='admin_qe_cancel'
-                    onClick={() => { this.close(); }}
-                    className='admin-qe-btn'
-                >Cancel</button>
-                <button
-                    key='admin_qe_reset'
-                    onClick={() => {
-                        this.props.promptOpen(
-                            'Are you sure you want to reset all of the data to how it is?', 
-                            () => { this.reset(); this.setState({ inBackground: false }); }, 
-                            () => { this.setState({ inBackground: false }); },
-                            false
-                        );
-                        this.setState({ inBackground: true });
-                    }}
-                    className='admin-qe-btn'
-                >Reset</button>
+            <div key='admin_qe_vehicle_info' className='admin-qe-block'>
+                <div key='admin_qe_title_sub' className='admin-qe-ttext'>Vehicle Make/Model:</div>
+                <div key='admin_qe_title' className='admin-qe-title'>
+                    <input
+                        key={`admin_qe_year`}
+                        className='admin-qe-title-txt'
+                        value={YEAR}
+                        type='number'
+                        placeholder='year'
+                        size={1}
+                        onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                            this.setState({ YEAR: e.currentTarget.value.replace(/\D/, '') });
+                        }}></input>
+                    <input
+                        key={`admin_qe_make`}
+                        className='admin-qe-title-txt'
+                        value={MAKE}
+                        placeholder='make'
+                        size={10}
+                        onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                            this.setState({ MAKE: e.currentTarget.value });
+                        }}></input>
+                    <input
+                        key={`admin_qe_model`}
+                        className='admin-qe-title-txt'
+                        value={MODEL}
+                        placeholder='model'
+                        size={20}
+                        onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                            this.setState({ MODEL: e.currentTarget.value });
+                        }}></input>
+                </div>
+                <div key='admin_qe_content_sub' className='admin-qe-ttext'>List of quotes:</div>
+                <div key='admin_qe_content' className='admin-qe-content'>
+                    {this.template_formatData()}
+                </div>
+                <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
+                    <button
+                        key='admin_qe_confirm'
+                        onClick={() => { this.saveData(); }}
+                        className='admin-qe-btn main'
+                    >Update</button>
+                    <button
+                        key='admin_qe_cancel'
+                        onClick={() => { this.close(); }}
+                        className='admin-qe-btn'
+                    >Cancel</button>
+                    <button
+                        key='admin_qe_reset'
+                        onClick={() => {
+                            this.props.promptOpen(
+                                'Are you sure you want to reset all of the data to how it is?', 
+                                () => { this.reset(); this.setState({ inBackground: false }); }, 
+                                () => { this.setState({ inBackground: false }); },
+                                false
+                            );
+                            this.setState({ inBackground: true });
+                        }}
+                        className='admin-qe-btn'
+                    >Reset</button>
+                </div>
             </div>
         </div>
         );

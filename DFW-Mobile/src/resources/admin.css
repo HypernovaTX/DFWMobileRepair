@@ -303,8 +303,16 @@
     margin: auto;
     min-width: 30%;
     position: relative;
-    transition: 200ms linear all;
+    transition: 200ms linear top, 200ms linear opacity;
+    -webkit-user-select: none;
     user-select: none;
+    /*resize: vertical;
+    overflow-y: auto;*/
+    overflow: hidden;
+}
+.admin-qe-block {
+    display: block;
+    /*height: 100%;*/
 }
 .admin-qe-ttext {
     color: #333;
@@ -366,8 +374,8 @@
     background: rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     margin: 4px 16px;
-    min-height: 50vh;
-    max-height: 50vh;
+    height: 60vh;
+    /*max-height: 50vh;*/
     padding: 8px;
     overflow-x: hidden;
     overflow-y: scroll;
