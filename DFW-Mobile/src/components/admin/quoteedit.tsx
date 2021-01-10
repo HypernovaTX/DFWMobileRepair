@@ -12,7 +12,7 @@ type Props = {
     vehicleMake: string,
     vehicleModel: string,
     newQuote: boolean,
-    endEditAction: () => void,
+    endEditAction: (refresh: boolean) => void,
     promptOpen: (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => void,
 };
 type State = {
@@ -27,6 +27,8 @@ type State = {
     DATA: {[index: string]: any},
     OLD: string,
     editing: {[index: string]: any},
+
+    refresh: boolean,
 };
 
 export default class QuoteEdit extends React.Component<Props, State> {
@@ -60,6 +62,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 'price': '',
                 'error': false,
             },
+
+            refresh: false
         }
     }
     /************************************************** QE - EVENTS **************************************************/
@@ -124,6 +128,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         postData.append('make', MAKE);
         postData.append('model', MODEL);
         postData.append('data', JSON.stringify(DATA));
+        this.setState({ refresh: true });
 
         let param = 'update';
         if (this.props.newQuote === true) { param = 'create'; }
@@ -150,6 +155,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             show: 1,
             propsBG: this.props_bg_on,
             propsM: { 'top': '0px', 'opacity': '1' },
+            refresh: false,
         });
         setTimeout(() => {
             //Have to delay getData since it take a delay to have vehicle props to be sent over
@@ -166,7 +172,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     close(): void {
-        const { show } = this.state;
+        const { show, refresh } = this.state;
         if (show === 2) {
             this.setState({
                 show: 3,
@@ -179,7 +185,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     propsBG: this.props_bg_off,
                     propsM: { 'top': '-64px', 'opacity': '0' },
                 });
-                this.props.endEditAction();
+                this.props.endEditAction(refresh);
             }, 250);
         }
     }

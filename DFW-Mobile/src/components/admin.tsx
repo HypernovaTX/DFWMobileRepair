@@ -333,7 +333,7 @@ export default class Admin extends React.Component<Props, State> {
     loading(): JSX.Element {
         const { loading, loadingLast, loadCanEnd, endLoad } = this.state;
         const styleOff = { 'opacity': 0, 'zIndex': -1 };
-        const styleOn = { 'opacity': 1, 'zIndex': 10 };
+        const styleOn = { 'opacity': 1, 'zIndex': 30 };
         let style = (loading) ? styleOn : styleOff;
 
         if (loading !== loadingLast) {

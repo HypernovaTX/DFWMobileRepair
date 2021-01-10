@@ -67,6 +67,8 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 responseArray.forEach((year: any) => {
                     if (list[year] === undefined) {
                         list[year] = { '_show': false };
+                    } else if (list[year]?._show === true) {
+                        this.getMakeModel(year);
                     }
                 });
                 this.setState({ list });
@@ -93,8 +95,12 @@ export default class ManageQuotes extends React.Component<Props, State> {
                         if (list[year][make][splitInfo[0]] === undefined) {
                             list[year][make][splitInfo[0]] = { '_no_delete': false, '_no_edit': false, id: splitInfo[1] };
                         }
-                    } else if (list[year][key] === undefined) {
-                        list[year][key] = { '_show': false };
+                    } else {
+                        if (list[year][key] === undefined) {
+                            list[year][key] = { '_show': false };
+                        } else  if (list[year][key]?._show === true) {
+                            this.getMakeModel(year, key);
+                        }
                     }
                 });
                 this.setState({ list });
@@ -176,10 +182,13 @@ export default class ManageQuotes extends React.Component<Props, State> {
             this.edit_ref.current.open();
         }
     }
-    endEdit(): void {
+    endEdit = (refresh: boolean): void => {
         const { list, toEdit } = this.state;
         if (toEdit.year !== '' && toEdit.make !== '' && toEdit.model !== '') {
             list[toEdit.year][toEdit.make][toEdit.model]['_no_edit'] = false;
+        }
+        if (refresh === true) {
+            this.getYears();
         }
         this.setState({ list });
     }
@@ -240,7 +249,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 vehicleMake={toEdit.make}
                 vehicleModel={toEdit.model}
                 newQuote={toEdit.new}
-                endEditAction={() => {this.endEdit()}}
+                endEditAction={this.endEdit}
                 promptOpen={this.specialMessage}
 
                 ref={this.edit_ref}
