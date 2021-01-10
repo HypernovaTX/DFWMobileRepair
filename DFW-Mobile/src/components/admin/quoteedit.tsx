@@ -502,6 +502,22 @@ export default class QuoteEdit extends React.Component<Props, State> {
     //Main template
     template(): JSX.Element {
         const { propsM, YEAR, MAKE, MODEL } = this.state;
+        const { newQuote } = this.props;
+        let reset = <React.Fragment key='admin_qe_reset_empty'></React.Fragment>;
+        let saveButtonName = 'Create';
+        if (newQuote === false) {
+            reset = <button key='admin_qe_reset'
+                onClick={() => {
+                    this.props.promptOpen('Are you sure you want to reset all of the data to how it is?', 
+                        () => { this.reset(); this.setState({ inBackground: false }); }, 
+                        () => { this.setState({ inBackground: false }); }, 
+                        false);
+                    this.setState({ inBackground: true });
+                }}
+                className='admin-qe-btn'
+            >Reset</button>;
+            saveButtonName = 'Update';
+        }
         return(<div key='admin_qe_dbox' className='admin-qe-box' style={propsM}>
             <div key='admin_qe_vehicle_info' className='admin-qe-block'>
                 <div key='admin_qe_title_sub' className='admin-qe-ttext'>Vehicle Make/Model:</div>
@@ -544,25 +560,13 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         key='admin_qe_confirm'
                         onClick={() => { this.saveData(); }}
                         className='admin-qe-btn main'
-                    >Update</button>
+                    >{saveButtonName}</button>
                     <button
                         key='admin_qe_cancel'
                         onClick={() => { this.close(); }}
                         className='admin-qe-btn'
                     >Cancel</button>
-                    <button
-                        key='admin_qe_reset'
-                        onClick={() => {
-                            this.props.promptOpen(
-                                'Are you sure you want to reset all of the data to how it is?', 
-                                () => { this.reset(); this.setState({ inBackground: false }); }, 
-                                () => { this.setState({ inBackground: false }); },
-                                false
-                            );
-                            this.setState({ inBackground: true });
-                        }}
-                        className='admin-qe-btn'
-                    >Reset</button>
+                    {reset}
                 </div>
             </div>
         </div>

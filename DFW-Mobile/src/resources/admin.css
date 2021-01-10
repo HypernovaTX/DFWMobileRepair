@@ -129,6 +129,20 @@
 .nav-items:hover { background: rgba(0, 0, 0, 0.1); }
 .nav-items:active { background: rgba(0, 0, 0, 0.2); }
 
+.nav-button {
+    background: #ca4a00;
+    color: #FFF;
+    font-size: 1.1em;
+    border: none;
+    padding: 5px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 200ms linear all;
+    margin: 0px 16px;
+}
+.nav-button:hover { background: #ff5e00;}
+.nav-button:active { background: #ff8945;}
+
 .admin-contain {
     padding: 96px;
     padding-top: 80px;

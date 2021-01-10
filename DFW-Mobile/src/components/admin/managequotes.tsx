@@ -178,7 +178,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
     }
     endEdit(): void {
         const { list, toEdit } = this.state;
-        if (toEdit?.year?.make?.model?._no_edit === true) {
+        if (toEdit.year !== '' && toEdit.make !== '' && toEdit.model !== '') {
             list[toEdit.year][toEdit.make][toEdit.model]['_no_edit'] = false;
         }
         this.setState({ list });
