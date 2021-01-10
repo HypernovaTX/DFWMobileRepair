@@ -161,13 +161,13 @@ export default class ManageQuotes extends React.Component<Props, State> {
         }
     }
 
-    startEditing(id: string, year: string, make: string, model: string, New: boolean): void {
+    startEditing(New: boolean, id: string | null = null, year: string | null = null, make: string | null = null, model: string | null = null): void {
         this.setState({
             toEdit: {
-                'id': id,
-                'year': year,
-                'make': make,
-                'model': model,
+                'id': id || '',
+                'year': year || '',
+                'make': make || '',
+                'model': model || '',
                 'new': New,
             },
         });
@@ -178,7 +178,9 @@ export default class ManageQuotes extends React.Component<Props, State> {
     }
     endEdit(): void {
         const { list, toEdit } = this.state;
-        list[toEdit.year][toEdit.make][toEdit.model]['_no_edit'] = false;
+        if (toEdit?.year?.make?.model?._no_edit === true) {
+            list[toEdit.year][toEdit.make][toEdit.model]['_no_edit'] = false;
+        }
         this.setState({ list });
     }
 
@@ -237,7 +239,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 vehicleYear={toEdit.year}
                 vehicleMake={toEdit.make}
                 vehicleModel={toEdit.model}
-                newQuote={toEdit.edit}
+                newQuote={toEdit.new}
                 endEditAction={() => {this.endEdit()}}
                 promptOpen={this.specialMessage}
 
@@ -319,7 +321,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                         onClick={() => {
                             list[year][make][model]['_no_edit'] = true;
                             this.setState({ list });
-                            this.startEditing(vehicle['id'], year, make, model, false);
+                            this.startEditing(false, vehicle['id'], year, make, model);
                         }}
                     ><FontAwesomeIcon icon={faEdit} /> Edit</button>
                     <button

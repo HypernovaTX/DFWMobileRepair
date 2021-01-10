@@ -4,6 +4,8 @@ import './../resources/admin.css'
 import './../resources/user.css';
 import * as CONFIG from '../config.json';
 import ManageQuotes from './admin/managequotes'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
 };
@@ -34,6 +36,7 @@ type State = {
 
 export default class Admin extends React.Component<Props, State> {
     private userMenuItem: [string, number][];
+    private component_ref: React.RefObject<ManageQuotes | ManageQuotes>;
     constructor(p: Props) {
         super(p);
 
@@ -66,6 +69,8 @@ export default class Admin extends React.Component<Props, State> {
             ['Settings', 1],
             ['Log Out', 2],
         ];
+
+        this.component_ref = React.createRef();
     }
     componentDidMount() {
         axios.defaults.withCredentials = true;
@@ -209,13 +214,22 @@ export default class Admin extends React.Component<Props, State> {
     template_adminpanel(): JSX.Element {
         const { session, menuOn, adminPanel, loggedin } = this.state;
         let panel = <div key='admin_none'></div>;
+        let additionalNav = <React.Fragment key='admin_nav_none'></React.Fragment>
         switch (adminPanel) {
-            default: panel = <ManageQuotes loggedIn={loggedin}/>; break;
+            default:  
+                panel = <ManageQuotes loggedIn={loggedin} ref={this.component_ref}/>;
+                additionalNav = <button
+                    key='acpnav_q_add'
+                    className='nav-button'
+                    onClick={() => { this.component_ref.current?.startEditing(true); }}
+                ><FontAwesomeIcon icon={faPlus} /> Add New Vehicle</button>;
+                break;
         }
 
         const hamburgerTop = this.hamburgerMenuStyle(true);
         const hamburgerCenter = (menuOn) ? { 'opacity': '0' } : { 'opacity': '1' };
         const hamburgerBottom = this.hamburgerMenuStyle(false);
+
 
         return(
             <div key='admin_main' className='admin-body'>
@@ -250,7 +264,7 @@ export default class Admin extends React.Component<Props, State> {
                     </span>
                     <span key='nav_item1' className='nav-items'>Manage Quotes</span>
                     <span key='nav_item2' className='nav-items'>Manage User</span>
-                    <span key='nav_item3' className='nav-items'>Refresh</span>
+                    {additionalNav}
                     {this.userMenu()}
                 </div>
                 <div key='admin_contain' className='admin-contain'>

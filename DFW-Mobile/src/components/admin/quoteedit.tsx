@@ -120,7 +120,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
 
         const postData = new FormData();
-        postData.append('id', this.props.vehicleID);
         postData.append('year', YEAR);
         postData.append('make', MAKE);
         postData.append('model', MODEL);
@@ -128,6 +127,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         let param = 'update';
         if (this.props.newQuote === true) { param = 'create'; }
+        else { postData.append('id', this.props.vehicleID); }
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=${param}`, postData)
         .then(() => {
             this.close();
