@@ -222,7 +222,7 @@ export default class Admin extends React.Component<Props, State> {
                     key='acpnav_q_add'
                     className='nav-button'
                     onClick={() => { this.component_ref.current?.startEditing(true); }}
-                ><FontAwesomeIcon icon={faPlus} /> Add New Vehicle</button>;
+                ><FontAwesomeIcon icon={faPlus} />  New Vehicle</button>;
                 break;
         }
 
