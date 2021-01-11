@@ -4,6 +4,7 @@ import './../resources/admin.css'
 import './../resources/user.css';
 import * as CONFIG from '../config.json';
 import ManageQuotes from './admin/managequotes'
+import ManageUsers from './admin/manageusers'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
@@ -36,7 +37,8 @@ type State = {
 
 export default class Admin extends React.Component<Props, State> {
     private userMenuItem: [string, number][];
-    private component_ref: React.RefObject<ManageQuotes | ManageQuotes>;
+    private comp_quote_ref: React.RefObject<ManageQuotes>;
+    private comp_user_ref: React.RefObject<ManageUsers>;
     constructor(p: Props) {
         super(p);
 
@@ -59,7 +61,7 @@ export default class Admin extends React.Component<Props, State> {
                 username: '',
                 password: '',
             },
-            adminPanel: 'quote',
+            adminPanel: 'Quote',
             menuHover: '',
             menuOn: false,
         }
@@ -70,7 +72,8 @@ export default class Admin extends React.Component<Props, State> {
             ['Log Out', 2],
         ];
 
-        this.component_ref = React.createRef();
+        this.comp_quote_ref = React.createRef();
+        this.comp_user_ref = React.createRef();
     }
     componentDidMount() {
         axios.defaults.withCredentials = true;
@@ -217,12 +220,15 @@ export default class Admin extends React.Component<Props, State> {
         let additionalNav = <React.Fragment key='admin_nav_none'></React.Fragment>
         switch (adminPanel) {
             default:  
-                panel = <ManageQuotes loggedIn={loggedin} ref={this.component_ref}/>;
+                panel = <ManageQuotes loggedIn={loggedin} ref={this.comp_quote_ref}/>;
                 additionalNav = <button
                     key='acpnav_q_add'
                     className='nav-button'
-                    onClick={() => { this.component_ref.current?.startEditing(true); }}
+                    onClick={() => { this.comp_quote_ref.current?.startEditing(true); }}
                 ><FontAwesomeIcon icon={faPlus} />  New Vehicle</button>;
+                break;
+            case ('User'):
+                panel = <ManageUsers loggedIn={loggedin} ref={this.comp_user_ref}/>;
                 break;
         }
 
@@ -262,8 +268,10 @@ export default class Admin extends React.Component<Props, State> {
                             ></div>
                         </div>
                     </span>
-                    <span key='nav_item1' className='nav-items'>Manage Quotes</span>
-                    <span key='nav_item2' className='nav-items'>Manage User</span>
+                    <span key='nav_item1' className='nav-items'
+                        onClick={() => {this.setState({ adminPanel: 'Quote' })}}>Manage Quotes</span>
+                    <span key='nav_item2' className='nav-items'
+                        onClick={() => {this.setState({ adminPanel: 'User' })}}>Manage User</span>
                     {additionalNav}
                     {this.userMenu()}
                 </div>

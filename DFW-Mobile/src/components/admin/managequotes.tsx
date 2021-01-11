@@ -107,6 +107,8 @@ export default class ManageQuotes extends React.Component<Props, State> {
             });
     }
 
+
+    //Can be called by other instances
     specialMessage = (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => {
         this.setState({
             pm_message: msg,
