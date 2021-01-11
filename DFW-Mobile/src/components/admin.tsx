@@ -67,8 +67,8 @@ export default class Admin extends React.Component<Props, State> {
         }
 
         this.userMenuItem = [
-            ['Profile', 0],
-            ['Settings', 1],
+            ['Preferences', 0],
+            ['Change Password', 1],
             ['Log Out', 2],
         ];
 

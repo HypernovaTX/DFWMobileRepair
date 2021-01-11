@@ -56,10 +56,11 @@ export default class ManageUsers extends React.Component<Props, State> {
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_list`)
             .then((response) => {
                 const { list } = this.state;
-                for (const uid in response.data) {
+                const jsonData = response.data; //JSON.parse() doesn't work
+                for (const uid in jsonData) {
                     if (list[uid] === undefined) { list[uid] = { '_show': false }; }
                 };
-                this.setState({ list: response.data });
+                this.setState({ list: jsonData });
             });
     };
 
@@ -77,7 +78,6 @@ export default class ManageUsers extends React.Component<Props, State> {
         let output: JSX.Element[] = [<div key={`userlist_legend`} className={`user-list-legends`}>
             <span key={`userlist_uid_legend`} className={`user-list-uid legends`}>ID</span>
             <span key={`userlist_usn_legend`} className={`user-list-username`}>Username</span>
-            <span key={`userlist_nam_legend`} className={`user-list-name`}>Name</span>
             <span key={`userlist_ema_legend`} className={`user-list-email`}>Email</span>
         </div>];
 
@@ -86,13 +86,17 @@ export default class ManageUsers extends React.Component<Props, State> {
             let evenListItem = ''; if (parseInt(list[user].uid) % 2 === 0) { evenListItem = '2'; }
             
             const tick = <span key={`userlistT_${user}`} className={`menu-tick ${on}`}>▶</span>
-
+            const rawPhone = list[user].phone;
+            const phoneNumber = rawPhone; //`${rawPhone.substring(0,3)}-${rawPhone.substring(3,6)}-${rawPhone.substring(6,10)}` || '(null)';
             output.push(<div key={`userlist_${user}`} className={`user-list${evenListItem} ${on}`} onClick={() => {this.toggleDisplayUser(user)}}>
                 {tick}
                 <span key={`userlist_uid_${user}`} className={`user-list-uid`}>{list[user].uid}</span>
                 <span key={`userlist_usn_${user}`} className={`user-list-username`}>{list[user].username}</span>
-                <span key={`userlist_nam_${user}`} className={`user-list-name`}>{list[user].name}</span>
                 <span key={`userlist_ema_${user}`} className={`user-list-email`}>{list[user].email}</span>
+                <span key={`userlist_nam_${user}`} className={`user-list-name`}>Name: {list[user].name}</span>
+                <span key={`userlist_pho_${user}`} className={`user-list-phone`}>Phone: {phoneNumber}</span>
+                <span key={`userlist_add_${user}`} className={`user-list-address`}>Address: {list[user].address}</span>
+                <span key={`userlist_joi_${user}`} className={`user-list-joined`}>Joined: {list[user].joined}</span>
             </div>);
         });
         return <React.Fragment key={`user-contain`}>{output}</React.Fragment>;

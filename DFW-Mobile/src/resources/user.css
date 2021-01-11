@@ -18,7 +18,7 @@
 
 .user-icon {
     position: absolute;
-    right: 0px;
+    right: 24px;
     overflow-x: hidden;
     display: flex;
 }
@@ -65,7 +65,7 @@
     display: grid;
     position: fixed;
     top: 3em;
-    right: 0px;
+    right: 24px;
     /*backdrop-filter: blur(8px);*/
     box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.5);
 }

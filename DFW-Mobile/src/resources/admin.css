@@ -491,24 +491,27 @@
 .user-list2:hover { background: #C8C8C8; }
 .user-list2:active { background: #CCC; }
 
-.user-list-uid, .user-list-username, .user-list-name, .user-list-email {
+.user-list-uid, .user-list-username, .user-list-email {
     display: inline-block;
     margin-top: 0px;
     font-size: 0.9em;
 }
-.user-list-phone { display: none; }
+.user-list-phone, .user-list-name, .user-list-address, .user-list-joined {
+    display: block;
+    height: 0em;
+    font-size: 0em;
+    overflow: hidden;
+    transition: 200ms linear all;
+}
 .user-list-uid { width: 2%; }
-.user-list-username, .user-list-name, .user-list-email { width: 20%; }
+.user-list-username, .user-list-email { width: 20%; }
 .user-list-uid.legends { margin-left: 1em; }
 
-.on .user-list-uid, .on .user-list-username {
-    font-size: 0.9em;
-}
+.on .user-list-uid, .on .user-list-username, .on .user-list-name, .on .user-list-email, .on .user-list-phone { font-size: 0.9em; }
 
-.on .user-list-name, 
-.on .user-list-email, 
-.on .user-list-phone {
-    display: block;
+.on .user-list-name, .on .user-list-phone, .on .user-list-address, .on .user-list-joined
+{
+    height: 1.2em;
     margin-top: 0.5em;
     font-size: 0.75em;
 }
