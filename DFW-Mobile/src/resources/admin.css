@@ -126,6 +126,10 @@
     transition: 200ms linear all;
     background: rgba(0, 0, 0, 0);
 }
+.nav-items.active {
+    background: rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+}
 .nav-items:hover { background: rgba(0, 0, 0, 0.1); }
 .nav-items:active { background: rgba(0, 0, 0, 0.2); }
 
@@ -480,16 +484,19 @@
 .user-list, .user-list2 {
     font-size: 1.5em;
     background: #EEE;
-    padding: 12px 24px;
     transition: 200ms linear all;
     user-select: none;
-    cursor: pointer;
 }
 .user-list2 { background: #DDD; }
-.user-list:hover { background: #D8D8D8; }
-.user-list:active { background: #DDD; }
-.user-list2:hover { background: #C8C8C8; }
-.user-list2:active { background: #CCC; }
+
+.user-list-clickable {
+    padding: 12px 24px;
+    background: rgba(0, 0, 0, 0);
+    transition: 200ms linear all;
+    cursor: pointer;
+}
+.user-list-clickable:hover { background: rgba(0, 0, 0, 0.1); }
+.user-list-clickable:active { background: rgba(0, 0, 0, 0.2); }
 
 .user-list-uid, .user-list-username, .user-list-email {
     display: inline-block;
@@ -506,12 +513,50 @@
 .user-list-uid { width: 2%; }
 .user-list-username, .user-list-email { width: 20%; }
 .user-list-uid.legends { margin-left: 1em; }
-
+.user-list-username.rootuser {
+    font-weight: 600;
+    color:rgb(202, 74, 0);
+}
 .on .user-list-uid, .on .user-list-username, .on .user-list-name, .on .user-list-email, .on .user-list-phone { font-size: 0.9em; }
-
-.on .user-list-name, .on .user-list-phone, .on .user-list-address, .on .user-list-joined
-{
+.on .user-list-name, .on .user-list-phone, .on .user-list-address, .on .user-list-joined {
     height: 1.2em;
     margin-top: 0.5em;
     font-size: 0.75em;
+    margin-left: 24px;
+}
+.edit-user-icon {
+    font-size: 0.65em;
+    background: #ca4a00;
+    color: #FFF;
+    width: 12em;
+    margin: 0 4px;
+    text-align: center;
+    line-height: 1.5em;
+    border-radius: 1.2em;
+    transition: 100ms linear all;
+    cursor: pointer;
+    border: none;
+    display: inline-block;
+    padding: 6px;
+}
+.edit-user-icon:hover { background: #ff5e00; }
+.edit-user-icon:active { background: #ff8945; }
+.edit-user-icon:disabled {
+    background: #888;
+    color: #444;
+    cursor: default;
+}
+
+.user-edit-section {
+    overflow: hidden;
+    transition: 100ms linear all;
+    text-align: left;
+    font-size: 0em;
+    height: 0em;
+    margin: 0.5em;
+}
+.on .user-edit-section {
+    height: 2em;
+    margin: 0.5em;
+    font-size: 0.9em;
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faKey, faTrash } from '@fortawesome/free-solid-svg-icons';
 import AdminPrompt from './prompt';
 
 type Props = {
@@ -58,7 +58,12 @@ export default class ManageUsers extends React.Component<Props, State> {
                 const { list } = this.state;
                 const jsonData = response.data; //JSON.parse() doesn't work
                 for (const uid in jsonData) {
-                    if (list[uid] === undefined) { list[uid] = { '_show': false }; }
+                    if (list[uid]?._show === undefined
+                     || list[uid]?._no_edit === undefined
+                     || list[uid]?._no_pw === undefined 
+                     || list[uid]?._no_delete === undefined) {
+                        list[uid] = { '_show': false, '_no_edit': false, '_no_pw': false, '_no_delete': false };
+                    }
                 };
                 this.setState({ list: jsonData });
             });
@@ -82,21 +87,40 @@ export default class ManageUsers extends React.Component<Props, State> {
         </div>];
 
         userList.forEach((user: string) => {
+            //Prepare
             let on = ''; if (list[user]._show === true) { on = 'on'; }
             let evenListItem = ''; if (parseInt(list[user].uid) % 2 === 0) { evenListItem = '2'; }
-            
+            let rootUser = ''; if (list[user].role === '0') { rootUser = 'rootuser'; }
             const tick = <span key={`userlistT_${user}`} className={`menu-tick ${on}`}>▶</span>
             const rawPhone = list[user].phone;
-            const phoneNumber = rawPhone; //`${rawPhone.substring(0,3)}-${rawPhone.substring(3,6)}-${rawPhone.substring(6,10)}` || '(null)';
-            output.push(<div key={`userlist_${user}`} className={`user-list${evenListItem} ${on}`} onClick={() => {this.toggleDisplayUser(user)}}>
-                {tick}
-                <span key={`userlist_uid_${user}`} className={`user-list-uid`}>{list[user].uid}</span>
-                <span key={`userlist_usn_${user}`} className={`user-list-username`}>{list[user].username}</span>
-                <span key={`userlist_ema_${user}`} className={`user-list-email`}>{list[user].email}</span>
-                <span key={`userlist_nam_${user}`} className={`user-list-name`}>Name: {list[user].name}</span>
-                <span key={`userlist_pho_${user}`} className={`user-list-phone`}>Phone: {phoneNumber}</span>
-                <span key={`userlist_add_${user}`} className={`user-list-address`}>Address: {list[user].address}</span>
-                <span key={`userlist_joi_${user}`} className={`user-list-joined`}>Joined: {list[user].joined}</span>
+            const phoneNumber = `(${rawPhone.substring(0,3)}) ${rawPhone.substring(3,6)}-${rawPhone.substring(6,10)}` || '(null)';
+
+            //Put all of the info and items for the userbar
+            output.push(<div key={`userlist_${user}`} className={`user-list${evenListItem} ${on}`}>
+                <div key={`userlistC_${user}`} className={`user-list-clickable`} onClick={() => {this.toggleDisplayUser(user)}}>
+                    {tick}
+                    <span key={`userlist_uid_${user}`} className={`user-list-uid`}>{list[user].uid}</span>
+                    <span key={`userlist_usn_${user}`} className={`user-list-username ${rootUser}`}>
+                        {list[user].username}
+                        {(rootUser === 'rootuser') ? ' (root)' : ''}
+                    </span>
+                    <span key={`userlist_ema_${user}`} className={`user-list-email`}>{list[user].email}</span>
+                </div>
+                <span key={`userlist_nam_${user}`} className={`user-list-name`}><b>Name:</b> {list[user].name}</span>
+                <span key={`userlist_pho_${user}`} className={`user-list-phone`}><b>Phone:</b> {phoneNumber}</span>
+                <span key={`userlist_add_${user}`} className={`user-list-address`}><b>Address:</b> {list[user].address}</span>
+                <span key={`userlist_joi_${user}`} className={`user-list-joined`}><b>Joined:</b> {list[user].joined}</span>
+                <div key={`${user}_icons`} className='user-edit-section'>
+                    <button type='button' key={`${user}_edit`} className='edit-user-icon' disabled={list[user]['_no_edit']}
+                        onClick={() => { list[user]['_no_edit'] = true; this.setState({ list }); /*this.startEditing(false, vehicle['id'], year, make, model);*/ }}
+                    ><FontAwesomeIcon icon={faEdit} /> Edit User</button>
+                    <button type='button' key={`${user}_password`} className='edit-user-icon' disabled={list[user]['_no_pw']}
+                        onClick={() => { list[user]['_no_pw'] = true; this.setState({ list }); /*this.startEditing(false, vehicle['id'], year, make, model);*/ }}
+                    ><FontAwesomeIcon icon={faKey} /> Change Password</button>
+                    <button type='button' key={`${user}_edit`} className='edit-user-icon' disabled={list[user]['_no_delete']}
+                        onClick={() => { list[user]['_no_delete'] = true; this.setState({ list }); /*this.startEditing(false, vehicle['id'], year, make, model);*/ }}
+                    ><FontAwesomeIcon icon={faTrash} /> Delete User</button>
+                </div>
             </div>);
         });
         return <React.Fragment key={`user-contain`}>{output}</React.Fragment>;

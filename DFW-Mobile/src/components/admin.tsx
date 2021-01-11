@@ -268,9 +268,9 @@ export default class Admin extends React.Component<Props, State> {
                             ></div>
                         </div>
                     </span>
-                    <span key='nav_item1' className='nav-items'
+                    <span key='nav_item1' className={`nav-items ${(adminPanel === 'Quote') ? 'active' : ''}`}
                         onClick={() => {this.setState({ adminPanel: 'Quote' })}}>Manage Quotes</span>
-                    <span key='nav_item2' className='nav-items'
+                    <span key='nav_item2' className={`nav-items ${(adminPanel === 'User') ? 'active' : ''}`}
                         onClick={() => {this.setState({ adminPanel: 'User' })}}>Manage User</span>
                     {additionalNav}
                     {this.userMenu()}
