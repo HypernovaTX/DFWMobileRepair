@@ -73,19 +73,27 @@ export default class ManageUsers extends React.Component<Props, State> {
     /************************************************** TEMPLATE **************************************************/
     template_userList(): JSX.Element {
         const { list } = this.state;
-        const userList = Object.keys(list).reverse();
-        let output: JSX.Element[] = [];
+        const userList = Object.keys(list); //.reverse()
+        let output: JSX.Element[] = [<div key={`userlist_legend`} className={`user-list-legends`}>
+            <span key={`userlist_uid_legend`} className={`user-list-uid legends`}>ID</span>
+            <span key={`userlist_usn_legend`} className={`user-list-username`}>Username</span>
+            <span key={`userlist_nam_legend`} className={`user-list-name`}>Name</span>
+            <span key={`userlist_ema_legend`} className={`user-list-email`}>Email</span>
+        </div>];
 
         userList.forEach((user: string) => {
-            let on = '';
-            if (list[user]._show === true) { on = 'on'; }
+            let on = ''; if (list[user]._show === true) { on = 'on'; }
+            let evenListItem = ''; if (parseInt(list[user].uid) % 2 === 0) { evenListItem = '2'; }
+            
             const tick = <span key={`userlistT_${user}`} className={`menu-tick ${on}`}>▶</span>
 
-            output.push(<div
-                key={`userlist_${user}`}
-                className={`user-list`}
-                onClick={() => {this.toggleDisplayUser(user)}}
-            >{tick}{user}</div>);
+            output.push(<div key={`userlist_${user}`} className={`user-list${evenListItem} ${on}`} onClick={() => {this.toggleDisplayUser(user)}}>
+                {tick}
+                <span key={`userlist_uid_${user}`} className={`user-list-uid`}>{list[user].uid}</span>
+                <span key={`userlist_usn_${user}`} className={`user-list-username`}>{list[user].username}</span>
+                <span key={`userlist_nam_${user}`} className={`user-list-name`}>{list[user].name}</span>
+                <span key={`userlist_ema_${user}`} className={`user-list-email`}>{list[user].email}</span>
+            </div>);
         });
         return <React.Fragment key={`user-contain`}>{output}</React.Fragment>;
     }

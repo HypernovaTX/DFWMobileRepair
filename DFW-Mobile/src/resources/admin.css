@@ -468,3 +468,47 @@
 .edit-item-txt.short {
     width: 4em;
 }
+
+/* ----------- USER SECTION -------------- */
+.user-list-legends {
+    font-size: 1.25em;
+    background: #BBB;
+    padding: 12px 24px;
+    transition: 200ms linear all;
+    user-select: none;
+}
+.user-list, .user-list2 {
+    font-size: 1.5em;
+    background: #EEE;
+    padding: 12px 24px;
+    transition: 200ms linear all;
+    user-select: none;
+    cursor: pointer;
+}
+.user-list2 { background: #DDD; }
+.user-list:hover { background: #D8D8D8; }
+.user-list:active { background: #DDD; }
+.user-list2:hover { background: #C8C8C8; }
+.user-list2:active { background: #CCC; }
+
+.user-list-uid, .user-list-username, .user-list-name, .user-list-email {
+    display: inline-block;
+    margin-top: 0px;
+    font-size: 0.9em;
+}
+.user-list-phone { display: none; }
+.user-list-uid { width: 2%; }
+.user-list-username, .user-list-name, .user-list-email { width: 20%; }
+.user-list-uid.legends { margin-left: 1em; }
+
+.on .user-list-uid, .on .user-list-username {
+    font-size: 0.9em;
+}
+
+.on .user-list-name, 
+.on .user-list-email, 
+.on .user-list-phone {
+    display: block;
+    margin-top: 0.5em;
+    font-size: 0.75em;
+}
