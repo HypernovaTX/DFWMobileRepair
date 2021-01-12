@@ -560,3 +560,32 @@
     margin: 0.5em;
     font-size: 0.9em;
 }
+
+.admin-ue-title {
+    font-size: 1.5em;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-weight: 200;
+}
+
+.admin_ue_section {
+    display: inline-block;
+    padding: 0 2%;
+    width: 46%;
+}
+.admin_ue_section.wide {
+    width: 96%;
+}
+.admin_ue_section .admin-qe-ttext {
+    margin-left: 4px;
+}
+.admin-ue-txt {
+    width: -webkit-fill-available;
+    font-size: 1.2em;
+    border-radius: 8px;
+    border: none;
+    color: #333;
+    margin: auto 4px;
+    padding: 4px 12px;
+}

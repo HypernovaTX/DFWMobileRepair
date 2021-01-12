@@ -4,6 +4,7 @@ import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faKey, faTrash } from '@fortawesome/free-solid-svg-icons';
 import AdminPrompt from './prompt';
+import UserEdit from './useredit';
 
 type Props = {
     loggedIn: boolean;
@@ -15,11 +16,12 @@ type State = {
     pm_action: () => any,
     pm_cancel: () => any,
     pm_noCancel: boolean,
-    toDelete: {[index: string]: any},
+    toDelete: string,
     toEdit: {[index: string]: any},
 };
 
 export default class ManageUsers extends React.Component<Props, State> {
+    private edit_ref: React.RefObject<UserEdit>;
     private dialogue_ref: React.RefObject<AdminPrompt>;
     constructor(p: Props) {
         super(p);
@@ -31,20 +33,12 @@ export default class ManageUsers extends React.Component<Props, State> {
             pm_action: () => {},
             pm_cancel: () => {},
             pm_noCancel: false,
-            toDelete: {
-                'id': '',
-                'username': '',
-            },
-            toEdit: {
-                'id': '',
-                'username': '',
-                'email': '',
-                'password': '',
-                'new': false,
-            },
+            toDelete: '',
+            toEdit: { 'id': '', 'kind': 'n' },
         }
 
         this.dialogue_ref = React.createRef();
+        this.edit_ref = React.createRef();
     }
 
     componentDidMount() {
@@ -74,6 +68,43 @@ export default class ManageUsers extends React.Component<Props, State> {
         if (!list.hasOwnProperty(user)) { list[user]._show = false; }
         list[user]._show = !list[user]._show;
         this.setState({ list });
+    }
+
+    //Can be called by other instances
+    specialMessage = (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => {
+        this.setState({
+            pm_message: msg,
+            pm_action: action, 
+            pm_cancel: cancel,
+            pm_noCancel: confirmOnly,
+        });
+        if (this.dialogue_ref.current !== null) {
+            this.dialogue_ref.current.open();
+        }
+    };
+
+    /************************************************** EDITING **************************************************/
+    startEditing(type: string, id: string | null = null): void {
+        this.setState({
+            toEdit: { 'id': id || '', 'kind': type, },
+        });
+
+        if (this.edit_ref.current !== null) {
+            this.edit_ref.current.open();
+        }
+    }
+
+    endEdit = (refresh: boolean): void => {
+        const { list, toEdit } = this.state;
+        if (toEdit.id !== '') {
+            list[`user${toEdit.id}`]['_no_edit'] = false;
+            list[`user${toEdit.id}`]['_no_pw'] = false;
+            list[`user${toEdit.id}`]['_no_delete'] = false;
+        }
+        if (refresh === true) {
+            this.getUsers();
+        }
+        this.setState({ list, toEdit });
     }
 
     /************************************************** TEMPLATE **************************************************/
@@ -112,13 +143,23 @@ export default class ManageUsers extends React.Component<Props, State> {
                 <span key={`userlist_joi_${user}`} className={`user-list-joined`}><b>Joined:</b> {list[user].joined}</span>
                 <div key={`${user}_icons`} className='user-edit-section'>
                     <button type='button' key={`${user}_edit`} className='edit-user-icon' disabled={list[user]['_no_edit']}
-                        onClick={() => { list[user]['_no_edit'] = true; this.setState({ list }); /*this.startEditing(false, vehicle['id'], year, make, model);*/ }}
+                        onClick={() => {
+                            list[user]['_no_edit'] = true; this.setState({ list });
+                            this.startEditing('e', list[user].uid);
+                        }}
                     ><FontAwesomeIcon icon={faEdit} /> Edit User</button>
                     <button type='button' key={`${user}_password`} className='edit-user-icon' disabled={list[user]['_no_pw']}
-                        onClick={() => { list[user]['_no_pw'] = true; this.setState({ list }); /*this.startEditing(false, vehicle['id'], year, make, model);*/ }}
+                        onClick={() => {
+                            list[user]['_no_pw'] = true; this.setState({ list });
+                            this.startEditing('p', list[user].uid);
+                        }}
                     ><FontAwesomeIcon icon={faKey} /> Change Password</button>
-                    <button type='button' key={`${user}_edit`} className='edit-user-icon' disabled={list[user]['_no_delete']}
-                        onClick={() => { list[user]['_no_delete'] = true; this.setState({ list }); /*this.startEditing(false, vehicle['id'], year, make, model);*/ }}
+                    <button type='button' key={`${user}_delete`} className='edit-user-icon' disabled={list[user]['_no_delete']}
+                        onClick={() => {
+                            list[user]['_no_delete'] = true;
+                            this.setState({ list, toDelete: list[user].uid });
+                            /*this.startEditing(false, vehicle['id'], year, make, model);*/
+                        }}
                     ><FontAwesomeIcon icon={faTrash} /> Delete User</button>
                 </div>
             </div>);
@@ -127,8 +168,24 @@ export default class ManageUsers extends React.Component<Props, State> {
     }
     
     template(): JSX.Element {
+        const { toEdit, pm_message, pm_action, pm_cancel, pm_noCancel } = this.state;
         return(<div key='acp_user_wrapper' className='acp-u-wrapper'>
             {this.template_userList()}
+            {<UserEdit
+                user={toEdit.id}
+                kind={toEdit.kind}
+                endEditAction={this.endEdit}
+                promptOpen={this.specialMessage}
+
+                ref={this.edit_ref}
+            />}{<AdminPrompt
+                message={pm_message}
+                action={pm_action}
+                cancel={pm_cancel}
+                noCancel={pm_noCancel}
+
+                ref={this.dialogue_ref}
+            />}
         </div>)
     }
 
