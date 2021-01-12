@@ -4,8 +4,6 @@ import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-///TO-DO: Need to convert OBJ to arrays for this.state.DATA for better ordering capabilities
-
 type Props = {
     vehicleID: string,
     vehicleYear: string,

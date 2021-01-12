@@ -475,14 +475,14 @@
 
 /* ----------- USER SECTION -------------- */
 .user-list-legends {
-    font-size: 1.25em;
+    font-size: 1.2em;
     background: #BBB;
     padding: 12px 24px;
     transition: 200ms linear all;
     user-select: none;
 }
 .user-list, .user-list2 {
-    font-size: 1.5em;
+    font-size: 1.4em;
     background: #EEE;
     transition: 200ms linear all;
     user-select: none;
@@ -512,7 +512,7 @@
 }
 .user-list-uid { width: 2%; }
 .user-list-username, .user-list-email { width: 20%; }
-.user-list-uid.legends { margin-left: 1em; }
+.user-list-uid.legends { margin-left: 1.1em; }
 .user-list-username.rootuser {
     font-weight: 600;
     color:rgb(202, 74, 0);
