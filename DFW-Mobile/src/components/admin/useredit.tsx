@@ -36,7 +36,7 @@ export default class UserEdit extends React.Component<Props, State> {
         this.state = {
             show: 0, inBackground: false, propsBG: this.props_bg_off, propsM: { 'top': '-64px', 'opacity': '0' },
             DATA: {
-                username: '', name: '', email: '', phone: '', address: '', role: '',
+                username: '', name: '', email: '', phone: '', address: '', role: '', oldPassword: '', newPassword: '', newPasswordConfirm: '',
             },
             editing: {}, refresh: false
         }
@@ -57,19 +57,19 @@ export default class UserEdit extends React.Component<Props, State> {
 
     saveData(): void {
         switch (this.props.kind) {
-            //case ('n'): () => {}; break;
+            case ('n'): this.saveData_info(true); break;
             //case ('p'): () => {}; break;
-            case ('e'): this.saveData_info(); break;
+            case ('e'): this.saveData_info(false); break;
             default: this.close(); break;
         }
     }
 
-    saveData_info(): void {
+    saveData_info(newUser: boolean): void {
         const { DATA } = this.state;
-
-        if (DATA.username === '' || DATA.email === '' || DATA.name === '') {
-            this.props.promptOpen(`Username, email, and name cannot be empty!`, () => {}, () => {}, true);
-            return;
+        if (DATA.username === '' || DATA.name === '' || DATA.email === '') {
+            this.props.promptOpen(`Username, email, and name cannot be empty!`, () => {}, () => {}, true); return; }
+        if (newUser) {
+            //Run password saving
         }
 
         const postData = new FormData();
@@ -85,6 +85,20 @@ export default class UserEdit extends React.Component<Props, State> {
         .then(() => {
             this.close();
         });
+    }
+
+    saveData_password(): void {
+        const { DATA } = this.state;
+
+        //Errors
+        if (DATA.newPassword === '' || DATA.newPasswordConfirm === '' || DATA.oldPassword === '') {
+            this.props.promptOpen(`All of the fields cannot be empty!`, () => {}, () => {}, true); return; }
+        if (DATA.newPassword !== DATA.newPasswordConfirm) { this.props.promptOpen(`New passwords are not matching!`, () => {}, () => {}, true); return; }
+
+        const postData = new FormData();
+        postData.append('uid', this.props.user);
+        postData.append('password', DATA.oldPassword);
+        
     }
 
     /************************************************** UE - WINDOW **************************************************/
