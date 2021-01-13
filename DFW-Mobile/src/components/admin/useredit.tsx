@@ -56,27 +56,35 @@ export default class UserEdit extends React.Component<Props, State> {
     };
 
     saveData(): void {
-        //const { DATA } = this.state;
+        switch (this.props.kind) {
+            //case ('n'): () => {}; break;
+            //case ('p'): () => {}; break;
+            case ('e'): this.saveData_info(); break;
+            default: this.close(); break;
+        }
+    }
 
-        /*if () {
-            this.props.promptOpen(`Vehicle's "Year", "Make", and "Model" cannot be empty!`, () => {}, () => {}, true);
+    saveData_info(): void {
+        const { DATA } = this.state;
+
+        if (DATA.username === '' || DATA.email === '' || DATA.name === '') {
+            this.props.promptOpen(`Username, email, and name cannot be empty!`, () => {}, () => {}, true);
             return;
         }
 
         const postData = new FormData();
-        postData.append('year', YEAR);
-        postData.append('make', MAKE);
-        postData.append('model', MODEL);
-        postData.append('data', JSON.stringify(DATA));
+        postData.append('uid', this.props.user);
+        postData.append('username', DATA.username);
+        postData.append('name', DATA.name);
+        postData.append('email', DATA.email);
+        postData.append('phone', DATA.phone.replace(/-/g, ''));
+        postData.append('address', DATA.address);
         this.setState({ refresh: true });
 
-        let param = 'update';
-        if (this.props.newQuote === true) { param = 'create'; }
-        else { postData.append('id', this.props.vehicleID); }
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=${param}`, postData)
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_updateuser`, postData)
         .then(() => {
             this.close();
-        });*/
+        });
     }
 
     /************************************************** UE - WINDOW **************************************************/
@@ -160,8 +168,7 @@ export default class UserEdit extends React.Component<Props, State> {
         return(<div key='admin_ue_edit'  className='admin-ue-content'>
             <div key='aues_username' className='admin_ue_section'>
                 <div key='admin_uet_username' className='admin-qe-ttext'>Username:</div>
-                <input
-                    key='admin_uei_username' placeholder='username' 
+                <input key='admin_uei_username' placeholder='username' size={8} 
                     className={`admin-ue-txt`} value={DATA.username}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.username = e.currentTarget.value; this.setState({ DATA });
@@ -169,8 +176,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_name' className='admin_ue_section'>
                 <div key='admin_uet_name' className='admin-qe-ttext'>Full Name:</div>
-                <input
-                    key='admin_uei_name' placeholder='name' 
+                <input key='admin_uei_name' placeholder='name' size={8} 
                     className={`admin-ue-txt`} value={DATA.name}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.name = e.currentTarget.value; this.setState({ DATA });
@@ -178,8 +184,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_email' className='admin_ue_section'>
                 <div key='admin_uet_email' className='admin-qe-ttext'>Email Address:</div>
-                <input
-                    key='admin_uei_email' placeholder='email' 
+                <input key='admin_uei_email' placeholder='email' size={8} 
                     className={`admin-ue-txt`} value={DATA.email}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.email = e.currentTarget.value; this.setState({ DATA });
@@ -187,8 +192,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_phone' className='admin_ue_section'>
                 <div key='admin_uet_phone' className='admin-qe-ttext'>Phone Number:</div>
-                <input
-                    key='admin_uei_phone' placeholder='phone'
+                <input key='admin_uei_phone' placeholder='phone' size={8} 
                     className={`admin-ue-txt`} value={DATA.phone}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.phone = this.formatPhoneText(e.currentTarget.value);
@@ -197,8 +201,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_address' className='admin_ue_section wide'>
                 <div key='admin_uet_address' className='admin-qe-ttext'>Address:</div>
-                <input
-                    key='admin_uei_address' placeholder='address'
+                <input key='admin_uei_address' placeholder='address' 
                     className={`admin-ue-txt`} value={DATA.address}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.address = this.formatPhoneText(e.currentTarget.value);
@@ -213,7 +216,7 @@ export default class UserEdit extends React.Component<Props, State> {
         return(<div key='admin_ue_bc'  className='admin-qe-buttonbox'>
             <button
                 key='admin_ue_confirm'
-                onClick={() => { /*this.saveData();*/ }}
+                onClick={() => { this.saveData(); }}
                 className='admin-qe-btn main'
             >{saveButtonName}</button>
             <button
