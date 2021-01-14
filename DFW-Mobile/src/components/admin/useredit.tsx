@@ -276,7 +276,7 @@ export default class UserEdit extends React.Component<Props, State> {
                 <input key='admin_uei_address' placeholder='Address' 
                     className={`admin-ue-txt`} value={DATA.address}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                        DATA.address = this.formatPhoneText(e.currentTarget.value);
+                        DATA.address = e.currentTarget.value;
                         this.setState({ DATA });
                     }}></input>
             </div>

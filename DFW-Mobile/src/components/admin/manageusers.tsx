@@ -82,6 +82,16 @@ export default class ManageUsers extends React.Component<Props, State> {
         }
     };
 
+    deleteUser(uid: string): void {
+        const postData = new FormData();
+        postData.append('uid', uid);
+
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_deleteuser`, postData)
+        .then(() => {
+            //What's next???
+        });
+    }
+
     /************************************************** EDITING **************************************************/
     startEditing(type: string, id: string | null = null): void {
         this.setState({
