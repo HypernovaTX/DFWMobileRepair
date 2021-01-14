@@ -58,7 +58,7 @@ export default class UserEdit extends React.Component<Props, State> {
     saveData(): void {
         switch (this.props.kind) {
             case ('n'): this.saveData_info(true); break;
-            //case ('p'): () => {}; break;
+            case ('p'): this.saveData_password(false); break;
             case ('e'): this.saveData_info(false); break;
             default: this.close(); break;
         }
@@ -120,27 +120,50 @@ export default class UserEdit extends React.Component<Props, State> {
         
     }
 
-    saveData_password(): void {
+    saveData_password(newUser: boolean): void {
         const { DATA } = this.state;
 
         //Errors
         if (DATA.newPassword === '' || DATA.newPasswordConfirm === '' || DATA.oldPassword === '') {
             this.props.promptOpen(`All of the fields cannot be empty!`, () => {}, () => {}, true); return; }
         if (DATA.newPassword !== DATA.newPasswordConfirm) { this.props.promptOpen(`New passwords are not matching!`, () => {}, () => {}, true); return; }
+        if (DATA.newPassword === DATA.oldPassword) { this.props.promptOpen(`New password cannot be the same as before!`, () => {}, () => {}, true); return; }
+        if (DATA.newPassword.length < 6) { this.props.promptOpen(`New password is too short!`, () => {}, () => {}, true); return; }
+        
+        //1 ------ Send the old password with the UID to verify if it matches
+        const postOldPW = new FormData();
+        postOldPW.append('uid', this.props.user);
+        postOldPW.append('password', DATA.oldPassword);
+        
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_verifypw`, postOldPW)
+        .then((responsePWCheck: AxiosResponse<any>) => {
+            //Password fail (but make sure this is NOT a newUser)
+            if (responsePWCheck.data === 'FAIL' && !newUser) {
+                this.props.promptOpen(`The old password does NOT match for the user "${DATA.username}"!`, () => {}, () => {}, true); return;
+            }
+            //2 ------ Send the updated password
+            const postNewPW = new FormData();
+            postNewPW.append('uid', this.props.user);
+            postNewPW.append('password', DATA.oldPassword);
+            postNewPW.append('newpassword', DATA.newPassword);
 
-        const postData = new FormData();
-        postData.append('uid', this.props.user);
-        postData.append('password', DATA.oldPassword);
+            axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_updatepw`, postNewPW)
+            .then(() => {
+                this.close();
+            });
+        });//$_POST['uid'], $_POST['password']
         
     }
 
     /************************************************** UE - WINDOW **************************************************/
     open(): void {
+        const resetDATA = { username: '', name: '', email: '', phone: '', address: '', role: '', oldPassword: '', newPassword: '', newPasswordConfirm: '', }
         this.setState({
             show: 1,
             propsBG: this.props_bg_on,
             propsM: { 'top': '0px', 'opacity': '1' },
             refresh: false,
+            DATA: resetDATA, 
         });
         setTimeout(() => {
             if (this.state.show === 1) { this.getData(); }
@@ -152,6 +175,8 @@ export default class UserEdit extends React.Component<Props, State> {
 
     close(): void {
         const { show, refresh } = this.state;
+        const resetDATA = { username: '', name: '', email: '', phone: '', address: '', role: '', oldPassword: '', newPassword: '', newPasswordConfirm: '', }
+        this.setState({ DATA: resetDATA });
         if (show === 2) {
             this.setState({
                 show: 3,
@@ -271,7 +296,7 @@ export default class UserEdit extends React.Component<Props, State> {
                     }}></input>
             </div>
             <div key='aues_newPW' className='admin_ue_section wide'>
-                <div key='aues_newPW_title' className='admin-qe-ttext'>New password:</div>
+                <div key='aues_newPW_title' className='admin-qe-ttext'>New password (min: 6 characters):</div>
                 <input key='aues_newPW_input' placeholder='New Password' size={12} type = 'password' 
                     className={`admin-ue-txt`} value={DATA.newPassword}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
