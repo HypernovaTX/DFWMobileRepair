@@ -52,12 +52,11 @@ export default class ManageUsers extends React.Component<Props, State> {
                 const { list } = this.state;
                 const jsonData = response.data; //JSON.parse() doesn't work
                 for (const uid in jsonData) {
-                    if (list[uid]?._show === undefined
-                     || list[uid]?._no_edit === undefined
-                     || list[uid]?._no_pw === undefined 
-                     || list[uid]?._no_delete === undefined) {
-                        list[uid] = { '_show': false, '_no_edit': false, '_no_pw': false, '_no_delete': false };
-                    }
+                    if (!list.hasOwnProperty(uid)) { jsonData[uid]._show = false; }
+                    else { jsonData[uid]._show = (!list[uid].hasOwnProperty('_show')) ? false : list[uid]._show; }
+                    jsonData[uid]._no_edit = false;
+                    jsonData[uid]._no_pw = false;
+                    jsonData[uid]._no_delete = false;
                 };
                 this.setState({ list: jsonData });
             });

@@ -72,19 +72,52 @@ export default class UserEdit extends React.Component<Props, State> {
             //Run password saving
         }
 
-        const postData = new FormData();
-        postData.append('uid', this.props.user);
-        postData.append('username', DATA.username);
-        postData.append('name', DATA.name);
-        postData.append('email', DATA.email);
-        postData.append('phone', DATA.phone.replace(/-/g, ''));
-        postData.append('address', DATA.address);
-        this.setState({ refresh: true });
+        //1 -------------- Check for existing username
+        const postUser = new FormData();
+        postUser.append('username', DATA.username);
+        postUser.append('uid', this.props.user);
+        const blankF = () => {};
 
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_updateuser`, postData)
-        .then(() => {
-            this.close();
+        //Run the user check request
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=ck_uname`, postUser)
+        .then((responseUserCheck: AxiosResponse<any>) => {
+            //Username exists
+            if (responseUserCheck.data === 'EXISTS') {
+                this.props.promptOpen(`Username is taken by another user!`, blankF, blankF, true); return;
+            }
+            //2 -------------- Check for existing email 
+            else {
+                const postEmail = new FormData();
+                postEmail.append('email', DATA.email);
+                postEmail.append('uid', this.props.user);
+
+                //Run the email check request
+                axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=ck_email`, postEmail)
+                .then((responseEmailCheck: AxiosResponse<any>) => {
+                    //Email exists
+                    if (responseEmailCheck.data === 'EXISTS') {
+                        this.props.promptOpen(`Email is used by another user!`, blankF, blankF, true); return;
+                    }
+                    //3 ------------ Proceed to save the updated user data
+                    else {
+                        const postData = new FormData();
+                        postData.append('uid', this.props.user);
+                        postData.append('username', DATA.username);
+                        postData.append('name', DATA.name);
+                        postData.append('email', DATA.email);
+                        postData.append('phone', DATA.phone.replace(/-/g, ''));
+                        postData.append('address', DATA.address);
+                        this.setState({ refresh: true });
+                        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_updateuser`, postData)
+                        .then(() => {
+                            this.close();
+                        });
+                    }
+                });
+            }
         });
+
+        
     }
 
     saveData_password(): void {
