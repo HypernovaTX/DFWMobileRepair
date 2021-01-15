@@ -8,7 +8,9 @@ type Props = {
     user: string, //must be user ID
     kind: string, //'e' - user edit, 'p' - password, 'n' - new user
     endEditAction: (parameter: any) => void,
-    promptOpen: (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => void,
+    promptOpen: (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => void, 
+    me: string, //Current user ID
+    role: string, //current user role
 };
 type State = {
     show: number,
@@ -53,6 +55,7 @@ export default class UserEdit extends React.Component<Props, State> {
             this.setState({ DATA: response.data });
             const { DATA } = this.state;
             DATA.phone = this.formatPhoneText(this.state.DATA?.phone);
+            DATA.root = (DATA.role === '0') ? true : false;
             this.setState({ DATA });
         });
     };
@@ -109,6 +112,7 @@ export default class UserEdit extends React.Component<Props, State> {
                         postData.append('email', DATA.email);
                         postData.append('phone', DATA.phone.replace(/-/g, ''));
                         postData.append('address', DATA.address);
+                        postData.append('role', DATA.role);
                         this.setState({ refresh: true });
                         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_updateuser`, postData)
                         .then(() => {
@@ -241,7 +245,7 @@ export default class UserEdit extends React.Component<Props, State> {
         return(<div key='admin_ue_edit'  className='admin-ue-content'>
             <div key='aues_username' className='admin_ue_section'>
                 <div key='admin_uet_username' className='admin-qe-ttext'>Username:</div>
-                <input key='admin_uei_username' placeholder='Username' size={8} 
+                <input key='admin_uei_username' placeholder='Username' size={4} 
                     className={`admin-ue-txt`} value={DATA.username}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.username = e.currentTarget.value; this.setState({ DATA });
@@ -249,7 +253,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_name' className='admin_ue_section'>
                 <div key='admin_uet_name' className='admin-qe-ttext'>Full Name:</div>
-                <input key='admin_uei_name' placeholder='Full Name' size={8} 
+                <input key='admin_uei_name' placeholder='Full Name' size={4} 
                     className={`admin-ue-txt`} value={DATA.name}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.name = e.currentTarget.value; this.setState({ DATA });
@@ -257,7 +261,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_email' className='admin_ue_section'>
                 <div key='admin_uet_email' className='admin-qe-ttext'>Email Address:</div>
-                <input key='admin_uei_email' placeholder='Email' size={8} 
+                <input key='admin_uei_email' placeholder='Email' size={4} 
                     className={`admin-ue-txt`} value={DATA.email}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.email = e.currentTarget.value; this.setState({ DATA });
@@ -265,7 +269,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_phone' className='admin_ue_section'>
                 <div key='admin_uet_phone' className='admin-qe-ttext'>Phone Number:</div>
-                <input key='admin_uei_phone' placeholder='Phone' size={8} 
+                <input key='admin_uei_phone' placeholder='Phone' size={4} 
                     className={`admin-ue-txt`} value={DATA.phone}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.phone = this.formatPhoneText(e.currentTarget.value);
@@ -275,20 +279,33 @@ export default class UserEdit extends React.Component<Props, State> {
             <div key='aues_address' className='admin_ue_section wide'>
                 <div key='admin_uet_address' className='admin-qe-ttext'>Address:</div>
                 <input key='admin_uei_address' placeholder='Address' 
-                    className={`admin-ue-txt`} value={DATA.address}
+                    className={`admin-ue-txt`} value={DATA.address} size={8} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.address = e.currentTarget.value;
                         this.setState({ DATA });
                     }}></input>
             </div>
-            <div key='aues_rootaccess' className='admin_ue_section'>
-                <div key='admin_uet_rootaccess' className='admin-qe-ttext'>Root (admin) access:</div>
-                <input key='admin_uei_address' placeholder='Address' type='checkbox'
-                    className={`admin-ue-txt`} value={DATA.root} disabled={false}
-                    onChange={() => { DATA.root = !DATA.root; this.setState({ DATA });}}></input>
-            </div>
+            {this.template_rootaccess()}
             {password}
         </div>);
+    }
+
+    template_rootaccess(): JSX.Element {
+        const { DATA } = this.state;
+        if (this.props.user === this.props.me || this.props.role !== '0') { return <React.Fragment key='no_rootedit'></React.Fragment>; }
+
+        return(<React.Fragment key='temp_rootaccess_edit_container'>
+            <div key='aues_rootaccess' className='admin_ue_section'>
+            <div key='admin_uet_rootaccess' className='admin-qe-ttext'>Root access:</div>
+            <input key='admin_uei_address' placeholder='Address' type='checkbox'
+                className={`admin-ue-check`} checked={DATA.root} disabled={false}
+                onChange={() => {
+                    DATA.root = !DATA.root;
+                    DATA.role = (DATA.root) ? '0' : '1'; // 0 - root access, 1 - regular user
+                    this.setState({ DATA });
+                }}></input>
+            </div>
+        </React.Fragment>);
     }
 
     template_password(newUser: boolean): JSX.Element {

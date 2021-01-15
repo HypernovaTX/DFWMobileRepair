@@ -147,8 +147,10 @@ export default class ManageUsers extends React.Component<Props, State> {
             //Prepare Buttons
             let deleteButton = this.template_deleteButton(list, user);
             let editButtons = this.template_editButtons(list, user);
-            if (this.props.uid === list[user].uid) { deleteButton = <React.Fragment key='dont_delete_logged_in_user'></React.Fragment>; }
-            
+            if (this.props.uid === list[user].uid || this.props.role !== '0') {
+                deleteButton = <React.Fragment key='dont_delete_logged_in_user'></React.Fragment>; }
+            if (this.props.role !== '0' && this.props.uid !== list[user].uid) {
+                editButtons = <React.Fragment key={`no_edit_${list[user].uid}`}></React.Fragment>; }
 
             //Put all of the info and items for the userbar
             output.push(<div key={`userlist_${user}`} className={`user-list${evenListItem} ${on}`}>
@@ -208,6 +210,8 @@ export default class ManageUsers extends React.Component<Props, State> {
                 kind={toEdit.kind}
                 endEditAction={this.endEdit}
                 promptOpen={this.specialMessage}
+                role={this.props.role}
+                me={this.props.uid}
 
                 ref={this.edit_ref}
             />}{<AdminPrompt

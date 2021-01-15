@@ -592,3 +592,37 @@
     margin: auto 4px;
     padding: 4px 12px;
 }
+
+.admin-ue-check {
+    appearance: none;
+    user-select: none;
+    cursor: pointer;
+}
+.admin-ue-check::before {
+    width: 4em;
+    height: 1.75em;
+    background-color: #cc4848;
+    content: ' ';
+    display: inline-block;
+    border-radius: 1em;
+    transition: 200ms linear all;
+}
+.admin-ue-check:checked::before {
+    background-color: #399c41;
+}
+.admin-ue-check::after {
+    width: 2em;
+    height: 1.3em;
+    background-color: #FFF;
+    content: ' ';
+    border-radius: 1em;
+    display: inline-block;
+    position: relative;
+    right: 49px;
+    bottom: 3px;
+    transition: 400ms cubic-bezier(0, 0, 0.2, 1) all;
+}
+.admin-ue-check:checked::after {
+    right: 31px;
+    
+}
