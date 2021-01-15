@@ -36,7 +36,7 @@ export default class UserEdit extends React.Component<Props, State> {
         this.state = {
             show: 0, inBackground: false, propsBG: this.props_bg_off, propsM: { 'top': '-64px', 'opacity': '0' },
             DATA: {
-                username: '', name: '', email: '', phone: '', address: '', role: '', oldPassword: '', newPassword: '', newPasswordConfirm: '',
+                username: '', name: '', email: '', phone: '', address: '', role: '', root: false, oldPassword: '', newPassword: '', newPasswordConfirm: '',
             },
             editing: {}, refresh: false
         }
@@ -158,7 +158,7 @@ export default class UserEdit extends React.Component<Props, State> {
 
     /************************************************** UE - WINDOW **************************************************/
     open(): void {
-        const resetDATA = { username: '', name: '', email: '', phone: '', address: '', role: '', oldPassword: '', newPassword: '', newPasswordConfirm: '', }
+        const resetDATA = { username: '', name: '', email: '', phone: '', address: '', role: '', root: false, oldPassword: '', newPassword: '', newPasswordConfirm: '', }
         this.setState({
             show: 1,
             propsBG: this.props_bg_on,
@@ -176,7 +176,7 @@ export default class UserEdit extends React.Component<Props, State> {
 
     close(): void {
         const { show, refresh } = this.state;
-        const resetDATA = { username: '', name: '', email: '', phone: '', address: '', role: '', oldPassword: '', newPassword: '', newPasswordConfirm: '', }
+        const resetDATA = { username: '', name: '', email: '', phone: '', address: '', role: '', root: false, oldPassword: '', newPassword: '', newPasswordConfirm: '', }
         this.setState({ DATA: resetDATA });
         if (show === 2) {
             this.setState({
@@ -280,6 +280,12 @@ export default class UserEdit extends React.Component<Props, State> {
                         DATA.address = e.currentTarget.value;
                         this.setState({ DATA });
                     }}></input>
+            </div>
+            <div key='aues_rootaccess' className='admin_ue_section'>
+                <div key='admin_uet_rootaccess' className='admin-qe-ttext'>Root (admin) access:</div>
+                <input key='admin_uei_address' placeholder='Address' type='checkbox'
+                    className={`admin-ue-txt`} value={DATA.root} disabled={false}
+                    onChange={() => { DATA.root = !DATA.root; this.setState({ DATA });}}></input>
             </div>
             {password}
         </div>);

@@ -10,7 +10,8 @@ type Props = {
     loggedIn: boolean,
     uid: string,
     func_updateUsername: (param: any) => any,
-    username: string,
+    username: string, 
+    role: string, 
 };
 type State = {
     list: {[index: string]: any},
@@ -142,12 +143,12 @@ export default class ManageUsers extends React.Component<Props, State> {
             const tick = <span key={`userlistT_${user}`} className={`menu-tick ${on}`}>▶</span>
             const rawPhone = list[user].phone;
             const phoneNumber = `(${rawPhone.substring(0,3)}) ${rawPhone.substring(3,6)}-${rawPhone.substring(6,10)}` || '(null)';
-            let deleteButton = (<button type='button' key={`${user}_delete`} className='edit-user-icon' disabled={list[user]['_no_delete']}
-                onClick={() => {
-                    list[user]['_no_delete'] = true;
-                    this.setState({ list, toDelete: list[user].uid });
-                }}><FontAwesomeIcon icon={faTrash} /> Delete User</button>);
+
+            //Prepare Buttons
+            let deleteButton = this.template_deleteButton(list, user);
+            let editButtons = this.template_editButtons(list, user);
             if (this.props.uid === list[user].uid) { deleteButton = <React.Fragment key='dont_delete_logged_in_user'></React.Fragment>; }
+            
 
             //Put all of the info and items for the userbar
             output.push(<div key={`userlist_${user}`} className={`user-list${evenListItem} ${on}`}>
@@ -165,23 +166,37 @@ export default class ManageUsers extends React.Component<Props, State> {
                 <span key={`userlist_add_${user}`} className={`user-list-address`}><b>Address:</b> {list[user].address}</span>
                 <span key={`userlist_joi_${user}`} className={`user-list-joined`}><b>Joined:</b> {list[user].joined}</span>
                 <div key={`${user}_icons`} className='user-edit-section'>
-                    <button type='button' key={`${user}_edit`} className='edit-user-icon' disabled={list[user]['_no_edit']}
-                        onClick={() => {
-                            list[user]['_no_edit'] = true; this.setState({ list });
-                            this.startEditing('e', list[user].uid);
-                        }}
-                    ><FontAwesomeIcon icon={faEdit} /> Edit User</button>
-                    <button type='button' key={`${user}_password`} className='edit-user-icon' disabled={list[user]['_no_pw']}
-                        onClick={() => {
-                            list[user]['_no_pw'] = true; this.setState({ list });
-                            this.startEditing('p', list[user].uid);
-                        }}
-                    ><FontAwesomeIcon icon={faKey} /> Change Password</button>
+                    {editButtons}
                     {deleteButton}
                 </div>
             </div>);
         });
         return <React.Fragment key={`user-contain`}>{output}</React.Fragment>;
+    }
+
+    template_editButtons(list: {[index: string]: any}, user: string): JSX.Element {
+        return(<React.Fragment key={`temp_ue_button_${list[user].uid}`}>
+            <button type='button' key={`${user}_edit`} className='edit-user-icon' disabled={list[user]['_no_edit']}
+                onClick={() => {
+                    list[user]['_no_edit'] = true; this.setState({ list });
+                    this.startEditing('e', list[user].uid);
+                }}
+            ><FontAwesomeIcon icon={faEdit} /> Edit User</button>
+            <button type='button' key={`${user}_password`} className='edit-user-icon' disabled={list[user]['_no_pw']}
+                onClick={() => {
+                    list[user]['_no_pw'] = true; this.setState({ list });
+                    this.startEditing('p', list[user].uid);
+                }}
+            ><FontAwesomeIcon icon={faKey} /> Change Password</button>
+        </React.Fragment>);
+    }
+
+    template_deleteButton(list: {[index: string]: any}, user: string): JSX.Element {
+        return (<button type='button' key={`${user}_delete`} className='edit-user-icon' disabled={list[user]['_no_delete']}
+        onClick={() => {
+            list[user]['_no_delete'] = true;
+            this.setState({ list, toDelete: list[user].uid });
+        }}><FontAwesomeIcon icon={faTrash} /> Delete User</button>);
     }
     
     template(): JSX.Element {

@@ -25,6 +25,7 @@ type State = {
         currentUser: string,
         admin: boolean,
         uid: string,
+        role: string,
     },
     login: {
         username: string,
@@ -58,6 +59,7 @@ export default class Admin extends React.Component<Props, State> {
                 currentUser: '',
                 admin: false,
                 uid: '',
+                role: '',
             },
             login: {
                 username: '',
@@ -95,6 +97,7 @@ export default class Admin extends React.Component<Props, State> {
                         currentUser: responseString[0],
                         admin: this.state.session.admin,
                         uid: responseString[1], 
+                        role: responseString[2], 
                     },
                 });
             });
@@ -236,8 +239,8 @@ export default class Admin extends React.Component<Props, State> {
                 break;
             case ('User'):
                 panel = <ManageUsers
-                    loggedIn={loggedin} uid={session.uid}
-                    func_updateUsername={this.callable_updateUsername} username={session.currentUser}
+                    loggedIn={loggedin} uid={session.uid} username={session.currentUser} role={session.role}
+                    func_updateUsername={this.callable_updateUsername} 
                     ref={this.comp_user_ref}/>;
                 additionalNav = <button
                     key='acpnav_u_add'
