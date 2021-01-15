@@ -235,7 +235,10 @@ export default class Admin extends React.Component<Props, State> {
                 ><FontAwesomeIcon icon={faPlus} />  New Vehicle</button>;
                 break;
             case ('User'):
-                panel = <ManageUsers loggedIn={loggedin} uid={session.uid} ref={this.comp_user_ref}/>;
+                panel = <ManageUsers
+                    loggedIn={loggedin} uid={session.uid}
+                    func_updateUsername={this.callable_updateUsername} username={session.currentUser}
+                    ref={this.comp_user_ref}/>;
                 additionalNav = <button
                     key='acpnav_u_add'
                     className='nav-button'

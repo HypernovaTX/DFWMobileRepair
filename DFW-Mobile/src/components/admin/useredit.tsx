@@ -43,6 +43,8 @@ export default class UserEdit extends React.Component<Props, State> {
     }
     /************************************************** UE - API **************************************************/
     getData(): void {
+        //Make sure this is NOT a new user
+        if (this.props.kind === 'n') { return; }
         const postData = new FormData();
         postData.append('uid', this.props.user);
 

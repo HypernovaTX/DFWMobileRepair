@@ -7,8 +7,10 @@ import AdminPrompt from './prompt';
 import UserEdit from './useredit';
 
 type Props = {
-    loggedIn: boolean;
+    loggedIn: boolean,
     uid: string,
+    func_updateUsername: (param: any) => any,
+    username: string,
 };
 type State = {
     list: {[index: string]: any},
@@ -58,6 +60,11 @@ export default class ManageUsers extends React.Component<Props, State> {
                     jsonData[uid]._no_edit = false;
                     jsonData[uid]._no_pw = false;
                     jsonData[uid]._no_delete = false;
+
+                    if (jsonData[uid].username !== this.props.username
+                     && jsonData[uid].uid === this.props.uid) {
+                        this.props.func_updateUsername(jsonData[uid].username);
+                    }
                 };
                 this.setState({ list: jsonData });
             });
