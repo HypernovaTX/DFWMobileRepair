@@ -8,6 +8,7 @@ import UserEdit from './useredit';
 
 type Props = {
     loggedIn: boolean;
+    uid: string,
 };
 type State = {
     list: {[index: string]: any},
@@ -134,6 +135,12 @@ export default class ManageUsers extends React.Component<Props, State> {
             const tick = <span key={`userlistT_${user}`} className={`menu-tick ${on}`}>▶</span>
             const rawPhone = list[user].phone;
             const phoneNumber = `(${rawPhone.substring(0,3)}) ${rawPhone.substring(3,6)}-${rawPhone.substring(6,10)}` || '(null)';
+            let deleteButton = (<button type='button' key={`${user}_delete`} className='edit-user-icon' disabled={list[user]['_no_delete']}
+                onClick={() => {
+                    list[user]['_no_delete'] = true;
+                    this.setState({ list, toDelete: list[user].uid });
+                }}><FontAwesomeIcon icon={faTrash} /> Delete User</button>);
+            if (this.props.uid === list[user].uid) { deleteButton = <React.Fragment key='dont_delete_logged_in_user'></React.Fragment>; }
 
             //Put all of the info and items for the userbar
             output.push(<div key={`userlist_${user}`} className={`user-list${evenListItem} ${on}`}>
@@ -163,13 +170,7 @@ export default class ManageUsers extends React.Component<Props, State> {
                             this.startEditing('p', list[user].uid);
                         }}
                     ><FontAwesomeIcon icon={faKey} /> Change Password</button>
-                    <button type='button' key={`${user}_delete`} className='edit-user-icon' disabled={list[user]['_no_delete']}
-                        onClick={() => {
-                            list[user]['_no_delete'] = true;
-                            this.setState({ list, toDelete: list[user].uid });
-                            /*this.startEditing(false, vehicle['id'], year, make, model);*/
-                        }}
-                    ><FontAwesomeIcon icon={faTrash} /> Delete User</button>
+                    {deleteButton}
                 </div>
             </div>);
         });

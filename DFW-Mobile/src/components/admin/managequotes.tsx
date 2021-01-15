@@ -8,6 +8,7 @@ import QuoteEdit from './quoteedit';
 
 type Props = {
     loggedIn: boolean;
+    uid: string;
 };
 type State = {
     list: {[index: string]: any},

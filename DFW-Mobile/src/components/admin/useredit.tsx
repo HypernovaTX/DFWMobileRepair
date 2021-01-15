@@ -151,8 +151,7 @@ export default class UserEdit extends React.Component<Props, State> {
             .then(() => {
                 this.close();
             });
-        });//$_POST['uid'], $_POST['password']
-        
+        }); 
     }
 
     /************************************************** UE - WINDOW **************************************************/
@@ -316,7 +315,7 @@ export default class UserEdit extends React.Component<Props, State> {
         return(output);
     }
 
-    template_buttons(saveButtonName: string):JSX.Element {
+    template_buttons(saveButtonName: string): JSX.Element {
         return(<div key='admin_ue_bc'  className='admin-qe-buttonbox'>
             <button
                 key='admin_ue_confirm'

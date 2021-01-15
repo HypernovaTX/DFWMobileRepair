@@ -24,6 +24,7 @@ type State = {
     session: {
         currentUser: string,
         admin: boolean,
+        uid: string,
     },
     login: {
         username: string,
@@ -56,6 +57,7 @@ export default class Admin extends React.Component<Props, State> {
             session: {
                 currentUser: '',
                 admin: false,
+                uid: '',
             },
             login: {
                 username: '',
@@ -83,17 +85,16 @@ export default class Admin extends React.Component<Props, State> {
     getCurrentUser(): void {
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=check`)
             .then((response) => {
-                let responseString = '';
+                let responseString: string[];
                 let loggedin = false;
-                if (response.data + '' !== 'GUEST') {
-                    responseString = response.data + '';
-                    loggedin = true;
-                }
+                responseString = response.data.split(/\[sep\]/);;
+                if (responseString[0] !== 'GUEST') { loggedin = true; }
                 this.setState({
                     loggedin, 
                     session: {
-                        currentUser: responseString,
+                        currentUser: responseString[0],
                         admin: this.state.session.admin,
+                        uid: responseString[1], 
                     },
                 });
             });
@@ -107,6 +108,12 @@ export default class Admin extends React.Component<Props, State> {
             case (2): this.logout(); break;
         }
     }
+
+    callable_updateUsername = (newuser: string): void => {
+        const { session } = this.state;
+        session.currentUser = newuser;
+        this.setState({ session });
+    };
 
     clearLoginData(): void {
         let { login } = this.state;
@@ -220,7 +227,7 @@ export default class Admin extends React.Component<Props, State> {
         let additionalNav = <React.Fragment key='admin_nav_none'></React.Fragment>
         switch (adminPanel) {
             default:  
-                panel = <ManageQuotes loggedIn={loggedin} ref={this.comp_quote_ref}/>;
+                panel = <ManageQuotes loggedIn={loggedin} uid={session.uid} ref={this.comp_quote_ref}/>;
                 additionalNav = <button
                     key='acpnav_q_add'
                     className='nav-button'
@@ -228,7 +235,12 @@ export default class Admin extends React.Component<Props, State> {
                 ><FontAwesomeIcon icon={faPlus} />  New Vehicle</button>;
                 break;
             case ('User'):
-                panel = <ManageUsers loggedIn={loggedin} ref={this.comp_user_ref}/>;
+                panel = <ManageUsers loggedIn={loggedin} uid={session.uid} ref={this.comp_user_ref}/>;
+                additionalNav = <button
+                    key='acpnav_u_add'
+                    className='nav-button'
+                    onClick={() => { this.comp_user_ref.current?.startEditing('n'); }}
+                ><FontAwesomeIcon icon={faPlus} />  Create User</button>;
                 break;
         }
 
