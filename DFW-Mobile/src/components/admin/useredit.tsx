@@ -71,10 +71,21 @@ export default class UserEdit extends React.Component<Props, State> {
 
     saveData_info(newUser: boolean): void {
         const { DATA } = this.state;
+        
         if (DATA.username === '' || DATA.name === '' || DATA.email === '') {
             this.props.promptOpen(`Username, email, and name cannot be empty!`, () => {}, () => {}, true); return; }
+        if (this.props.role !== '0' && this.props.me !== DATA.uid) {
+            this.props.promptOpen(`Only root admins can modify users!`, () => {}, () => {}, true); return; }
+        
+        let api_param = 'acp_updateuser';
         if (newUser) {
-            //Run password saving
+            api_param = 'acp_newuser';
+
+            if (this.props.role !== '0') { this.props.promptOpen(`Only root admins can create new users!`, () => {}, () => {}, true); return; }
+            if (DATA.newPassword === '' || DATA.newPasswordConfirm === '') {
+                this.props.promptOpen(`Passwords cannot be empty!`, () => {}, () => {}, true); return; }
+            if (DATA.newPassword !== DATA.newPasswordConfirm) { this.props.promptOpen(`Passwords are not matching!`, () => {}, () => {}, true); return; }
+            if (DATA.newPassword.length < 6) { this.props.promptOpen(`New password is too short!`, () => {}, () => {}, true); return; }
         }
 
         //1 -------------- Check for existing username
@@ -113,8 +124,11 @@ export default class UserEdit extends React.Component<Props, State> {
                         postData.append('phone', DATA.phone.replace(/-/g, ''));
                         postData.append('address', DATA.address);
                         postData.append('role', DATA.role);
+                        if (newUser) {
+                            postData.append('password', DATA.newPassword);
+                        }
                         this.setState({ refresh: true });
-                        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_updateuser`, postData)
+                        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=${api_param}`, postData)
                         .then(() => {
                             this.close();
                         });
@@ -122,8 +136,6 @@ export default class UserEdit extends React.Component<Props, State> {
                 });
             }
         });
-
-        
     }
 
     saveData_password(newUser: boolean): void {
@@ -244,7 +256,7 @@ export default class UserEdit extends React.Component<Props, State> {
             : this.template_password(true);
         return(<div key='admin_ue_edit'  className='admin-ue-content'>
             <div key='aues_username' className='admin_ue_section'>
-                <div key='admin_uet_username' className='admin-qe-ttext'>Username:</div>
+                <div key='admin_uet_username' className='admin-qe-ttext'>{this.form_important('auesI_uname_title')}Username:</div>
                 <input key='admin_uei_username' placeholder='Username' size={4} 
                     className={`admin-ue-txt`} value={DATA.username}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
@@ -252,7 +264,7 @@ export default class UserEdit extends React.Component<Props, State> {
                     }}></input>
             </div>
             <div key='aues_name' className='admin_ue_section'>
-                <div key='admin_uet_name' className='admin-qe-ttext'>Full Name:</div>
+                <div key='admin_uet_name' className='admin-qe-ttext'>{this.form_important('auesI_name_title')}Full Name:</div>
                 <input key='admin_uei_name' placeholder='Full Name' size={4} 
                     className={`admin-ue-txt`} value={DATA.name}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
@@ -260,7 +272,7 @@ export default class UserEdit extends React.Component<Props, State> {
                     }}></input>
             </div>
             <div key='aues_email' className='admin_ue_section'>
-                <div key='admin_uet_email' className='admin-qe-ttext'>Email Address:</div>
+                <div key='admin_uet_email' className='admin-qe-ttext'>{this.form_important('auesI_email_title')}Email Address:</div>
                 <input key='admin_uei_email' placeholder='Email' size={4} 
                     className={`admin-ue-txt`} value={DATA.email}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
@@ -296,7 +308,7 @@ export default class UserEdit extends React.Component<Props, State> {
 
         return(<React.Fragment key='temp_rootaccess_edit_container'>
             <div key='aues_rootaccess' className='admin_ue_section'>
-            <div key='admin_uet_rootaccess' className='admin-qe-ttext'>Root access:</div>
+            <div key='admin_uet_rootaccess' className='admin-qe-ttext'>Root access (ability to edit other users):</div>
             <input key='admin_uei_address' placeholder='Address' type='checkbox'
                 className={`admin-ue-check`} checked={DATA.root} disabled={false}
                 onChange={() => {
@@ -310,17 +322,22 @@ export default class UserEdit extends React.Component<Props, State> {
 
     template_password(newUser: boolean): JSX.Element {
         const { DATA } = this.state;
+        const form_oldpassword = (newUser)
+            ? (<React.Fragment key='temp_oldpassword_section'></React.Fragment>)
+            : (<React.Fragment key='temp_oldpassword_section'>
+                <div key='aues_oldPW' className='admin_ue_section wide'>
+                    <div key='aues_oldPW_title' className='admin-qe-ttext'>{this.form_important('auesI_oldPW_title')}Old password:</div>
+                    <input key='aues_oldPW_input' placeholder='Old Password' size={12} type = 'password' 
+                        className={`admin-ue-txt`} value={DATA.oldPassword}
+                        onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                            DATA.oldPassword = e.currentTarget.value; this.setState({ DATA });
+                        }}></input>
+                </div>
+            </React.Fragment>);
         const content = (<React.Fragment key='passwordTemplateVariableContain'>
-            <div key='aues_oldPW' className='admin_ue_section wide'>
-                <div key='aues_oldPW_title' className='admin-qe-ttext'>Old password:</div>
-                <input key='aues_oldPW_input' placeholder='Old Password' size={12} type = 'password' 
-                    className={`admin-ue-txt`} value={DATA.oldPassword}
-                    onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                        DATA.oldPassword = e.currentTarget.value; this.setState({ DATA });
-                    }}></input>
-            </div>
+            {form_oldpassword}
             <div key='aues_newPW' className='admin_ue_section wide'>
-                <div key='aues_newPW_title' className='admin-qe-ttext'>New password (min: 6 characters):</div>
+                <div key='aues_newPW_title' className='admin-qe-ttext'>{this.form_important('auesI_newPW_title')}New password (min: 6 characters):</div>
                 <input key='aues_newPW_input' placeholder='New Password' size={12} type = 'password' 
                     className={`admin-ue-txt`} value={DATA.newPassword}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
@@ -328,7 +345,7 @@ export default class UserEdit extends React.Component<Props, State> {
                     }}></input>
             </div>
             <div key='aues_newPW2' className='admin_ue_section wide'>
-                <div key='aues_newPW2_title' className='admin-qe-ttext'>Confirm:</div>
+                <div key='aues_newPW2_title' className='admin-qe-ttext'>{this.form_important('auesI_newPW2_title')}Confirm:</div>
                 <input key='aues_newPW2_input' placeholder='Confirm' size={12} type = 'password' 
                     className={`admin-ue-txt`} value={DATA.newPasswordConfirm}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
@@ -338,6 +355,10 @@ export default class UserEdit extends React.Component<Props, State> {
         </React.Fragment>);
         const output = (newUser) ? content : <div key='admin_ue_edit'  className='admin-ue-content'>{content}</div>;
         return(output);
+    }
+
+    form_important(key: string) {
+        return(<span key={key} className='acpform-important'>*</span>)
     }
 
     template_buttons(saveButtonName: string): JSX.Element {

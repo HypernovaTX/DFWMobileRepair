@@ -513,8 +513,14 @@
     overflow: hidden;
     transition: 200ms linear all;
 }
-.user-list-uid { width: 2%; }
-.user-list-username, .user-list-email { width: 20%; }
+.user-list-uid { width: 2em; }
+.user-list-username, .user-list-email {
+    width: 20%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.user-list-email { width: 50%; }
 .user-list-uid.legends { margin-left: 1.1em; }
 .user-list-username.rootuser {
     font-weight: 600;
@@ -626,3 +632,4 @@
     right: 31px;
     
 }
+.acpform-important { color: #cc4848; }
