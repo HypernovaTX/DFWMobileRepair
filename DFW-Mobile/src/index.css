@@ -357,6 +357,9 @@ textarea.form-input-textarea {
 .form-input-textarea:focus {
   background: #FFF;
 }
+.form-input-text.wrong {
+  border: 1px solid rgb(201, 26, 26);
+}
 .contact-note {
   background: #777;
   color: #FFF;

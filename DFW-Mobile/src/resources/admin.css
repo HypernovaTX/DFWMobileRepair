@@ -4,7 +4,7 @@
     padding: 32px;
     background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(1px);
-    border-radius: 32px;
+    border-radius: 16px;
     box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.5);
 }
 
@@ -33,6 +33,25 @@
 }
 .login-button:hover { background: rgb(255, 94, 0); }
 .login-button:active { background: rgb(255, 147, 85); }
+
+.login-error {
+    user-select: none;
+    background: rgba(0, 0, 0, 0);
+    color: #FFF;
+    font-size: 0em;
+    font-weight: 600;
+    text-align: center;
+    padding: 0px;
+    border-radius: 8px;
+    margin: 0px 0px 0px;
+    transition: 200ms linear all;
+}
+.login-error.wrong {
+    background: rgba(212, 49, 49, 1);
+    font-size: 0.9em;
+    padding: 4px;
+    margin: 0px 8px 12px;
+}
 
 .loading-bg {
     background: rgba(0, 0, 0, 0.7);

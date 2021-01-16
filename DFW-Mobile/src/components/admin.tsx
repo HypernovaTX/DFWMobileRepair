@@ -36,6 +36,7 @@ type State = {
     login: {
         username: string,
         password: string,
+        wrong: boolean,
     },
     adminPanel: string,
 
@@ -70,6 +71,7 @@ export default class Admin extends React.Component<Props, State> {
             login: {
                 username: '',
                 password: '',
+                wrong: false,
             },
             adminPanel: 'Quote',
             menuHover: '',
@@ -151,6 +153,7 @@ export default class Admin extends React.Component<Props, State> {
         login = {
             username: '',
             password: '',
+            wrong: false,
         };
         this.setState({ login });
     }
@@ -172,6 +175,7 @@ export default class Admin extends React.Component<Props, State> {
     }
 
     login(): void {
+        let { login } = this.state;
         let postData = new FormData();
         postData.append('username', this.state.login.username);
         postData.append('password', this.state.login.password);
@@ -186,10 +190,15 @@ export default class Admin extends React.Component<Props, State> {
                 this.clearLoginData();
                 this.beginTransition(() => { this.setState({ loggedin: true }) });
             }
-            else if (response.data === 'FAIL') { console.log('Wrong login information!'); }
+            else if (response.data === 'FAIL') {
+                //console.log('Wrong login information!');
+                login.wrong = true;
+                this.setState({ endLoad: true, login });
+            }
             else {
                 console.log('UNKNOWN ERROR???')
                 console.log('response data: ' + response.data);
+                this.setState({ endLoad: true });
             }
         });
     }
@@ -206,41 +215,49 @@ export default class Admin extends React.Component<Props, State> {
 
     /* TEMPLATES */
     template_login(): JSX.Element {
+        const { login } = this.state;
+        let wrongLoginElement = <React.Fragment key='no_wrong_admin_login'></React.Fragment>;
+        let wrongLoginClass = '';
+        if (login.wrong === true) { wrongLoginClass = 'wrong'; }
+
         return(
             <div key='login_screen' className='login-screen'>
                 <div key='login_window' className='login-window'>
+                <div key='login_wrong' className={`login-error ${wrongLoginClass}`}>Incorrect username/password!</div>
                     <span key='login_title_user' className='input-title'>Username</span>
                     <input
                         key = 'login_form_user'
                         type = 'text'
                         value = {this.state.login.username}
                         autoFocus = {true}
-                        onChange = {(c: any) => {
+                        onChange = {(c: React.ChangeEvent<HTMLInputElement>) => {
                             this.setState({
                                 login: {
                                     username: c.target.value,
-                                    password: this.state.login.password,
+                                    password: login.password,
+                                    wrong: false,
                                 }
                             })
                         }}
                         disabled = {false}
-                        className = 'form-input-text'
+                        className = {`form-input-text ${wrongLoginClass}`}
                     ></input>
                     <span key='login_title_pw' className='input-title'>Password</span>
                     <input
                         key = 'login_form_pw'
                         type = 'password'
                         value = {this.state.login.password}
-                        onChange = {(c: any) => {
+                        onChange = {(c: React.ChangeEvent<HTMLInputElement>) => {
                             this.setState({
                                 login: {
                                     username: this.state.login.username,
                                     password: c.target.value,
+                                    wrong: false,
                                 }
                             })
                         }}
                         disabled = {false}
-                        className = 'form-input-text'
+                        className = {`form-input-text ${wrongLoginClass}`}
                     ></input>
                     <button
                         key='uform_login_butt_in'
