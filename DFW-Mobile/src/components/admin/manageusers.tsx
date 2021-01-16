@@ -96,6 +96,10 @@ export default class ManageUsers extends React.Component<Props, State> {
         const postData = new FormData();
         postData.append('uid', uid);
 
+        if (this.props.role !== '0') {
+            const endFunction = () => { this.endEdit(true) };
+            this.specialMessage(`Only root admins can delete users!`, endFunction, endFunction, true); return; }
+
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_deleteuser`, postData)
         .then(() => {
             const { list } = this.state;
