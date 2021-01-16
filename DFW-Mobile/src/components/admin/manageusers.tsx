@@ -46,6 +46,10 @@ export default class ManageUsers extends React.Component<Props, State> {
     }
 
     componentDidMount() {
+        if (localStorage.getItem('listusers') !== null) {
+            const tempObj = localStorage.getItem('listusers');
+            this.setState({ list: JSON.parse( tempObj || '{}') });
+        }
         this.getUsers();
     }
 
@@ -68,15 +72,31 @@ export default class ManageUsers extends React.Component<Props, State> {
                     }
                 };
                 this.setState({ list: jsonData });
+                this.saveToLocalStorage();
             }
         );
     };
+
+    saveToLocalStorage(): void {
+        let tempObj: {[index: string]: any} = {};
+        const { list } = this.state;
+        for (const user in list) {
+            tempObj[user] = {
+                uid: list[user].uid,
+                username: list[user].username,
+                email: list[user].email,
+                _show: list[user]._show,
+            };
+        }
+        localStorage.setItem('listusers', JSON.stringify(tempObj));
+    }
 
     toggleDisplayUser(user: string): void {
         let { list } = this.state;
         if (!list.hasOwnProperty(user)) { list[user]._show = false; }
         list[user]._show = !list[user]._show;
         this.setState({ list });
+        this.saveToLocalStorage();
     }
 
     //Can be called by other instances
@@ -151,7 +171,7 @@ export default class ManageUsers extends React.Component<Props, State> {
             let evenListItem = ''; if (parseInt(list[user].uid) % 2 === 0) { evenListItem = '2'; }
             let rootUser = ''; if (list[user].role === '0') { rootUser = 'rootuser'; }
             const tick = <span key={`userlistT_${user}`} className={`menu-tick ${on}`}>▶</span>
-            const rawPhone = list[user].phone;
+            const rawPhone = list[user].phone || '';
             const phoneNumber = `(${rawPhone.substring(0,3)}) ${rawPhone.substring(3,6)}-${rawPhone.substring(6,10)}` || '(null)';
 
             //Prepare Buttons
