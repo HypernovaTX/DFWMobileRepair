@@ -68,7 +68,8 @@ export default class ManageUsers extends React.Component<Props, State> {
                     }
                 };
                 this.setState({ list: jsonData });
-            });
+            }
+        );
     };
 
     toggleDisplayUser(user: string): void {
@@ -97,7 +98,12 @@ export default class ManageUsers extends React.Component<Props, State> {
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_deleteuser`, postData)
         .then(() => {
-            //What's next???
+            const { list } = this.state;
+            this.endEdit(true);
+            if (list.hasOwnProperty(`user${uid}`)) {
+                delete list[`user${uid}`];
+                this.setState({ list });
+            }
         });
     }
 
@@ -115,9 +121,9 @@ export default class ManageUsers extends React.Component<Props, State> {
     endEdit = (refresh: boolean): void => {
         const { list, toEdit } = this.state;
         if (toEdit.id !== '') {
-            list[`user${toEdit.id}`]['_no_edit'] = false;
-            list[`user${toEdit.id}`]['_no_pw'] = false;
-            list[`user${toEdit.id}`]['_no_delete'] = false;
+            list[`user${toEdit.id}`]._no_edit = false;
+            list[`user${toEdit.id}`]._no_pw = false;
+            list[`user${toEdit.id}`]._no_delete = false;
         }
         if (refresh === true) {
             this.getUsers();
@@ -196,8 +202,13 @@ export default class ManageUsers extends React.Component<Props, State> {
     template_deleteButton(list: {[index: string]: any}, user: string): JSX.Element {
         return (<button type='button' key={`${user}_delete`} className='edit-user-icon' disabled={list[user]['_no_delete']}
         onClick={() => {
-            list[user]['_no_delete'] = true;
+            list[user]._no_delete = true;
             this.setState({ list, toDelete: list[user].uid });
+            this.specialMessage(
+                `Are you sure you want to delete user "${list[user].username}"?`, 
+                () => { this.deleteUser(list[user].uid); }, 
+                () => { this.endEdit(false); }, 
+            false);
         }}><FontAwesomeIcon icon={faTrash} /> Delete User</button>);
     }
     

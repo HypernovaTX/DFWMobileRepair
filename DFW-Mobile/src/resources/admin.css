@@ -513,7 +513,10 @@
     overflow: hidden;
     transition: 200ms linear all;
 }
-.user-list-uid { width: 2em; }
+.user-list-uid {
+    width: 2em;
+    overflow: hidden;
+}
 .user-list-username, .user-list-email {
     width: 20%;
     white-space: nowrap;
