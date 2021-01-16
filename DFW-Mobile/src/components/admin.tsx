@@ -12,8 +12,6 @@ import Cookies from 'js-cookie';
 /** Admin specific cookies
  *      uid - current user
  *      panel - quote/user edit settings
- *      quotedata - quote list data
- *      userdata - user list data
  */
 
 type Props = {
@@ -115,8 +113,6 @@ export default class Admin extends React.Component<Props, State> {
                 if (responseString[1] !== getCookieUid) {
                     Cookies.set('uid', responseString[1]);
                     Cookies.remove('panel');
-                    Cookies.remove('quotedata');
-                    Cookies.remove('userdata');
                 } else {
                     this.setState({ adminPanel: Cookies.get('panel') || 'Quote' }); 
                 }
