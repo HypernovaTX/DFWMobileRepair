@@ -65,6 +65,7 @@ export default class ManageUsers extends React.Component<Props, State> {
                     jsonData[uid]._no_edit = false;
                     jsonData[uid]._no_pw = false;
                     jsonData[uid]._no_delete = false;
+                    jsonData[uid]._existingData = true;
 
                     if (jsonData[uid].username !== this.props.username
                      && jsonData[uid].uid === this.props.uid) {
@@ -72,10 +73,19 @@ export default class ManageUsers extends React.Component<Props, State> {
                     }
                 };
                 this.setState({ list: jsonData });
+                this.deleteAdditionalKeys();
                 this.saveToLocalStorage();
             }
         );
     };
+
+    deleteAdditionalKeys(): void {
+        const { list } = this.state;
+        for (const i in list) {
+            if (!list[i].hasOwnProperty('_existingData')) { delete list[i]; }
+        }
+        this.setState({ list });
+    }
 
     saveToLocalStorage(): void {
         let tempObj: {[index: string]: any} = {};

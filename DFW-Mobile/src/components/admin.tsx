@@ -88,7 +88,6 @@ export default class Admin extends React.Component<Props, State> {
     componentDidMount() {
         axios.defaults.withCredentials = true;
         this.getCurrentUser();
-        
     }
 
     getCurrentUser(): void {
