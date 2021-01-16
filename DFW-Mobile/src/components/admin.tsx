@@ -7,6 +7,14 @@ import ManageQuotes from './admin/managequotes'
 import ManageUsers from './admin/manageusers'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import Cookies from 'js-cookie';
+
+/** Admin specific cookies
+ *      uid - current user
+ *      panel - quote/user edit settings
+ *      quotedata - quote list data
+ *      userdata - user list data
+ */
 
 type Props = {
 };
@@ -71,7 +79,7 @@ export default class Admin extends React.Component<Props, State> {
         }
 
         this.userMenuItem = [
-            ['Preferences', 0],
+            ['Update My Info', 0],
             ['Change Password', 1],
             ['Log Out', 2],
         ];
@@ -82,6 +90,7 @@ export default class Admin extends React.Component<Props, State> {
     componentDidMount() {
         axios.defaults.withCredentials = true;
         this.getCurrentUser();
+        
     }
 
     getCurrentUser(): void {
@@ -89,8 +98,10 @@ export default class Admin extends React.Component<Props, State> {
             .then((response) => {
                 let responseString: string[];
                 let loggedin = false;
-                responseString = response.data.split(/\[sep\]/);;
+                responseString = response.data.split(/\[sep\]/);; //split the 3 part of the data
+
                 if (responseString[0] !== 'GUEST') { loggedin = true; }
+
                 this.setState({
                     loggedin, 
                     session: {
@@ -100,6 +111,15 @@ export default class Admin extends React.Component<Props, State> {
                         role: responseString[2], 
                     },
                 });
+                const getCookieUid = Cookies.get('uid') || '-1';
+                if (responseString[1] !== getCookieUid) {
+                    Cookies.set('uid', responseString[1]);
+                    Cookies.remove('panel');
+                    Cookies.remove('quotedata');
+                    Cookies.remove('userdata');
+                } else {
+                    this.setState({ adminPanel: Cookies.get('panel') || 'Quote' }); 
+                }
             });
     };
 
@@ -287,9 +307,15 @@ export default class Admin extends React.Component<Props, State> {
                         </div>
                     </span>
                     <span key='nav_item1' className={`nav-items ${(adminPanel === 'Quote') ? 'active' : ''}`}
-                        onClick={() => {this.setState({ adminPanel: 'Quote' })}}>Manage Quotes</span>
+                        onClick={() => {
+                            this.setState({ adminPanel: 'Quote' });
+                            Cookies.set('panel', 'Quote');
+                        }}>Manage Quotes</span>
                     <span key='nav_item2' className={`nav-items ${(adminPanel === 'User') ? 'active' : ''}`}
-                        onClick={() => {this.setState({ adminPanel: 'User' })}}>Manage User</span>
+                        onClick={() => {
+                            this.setState({ adminPanel: 'User' });
+                            Cookies.set('panel', 'User');
+                        }}>Manage User</span>
                     {additionalNav}
                     {this.userMenu()}
                 </div>
