@@ -119,10 +119,23 @@ export default class Admin extends React.Component<Props, State> {
     };
 
     userMenuFunction(input: number): void {
+        const { session } = this.state;
         let test = 'please remove test in line 95 of admin.tsx when done.';
         console.log(test);
         switch (input) {
             default: test = 'xxx'; break;
+            case (0):
+                this.setState({ adminPanel: 'User' });
+                setTimeout(() => {
+                    this.comp_user_ref.current?.startEditing('e', session.uid);
+                }, 1);
+                break;
+            case (1):
+                this.setState({ adminPanel: 'User' });
+                setTimeout(() => {
+                    this.comp_user_ref.current?.startEditing('p', session.uid);
+                }, 1);
+                break;
             case (2): this.logout(); break;
         }
     }
