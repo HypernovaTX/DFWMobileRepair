@@ -233,16 +233,6 @@
 }
 .model-list:active { background: #9A9A9A; }
 
-.quotelist-load {
-    font-size: 1.5em;
-    background: #888;
-    padding: 12px 24px;
-    margin: 0px;
-    transition: 200ms linear all;
-    user-select: none;
-    overflow: hidden;
-}
-
 .model-edit-section {
     display: inline-flex;
     float: right;
@@ -659,19 +649,31 @@
 }
 .acpform-important { color: #cc4848; }
 
-
-.quotelist-load img {
-    width: 1em;
-    height: 1em;
+.quotelist-load {
+    font-size: 1.5em;
+    background: #888;
+    padding: 12px 24px;
+    margin: 0px;
+    transition: 200ms linear all;
     user-select: none;
-    filter: invert(0.8);
+    overflow: hidden;
 }
-
-.quotelist-load .ld {
-    width: 1em;
-    height: 1em;
-    margin: auto;
+.quotelist-load2 {
+    font-size: 0em;
+    background: #888;
+    padding: 0px 0px;
+    margin: 0px;
+    transition: 200ms linear all;
+    user-select: none;
+    overflow: hidden;
+    transition: 200ms linear all;
 }
+.quotelist-load2.active {
+    font-size: 1.5em;
+    padding: 12px 24px;
+}
+.quotelist-load img, .quotelist-load2 img { width: 1em; height: 1em; user-select: none; filter: invert(0.8); }
+.quotelist-load .ld, .quotelist-load2 .ld { width: 1em; height: 1em; margin: auto; }
 
 .loading-cover {
     width: 100%;

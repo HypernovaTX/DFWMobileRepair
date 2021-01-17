@@ -264,10 +264,10 @@ export default class ManageQuotes extends React.Component<Props, State> {
         </div>;
     }
 
-    templateLoadBar(nameKey: string): JSX.Element {
+    templateLoadBar(nameKey: string, alt: string = ''): JSX.Element {
         const styleSpinner = { animationDuration: '2.0s' };
         return(
-            <div key={`${nameKey}_load_outer`} className='quotelist-load'>
+            <div key={`${nameKey}_load_outer`} className={`quotelist-load${alt}`}>
                 <div key={`${nameKey}_load_spinner`} className='ld ld-spin' style={styleSpinner}>
                     <img
                         src={require('./../../resources/images/nut.png')}
@@ -283,7 +283,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
         const { list } = this.state;
         const yearList = Object.keys(list).reverse();
         let output = [this.templateLoadBar('year')];
-        //if (yearList.length > 0) { output = []; }
+        if (yearList.length > 0) { output = []; }
 
         yearList.forEach((year: string) => {
             let on = '';
@@ -303,12 +303,13 @@ export default class ManageQuotes extends React.Component<Props, State> {
     template_listMake(year: string): JSX.Element {
         const { list } = this.state;
 
-        const makeList = Object.keys(list[year]).reverse();
-        let output = [this.templateLoadBar(`make_${year}`)];
-        if (makeList.length > 0) { output = []; }
-
         let divClassName = '';
         if (list[year]['_show'] === true) { divClassName = 'active'; }
+
+        const makeList = Object.keys(list[year]).reverse();
+        let output = [this.templateLoadBar(`make_${year}`, `2 ${divClassName}`)];
+        if (makeList.length > 1) { output = []; }
+        
 
         makeList.forEach((make: string) => {
             if (make !== '_show') {
@@ -330,14 +331,14 @@ export default class ManageQuotes extends React.Component<Props, State> {
     template_listModel(year: string, make: string): JSX.Element {
         const { list } = this.state;
 
-        const makeList = Object.keys(list[year][make]).reverse();
-        let output = [this.templateLoadBar(`model_${year}_${make}`)];
-        if (makeList.length > 0) { output = []; }
-
         let divClassName = '';
         if (list[year]['_show'] === true && list[year][make]['_show'] === true) {
             divClassName = 'active';
         }
+
+        const makeList = Object.keys(list[year][make]).reverse();
+        let output = [this.templateLoadBar(`model_${year}_${make}`, `2 ${divClassName}`)];
+        if (makeList.length > 1) { output = []; }
 
         makeList.forEach((model: string) => {
             const keyName = `modellist_${year}_${make}_${model}`;
