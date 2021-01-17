@@ -524,7 +524,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                             alt='loading'
                             key='quoteedit_loading_img' 
                     ></img></div>
-                    <div key='quoteedit_loading_icon' className='loading-cover-text'>Saving data...</div>
+                    <div key='quoteedit_loading_txt' className='loading-cover-text'>Saving data...</div>
                 </div>
             </div>
         );

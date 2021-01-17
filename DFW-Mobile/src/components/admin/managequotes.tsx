@@ -25,6 +25,7 @@ type State = {
 export default class ManageQuotes extends React.Component<Props, State> {
     private dialogue_ref: React.RefObject<AdminPrompt>;
     private edit_ref: React.RefObject<QuoteEdit>;
+    private _ismounted: boolean = false;
     constructor(p: Props) {
         super(p);
 
@@ -56,7 +57,10 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
     componentDidMount() {
         this.getYears();
+        this._ismounted = true;
     }
+
+    componentWillUnmount() { this._ismounted = false; }
 
     /************************************************** REQUESTS **************************************************/
 
@@ -72,7 +76,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                         this.getMakeModel(year);
                     }
                 });
-                this.setState({ list });
+                if (this._ismounted) { this.setState({ list }); }
             });
     };
 
@@ -104,7 +108,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                         }
                     }
                 });
-                this.setState({ list });
+                if (this._ismounted) { this.setState({ list }); }
             });
     }
 

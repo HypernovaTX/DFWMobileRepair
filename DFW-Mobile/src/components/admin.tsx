@@ -131,13 +131,15 @@ export default class Admin extends React.Component<Props, State> {
             case (0):
                 this.setState({ adminPanel: 'User' });
                 setTimeout(() => {
-                    this.comp_user_ref.current?.startEditing('e', session.uid);
+                    if (this.comp_user_ref.current !== null) {
+                        this.comp_user_ref.current?.startEditing('e', session.uid); }
                 }, 1);
                 break;
             case (1):
                 this.setState({ adminPanel: 'User' });
                 setTimeout(() => {
-                    this.comp_user_ref.current?.startEditing('p', session.uid);
+                    if (this.comp_user_ref.current !== null) {
+                        this.comp_user_ref.current?.startEditing('p', session.uid); }
                 }, 1);
                 break;
             case (2): this.logout(); break;
@@ -275,12 +277,15 @@ export default class Admin extends React.Component<Props, State> {
         let panel = <div key='admin_none'></div>;
         let additionalNav = <React.Fragment key='admin_nav_none'></React.Fragment>
         switch (adminPanel) {
-            default:  
+            case ('Quote'): 
                 panel = <ManageQuotes loggedIn={loggedin} uid={session.uid} ref={this.comp_quote_ref}/>;
                 additionalNav = <button
                     key='acpnav_q_add'
                     className='nav-button'
-                    onClick={() => { this.comp_quote_ref.current?.startEditing(true); }}
+                    onClick={() => {
+                        if (this.comp_quote_ref.current !== null) {
+                            this.comp_quote_ref.current?.startEditing(true); }
+                    }}
                 ><FontAwesomeIcon icon={faPlus} /><span key='nav_txt1' className='nav-text'>  New Vehicle</span></button>;
                 break;
             case ('User'):
@@ -291,7 +296,10 @@ export default class Admin extends React.Component<Props, State> {
                 additionalNav = <button
                     key='acpnav_u_add'
                     className='nav-button'
-                    onClick={() => { this.comp_user_ref.current?.startEditing('n'); }}
+                    onClick={() => {
+                        if (this.comp_user_ref.current !== null) {
+                            this.comp_user_ref.current?.startEditing('n'); }
+                    }}
                 ><FontAwesomeIcon icon={faPlus} /><span key='nav_txt1' className='nav-text'>  Create User</span></button>;
                 break;
         }
