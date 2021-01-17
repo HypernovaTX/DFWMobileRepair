@@ -216,7 +216,6 @@ export default class Admin extends React.Component<Props, State> {
     /* TEMPLATES */
     template_login(): JSX.Element {
         const { login } = this.state;
-        let wrongLoginElement = <React.Fragment key='no_wrong_admin_login'></React.Fragment>;
         let wrongLoginClass = '';
         if (login.wrong === true) { wrongLoginClass = 'wrong'; }
 
