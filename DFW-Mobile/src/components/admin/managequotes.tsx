@@ -260,10 +260,25 @@ export default class ManageQuotes extends React.Component<Props, State> {
         </div>;
     }
 
+    templateLoadBar(nameKey: string): JSX.Element {
+        const styleSpinner = { animationDuration: '4.0s' };
+        return(
+            <div key={`${nameKey}_load_outer`} className='quotelist-load'>
+                <div key={`${nameKey}_load_spinner`} className='ld ld-spin-fast' style={styleSpinner}>
+                    <img
+                        src={require('./../../resources/images/nut.png')}
+                        alt='loading'
+                        key={`${nameKey}_load_img`} 
+                    ></img>
+                </div>
+            </div>
+        );
+    }
+
     template_listYears(): JSX.Element {
         const { list } = this.state;
         const yearList = Object.keys(list).reverse();
-        let output = [<div key='year_load' className='quotelist-load'></div>];
+        let output = [this.templateLoadBar('year')];
         if (yearList.length > 0) { output = []; }
 
         yearList.forEach((year: string) => {
@@ -285,7 +300,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
         const { list } = this.state;
 
         const makeList = Object.keys(list[year]).reverse();
-        let output = [<div key='make_load' className='quotelist-load2'></div>];
+        let output = [this.templateLoadBar(`make_${year}`)];
         if (makeList.length > 0) { output = []; }
 
         let divClassName = '';
@@ -312,7 +327,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
         const { list } = this.state;
 
         const makeList = Object.keys(list[year][make]).reverse();
-        let output = [<div key='model_load' className='quotelist-load2'></div>];
+        let output = [this.templateLoadBar(`model_${year}_${make}`)];
         if (makeList.length > 0) { output = []; }
 
         let divClassName = '';

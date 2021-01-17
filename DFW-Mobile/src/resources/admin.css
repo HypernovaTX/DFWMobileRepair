@@ -234,11 +234,12 @@
 
 .quotelist-load {
     font-size: 1.5em;
-    background: #EEE;
+    background: #888;
     padding: 12px 24px;
     margin: 0px;
     transition: 200ms linear all;
     user-select: none;
+    overflow: hidden;
 }
 
 .model-edit-section {
@@ -655,3 +656,38 @@
     
 }
 .acpform-important { color: #cc4848; }
+
+
+.quotelist-load img {
+    width: 1em;
+    height: 1em;
+    user-select: none;
+    filter: invert(0.8);
+}
+
+.quotelist-load .ld.ld-spin-fast {
+    width: 1em;
+    height: 1em;
+    margin: auto;
+}
+
+.loading-cover {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    top: 0px;
+    backdrop-filter: blur(4px);
+    z-index: -10;
+    transition: 200ms linear opacity, 200ms linear backdrop-filter;
+    opacity: 0;
+    display: flex;
+}
+
+.loading-cover-center { margin: auto; }
+
+.loading-cover .ld, .loading-cover img {
+    width: 32px;
+    height: 32px;
+    margin: auto;
+}

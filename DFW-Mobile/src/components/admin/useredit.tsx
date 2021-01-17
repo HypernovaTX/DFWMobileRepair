@@ -21,7 +21,8 @@ type State = {
     DATA: {[index: string]: any},
     editing: {[index: string]: any},
 
-    refresh: boolean
+    refresh: boolean,
+    loading: boolean,
 };
 
 export default class UserEdit extends React.Component<Props, State> {
@@ -40,7 +41,7 @@ export default class UserEdit extends React.Component<Props, State> {
             DATA: {
                 username: '', name: '', email: '', phone: '', address: '', role: '', root: false, oldPassword: '', newPassword: '', newPasswordConfirm: '',
             },
-            editing: {}, refresh: false
+            editing: {}, refresh: false, loading: false,
         }
     }
     /************************************************** UE - API **************************************************/
@@ -60,7 +61,12 @@ export default class UserEdit extends React.Component<Props, State> {
         });
     };
 
+    stopLoading = (): void => { this.setState({ loading: false }); }
+
     saveData(): void {
+        const { loading } = this.state; 
+        if (loading) { return; } //don't call more than once
+        this.setState({ loading: true });
         switch (this.props.kind) {
             case ('n'): this.saveData_info(true); break;
             case ('p'): this.saveData_password(false); break;
@@ -71,36 +77,31 @@ export default class UserEdit extends React.Component<Props, State> {
 
     saveData_info(newUser: boolean): void {
         const { DATA } = this.state;
+        const errorMsg = (message: string): void => { this.props.promptOpen(message, this.stopLoading, () => {}, true); };
         
-        if (DATA.username === '' || DATA.name === '' || DATA.email === '') {
-            this.props.promptOpen(`Username, email, and name cannot be empty!`, () => {}, () => {}, true); return; }
-        if (this.props.role !== '0' && this.props.me !== DATA.uid) {
-            this.props.promptOpen(`Only root admins can modify users!`, () => {}, () => {}, true); return; }
+        if (DATA.username === '' || DATA.name === '' || DATA.email === '') { errorMsg(`Username, email, and name cannot be empty!`); return; }
+        if (this.props.role !== '0' && this.props.me !== DATA.uid) { errorMsg(`Only root admins can modify users!`); return; }
         
         let api_param = 'acp_updateuser';
         if (newUser) {
             api_param = 'acp_newuser';
-
-            if (this.props.role !== '0') { this.props.promptOpen(`Only root admins can create new users!`, () => {}, () => {}, true); return; }
-            if (DATA.newPassword === '' || DATA.newPasswordConfirm === '') {
-                this.props.promptOpen(`Passwords cannot be empty!`, () => {}, () => {}, true); return; }
-            if (DATA.newPassword !== DATA.newPasswordConfirm) { this.props.promptOpen(`Passwords are not matching!`, () => {}, () => {}, true); return; }
-            if (DATA.newPassword.length < 6) { this.props.promptOpen(`New password is too short!`, () => {}, () => {}, true); return; }
+            if (this.props.role !== '0') { errorMsg(`Only root admins can create new users!`); return; }
+            if (DATA.newPassword === '' || DATA.newPasswordConfirm === '') { errorMsg(`Passwords cannot be empty!`); return; }
+            if (DATA.newPassword !== DATA.newPasswordConfirm) { errorMsg(`Passwords are not matching!`); return; }
+            if (DATA.newPassword.length < 6) { errorMsg(`New password is too short!`); return; }
         }
 
         //1 -------------- Check for existing username
         const postUser = new FormData();
         postUser.append('username', DATA.username);
         postUser.append('uid', this.props.user);
-        const blankF = () => {};
 
         //Run the user check request
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=ck_uname`, postUser)
         .then((responseUserCheck: AxiosResponse<any>) => {
             //Username exists
-            if (responseUserCheck.data === 'EXISTS') {
-                this.props.promptOpen(`Username is taken by another user!`, blankF, blankF, true); return;
-            }
+            if (responseUserCheck.data === 'EXISTS') { errorMsg(`Username is taken by another user!`); return; }
+            
             //2 -------------- Check for existing email 
             else {
                 const postEmail = new FormData();
@@ -111,9 +112,8 @@ export default class UserEdit extends React.Component<Props, State> {
                 axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=ck_email`, postEmail)
                 .then((responseEmailCheck: AxiosResponse<any>) => {
                     //Email exists
-                    if (responseEmailCheck.data === 'EXISTS') {
-                        this.props.promptOpen(`Email is used by another user!`, blankF, blankF, true); return;
-                    }
+                    if (responseEmailCheck.data === 'EXISTS') { errorMsg(`Email is used by another user!`); return; }
+
                     //3 ------------ Proceed to save the updated user data
                     else {
                         const postData = new FormData();
@@ -130,7 +130,10 @@ export default class UserEdit extends React.Component<Props, State> {
                         this.setState({ refresh: true });
                         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=${api_param}`, postData)
                         .then(() => {
-                            this.close();
+                            setTimeout(() => {
+                                this.close();
+                                setTimeout(() => { this.setState({ loading: false }); }, 200);
+                            },1000);
                         });
                     }
                 });
@@ -140,13 +143,13 @@ export default class UserEdit extends React.Component<Props, State> {
 
     saveData_password(newUser: boolean): void {
         const { DATA } = this.state;
+        const errorMsg = (message: string): void => { this.props.promptOpen(message, this.stopLoading, () => {}, true); };
 
         //Errors
-        if (DATA.newPassword === '' || DATA.newPasswordConfirm === '' || DATA.oldPassword === '') {
-            this.props.promptOpen(`All of the fields cannot be empty!`, () => {}, () => {}, true); return; }
-        if (DATA.newPassword !== DATA.newPasswordConfirm) { this.props.promptOpen(`New passwords are not matching!`, () => {}, () => {}, true); return; }
-        if (DATA.newPassword === DATA.oldPassword) { this.props.promptOpen(`New password cannot be the same as before!`, () => {}, () => {}, true); return; }
-        if (DATA.newPassword.length < 6) { this.props.promptOpen(`New password is too short!`, () => {}, () => {}, true); return; }
+        if (DATA.newPassword === '' || DATA.newPasswordConfirm === '' || DATA.oldPassword === '') { errorMsg(`All of the fields cannot be empty!`); return; }
+        if (DATA.newPassword !== DATA.newPasswordConfirm) { errorMsg(`New passwords are not matching!`); return; }
+        if (DATA.newPassword === DATA.oldPassword) { errorMsg(`New password cannot be the same as before!`); return; }
+        if (DATA.newPassword.length < 6) { errorMsg(`New password is too short!`); return; }
         
         //1 ------ Send the old password with the UID to verify if it matches
         const postOldPW = new FormData();
@@ -156,9 +159,8 @@ export default class UserEdit extends React.Component<Props, State> {
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_verifypw`, postOldPW)
         .then((responsePWCheck: AxiosResponse<any>) => {
             //Password fail (but make sure this is NOT a newUser)
-            if (responsePWCheck.data === 'FAIL' && !newUser) {
-                this.props.promptOpen(`The old password does NOT match for the user "${DATA.username}"!`, () => {}, () => {}, true); return;
-            }
+            if (responsePWCheck.data === 'FAIL' && !newUser) { errorMsg(`The old password does NOT match for the user "${DATA.username}"!`); return; }
+
             //2 ------ Send the updated password
             const postNewPW = new FormData();
             postNewPW.append('uid', this.props.user);
@@ -167,7 +169,10 @@ export default class UserEdit extends React.Component<Props, State> {
 
             axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_updatepw`, postNewPW)
             .then(() => {
-                this.close();
+                setTimeout(() => {
+                    this.close();
+                    setTimeout(() => { this.setState({ loading: false }); }, 200);
+                },1000);
             });
         }); 
     }
@@ -246,6 +251,7 @@ export default class UserEdit extends React.Component<Props, State> {
             <div key='admin_ue_title' className='admin-ue-title'>{content.title}</div>
             {content.template}
             {this.template_buttons(content.ok)}
+            {this.template_loadingCover()}
         </div>);
     }
 
@@ -359,6 +365,25 @@ export default class UserEdit extends React.Component<Props, State> {
 
     form_important(key: string) {
         return(<span key={key} className='acpform-important'>*</span>)
+    }
+
+    template_loadingCover(): JSX.Element {
+        const { loading } = this.state;
+        let loadCSS: {[index: string]: any} = {};
+        const styleSpinner = { animationDuration: '2s' };
+        if (loading) { loadCSS = { opacity: 1, zIndex: 10 }; }
+        return(
+            <div key='useredit_loading_cover' className='loading-cover' style={loadCSS}>
+                <div key='useredit_loading_cover_center' className='loading-cover-center'>
+                    <div key='useredit_loading_icon' className='ld ld-clock' style={styleSpinner}><img
+                            src={require('./../../resources/images/nut.png')}
+                            alt='loading'
+                            key='useredit_loading_img' 
+                    ></img></div>
+                    <div key='useredit_loading_icon' className='loading-cover-text'>Saving data...</div>
+                </div>
+            </div>
+        );
     }
 
     template_buttons(saveButtonName: string): JSX.Element {

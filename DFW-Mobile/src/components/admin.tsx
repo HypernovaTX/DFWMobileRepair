@@ -1,7 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import './../resources/admin.css'
+import './../resources/admin.css';
 import './../resources/user.css';
+import './../resources/mobileadmin.css';
+import './../resources/loading.min.css';
 import * as CONFIG from '../config.json';
 import ManageQuotes from './admin/managequotes'
 import ManageUsers from './admin/manageusers'

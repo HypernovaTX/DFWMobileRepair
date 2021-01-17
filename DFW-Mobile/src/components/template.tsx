@@ -244,7 +244,7 @@ export default class Template extends React.Component<Props, State> {
                 );
 
                 //Each of the list item has a delayed timing
-                slistArray.forEach((val, num) => {
+                slistArray.forEach((val: string, num: number) => {
                     slistArray[num] = '';
                     timeout.push(setTimeout(() => {
                         let getSLCN = this.state.service_list_cname;

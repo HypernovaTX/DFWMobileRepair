@@ -27,6 +27,7 @@ type State = {
     editing: {[index: string]: any},
 
     refresh: boolean,
+    loading: boolean,
 };
 
 export default class QuoteEdit extends React.Component<Props, State> {
@@ -61,7 +62,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 'error': false,
             },
 
-            refresh: false
+            refresh: false,
+            loading: false,
         }
     }
     /************************************************** QE - EVENTS **************************************************/
@@ -114,7 +116,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
     };
 
     saveData(): void {
-        const { YEAR, MAKE, MODEL, DATA } = this.state;
+        const { YEAR, MAKE, MODEL, DATA, loading } = this.state;
+
+        if (loading) { return; } //don't call it more than once
 
         if (YEAR === '' || MAKE === '' || MODEL === '') {
             this.props.promptOpen(`Vehicle's "Year", "Make", and "Model" cannot be empty!`, () => {}, () => {}, true);
@@ -126,14 +130,17 @@ export default class QuoteEdit extends React.Component<Props, State> {
         postData.append('make', MAKE);
         postData.append('model', MODEL);
         postData.append('data', JSON.stringify(DATA));
-        this.setState({ refresh: true });
+        this.setState({ refresh: true, loading: true });
 
         let param = 'update';
         if (this.props.newQuote === true) { param = 'create'; }
         else { postData.append('id', this.props.vehicleID); }
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=${param}`, postData)
         .then(() => {
-            this.close();
+            setTimeout(() => {
+                this.close();
+                setTimeout(() => { this.setState({ loading: false }); }, 200);
+            },1000);
         });
     }
 
@@ -502,6 +509,25 @@ export default class QuoteEdit extends React.Component<Props, State> {
         output.shift();
         return (<React.Fragment key='qe_list'>{output}</React.Fragment>);
     }
+
+    template_loadingCover(): JSX.Element {
+        const { loading } = this.state;
+        let loadCSS: {[index: string]: any} = {};
+        const styleSpinner = { animationDuration: '2s' };
+        if (loading) { loadCSS = { opacity: 1, zIndex: 10 }; }
+        return(
+            <div key='quoteedit_loading_cover' className='loading-cover' style={loadCSS}>
+                <div key='quoteedit_loading_cover_center' className='loading-cover-center'>
+                    <div key='quoteedit_loading_icon' className='ld ld-clock' style={styleSpinner}><img
+                            src={require('./../../resources/images/nut.png')}
+                            alt='loading'
+                            key='quoteedit_loading_img' 
+                    ></img></div>
+                    <div key='quoteedit_loading_icon' className='loading-cover-text'>Saving data...</div>
+                </div>
+            </div>
+        );
+    }
     
     //Main template
     template(): JSX.Element {
@@ -573,6 +599,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     {reset}
                 </div>
             </div>
+            {this.template_loadingCover()}
         </div>
         );
     }
