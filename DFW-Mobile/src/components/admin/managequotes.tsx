@@ -265,10 +265,10 @@ export default class ManageQuotes extends React.Component<Props, State> {
     }
 
     templateLoadBar(nameKey: string): JSX.Element {
-        const styleSpinner = { animationDuration: '4.0s' };
+        const styleSpinner = { animationDuration: '2.0s' };
         return(
             <div key={`${nameKey}_load_outer`} className='quotelist-load'>
-                <div key={`${nameKey}_load_spinner`} className='ld ld-spin-fast' style={styleSpinner}>
+                <div key={`${nameKey}_load_spinner`} className='ld ld-spin' style={styleSpinner}>
                     <img
                         src={require('./../../resources/images/nut.png')}
                         alt='loading'
@@ -283,7 +283,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
         const { list } = this.state;
         const yearList = Object.keys(list).reverse();
         let output = [this.templateLoadBar('year')];
-        if (yearList.length > 0) { output = []; }
+        //if (yearList.length > 0) { output = []; }
 
         yearList.forEach((year: string) => {
             let on = '';

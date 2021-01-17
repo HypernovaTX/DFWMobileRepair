@@ -667,7 +667,7 @@
     filter: invert(0.8);
 }
 
-.quotelist-load .ld.ld-spin-fast {
+.quotelist-load .ld {
     width: 1em;
     height: 1em;
     margin: auto;
