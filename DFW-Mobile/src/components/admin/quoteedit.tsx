@@ -360,6 +360,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     //Delete
                     let itemBar = 
                         <span key={`qe_itemI_${forKey}`} className='qe-bar-text right'>
+                            <span key={`qe_itemI_ttxt_${forKey}`} className='qe-bar-delete-txt'>Delete "{item}"</span>
                             <span
                                 key={`qe_itemI_t_${forKey}`}
                                 className='qe-bar-button delete'

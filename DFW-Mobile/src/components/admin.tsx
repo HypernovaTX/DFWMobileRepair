@@ -8,7 +8,7 @@ import * as CONFIG from '../config.json';
 import ManageQuotes from './admin/managequotes'
 import ManageUsers from './admin/manageusers'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
 
 /** Admin specific cookies
@@ -281,7 +281,7 @@ export default class Admin extends React.Component<Props, State> {
                     key='acpnav_q_add'
                     className='nav-button'
                     onClick={() => { this.comp_quote_ref.current?.startEditing(true); }}
-                ><FontAwesomeIcon icon={faPlus} />  New Vehicle</button>;
+                ><FontAwesomeIcon icon={faPlus} /><span key='nav_txt1' className='nav-text'>  New Vehicle</span></button>;
                 break;
             case ('User'):
                 panel = <ManageUsers
@@ -292,7 +292,7 @@ export default class Admin extends React.Component<Props, State> {
                     key='acpnav_u_add'
                     className='nav-button'
                     onClick={() => { this.comp_user_ref.current?.startEditing('n'); }}
-                ><FontAwesomeIcon icon={faPlus} />  Create User</button>;
+                ><FontAwesomeIcon icon={faPlus} /><span key='nav_txt1' className='nav-text'>  Create User</span></button>;
                 break;
         }
 
@@ -336,12 +336,18 @@ export default class Admin extends React.Component<Props, State> {
                         onClick={() => {
                             this.setState({ adminPanel: 'Quote' });
                             Cookies.set('panel', 'Quote');
-                        }}>Manage Quotes</span>
+                        }}>
+                            <FontAwesomeIcon icon={faTags}/>
+                            <span key='nav_txt1' className='nav-text'>Manage Quotes</span>
+                        </span>
                     <span key='nav_item2' className={`nav-items ${(adminPanel === 'User') ? 'active' : ''}`}
                         onClick={() => {
                             this.setState({ adminPanel: 'User' });
                             Cookies.set('panel', 'User');
-                        }}>Manage User</span>
+                        }}>
+                            <FontAwesomeIcon icon={faUsers}/>
+                            <span key='nav_txt1' className='nav-text'>Manage User</span>
+                        </span>
                     {additionalNav}
                     {this.userMenu()}
                 </div>

@@ -350,7 +350,10 @@ export default class ManageQuotes extends React.Component<Props, State> {
                             this.setState({ list });
                             this.startEditing(false, vehicle['id'], year, make, model);
                         }}
-                    ><FontAwesomeIcon icon={faEdit} /> Edit</button>
+                    >
+                        <FontAwesomeIcon icon={faEdit} />
+                        <span key={`${keyName}_editbut_text`} className='list-button-txt'> Edit</span>
+                    </button>
                     <button
                         type='button'
                         key={`${keyName}_trash`}
@@ -361,7 +364,10 @@ export default class ManageQuotes extends React.Component<Props, State> {
                             this.setState({ list });
                             this.diagDeleteVehicle(vehicle['id'], year, make, model);
                         }}
-                    ><FontAwesomeIcon icon={faTrash} /> Delete</button>
+                    >
+                        <FontAwesomeIcon icon={faTrash} />
+                        <span key={`${keyName}_delbut_text`} className='list-button-txt'> Delete</span>
+                    </button>
                 </div>
             );
 

@@ -153,6 +153,7 @@
 }
 .nav-items:hover { background: rgba(0, 0, 0, 0.1); }
 .nav-items:active { background: rgba(0, 0, 0, 0.2); }
+.nav-items svg { display: none; }
 
 .nav-button {
     background: #ca4a00;
@@ -267,6 +268,7 @@
     color: #444;
     cursor: default;
 }
+.qe-bar-delete-txt { display: none; }
 
 .admin-pm-body {
     z-index: -20;
