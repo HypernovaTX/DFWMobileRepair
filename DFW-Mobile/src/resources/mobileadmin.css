@@ -14,6 +14,9 @@
     .admin-pm-msg { padding: 8px 16px; font-size: 1.1em; }
     .admin-pm-btn { width: 100%; }
 
+    /* login */
+    .login-window { width: 80%; border-radius: 8px; padding: 24px;}
+
     /* quote edit */
     .year-list, .make-list, .model-list { margin-top: 4px; padding: 10px 24px; }
     .make-list, .model-list { margin-top: 0px; padding: 0px; }
@@ -43,4 +46,15 @@
     .admin-qe-buttonbox { width: auto; white-space: normal; }
     .admin-qe-btn { border-radius: 8px; font-size: 1em; height: 2em; margin: 2px 4px; width: 30%; }
     .qe-bar-delete-txt { display: inline; font-size: 0.7em; color: rgb(184, 64, 64); text-transform: uppercase; }
+
+    /* user list */
+    .user-list-username { width: 60%; }
+    .user-list-email { display: none; }
+    .user-list-email.mobile { display: block; height: 0em; font-size: 0em; overflow: hidden; transition: 200ms linear all; }
+    .on .user-list-email.mobile { height: 1.2em; margin-top: 0.5em; font-size: 0.75em; margin-left: 24px; }
+    .user-list-email.mobile, .user-list-phone, .user-list-name, .user-list-address, .user-list-joined {
+        width: 90%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .edit-user-icon { width: 6em; border-radius: 4px; }
+    .edit-user-icon .ue-btn-txt { display: none; }
+    .admin_ue_section { width: 96%; }
 }

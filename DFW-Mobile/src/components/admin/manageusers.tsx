@@ -203,6 +203,7 @@ export default class ManageUsers extends React.Component<Props, State> {
                     </span>
                     <span key={`userlist_ema_${user}`} className={`user-list-email`}>{list[user].email}</span>
                 </div>
+                <span key={`userlist_ema_${user}`} className={`user-list-email mobile`}><b>Email:</b> {list[user].email}</span>
                 <span key={`userlist_nam_${user}`} className={`user-list-name`}><b>Name:</b> {list[user].name}</span>
                 <span key={`userlist_pho_${user}`} className={`user-list-phone`}><b>Phone:</b> {phoneNumber}</span>
                 <span key={`userlist_add_${user}`} className={`user-list-address`}><b>Address:</b> {list[user].address}</span>
@@ -223,13 +224,13 @@ export default class ManageUsers extends React.Component<Props, State> {
                     list[user]['_no_edit'] = true; this.setState({ list });
                     this.startEditing('e', list[user].uid);
                 }}
-            ><FontAwesomeIcon icon={faEdit} /> Edit User</button>
+            ><FontAwesomeIcon icon={faEdit} /><span key={`${user}_editb_txt`} className='ue-btn-txt'> Edit User</span></button>
             <button type='button' key={`${user}_password`} className='edit-user-icon' disabled={list[user]['_no_pw']}
                 onClick={() => {
                     list[user]['_no_pw'] = true; this.setState({ list });
                     this.startEditing('p', list[user].uid);
                 }}
-            ><FontAwesomeIcon icon={faKey} /> Change Password</button>
+            ><FontAwesomeIcon icon={faKey} /><span key={`${user}_passb_txt`} className='ue-btn-txt'> Change Password</span></button>
         </React.Fragment>);
     }
 
@@ -243,7 +244,7 @@ export default class ManageUsers extends React.Component<Props, State> {
                 () => { this.deleteUser(list[user].uid); }, 
                 () => { this.endEdit(false); }, 
             false);
-        }}><FontAwesomeIcon icon={faTrash} /> Delete User</button>);
+        }}><FontAwesomeIcon icon={faTrash} /><span key={`${user}_deleteb_txt`} className='ue-btn-txt'> Delete User</span></button>);
     }
     
     template(): JSX.Element {
