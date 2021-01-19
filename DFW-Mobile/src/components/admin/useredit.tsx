@@ -52,7 +52,14 @@ export default class UserEdit extends React.Component<Props, State> {
     /************************************************** UE - API **************************************************/
     getData(): void {
         //Make sure this is NOT a new user
-        if (this.props.kind === 'n') { return; }
+        if (this.props.kind === 'n') {
+            const ckError = new FormData(); ckError.append('error', '');
+            axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=checkLogin`, ckError)
+            .then((response: AxiosResponse<string>) => {
+                this.props.logout(response.data);
+            });
+            return;
+        }
         const postData = new FormData();
         postData.append('uid', this.props.user);
 
