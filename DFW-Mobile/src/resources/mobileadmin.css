@@ -5,6 +5,7 @@
     .user-text { display: none; }
     .nav-items { width: auto; padding: 0 24px; }
     .nav-items svg { display: initial; }
+    .nav-items.active { font-weight: initial; }
     .nav-text { display: none; }
     .nav-buttom { margin-bottom: 8px; }
 
@@ -59,3 +60,12 @@
     .edit-user-icon .ue-btn-txt { display: none; }
     .admin_ue_section { width: 96%; }
 }
+
+/* for even smaller devices */
+@media only screen and (max-width: 280px) {
+    .nav-items { padding: 0 12px; }
+    .admin-qe-title-txt { width: 2.5em; }
+    .admin-qe-btn {
+        font-size: 0.8em; line-height: 1.2em; margin: 0px 4px; width: 25%;}
+}
+
