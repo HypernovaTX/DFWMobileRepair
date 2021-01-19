@@ -407,7 +407,7 @@
     background: rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     margin: 4px 16px;
-    height: 60vh;
+    height: calc(80vh - 168px);
     /*max-height: 50vh;*/
     padding: 8px;
     overflow-x: hidden;

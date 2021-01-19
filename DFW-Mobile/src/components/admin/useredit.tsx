@@ -328,7 +328,6 @@ export default class UserEdit extends React.Component<Props, State> {
                         this.setState({ DATA });
                     }}></input>
             </div>
-            {this.template_rootaccess()}
             {password}
         </div>);
     }
@@ -428,6 +427,6 @@ export default class UserEdit extends React.Component<Props, State> {
 
     render() {
         const { propsBG } = this.state;
-        return(<div key='admin_pm_body' className='admin-pm-body' style={propsBG}>{this.template()}</div>);
+        return(<div key='admin_pm_body' className='admin-pm-body' style={propsBG}>{this.template()}{this.template_loadingCover()}</div>);
     }
 }

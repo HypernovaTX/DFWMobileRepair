@@ -612,13 +612,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     {reset}
                 </div>
             </div>
-            {this.template_loadingCover()}
         </div>
         );
     }
 
     render() {
         const { propsBG } = this.state;
-        return(<div key='admin_pm_body' className='admin-pm-body' style={propsBG}>{this.template()}</div>);
+        return(<div key='admin_pm_body' className='admin-pm-body' style={propsBG}>{this.template()}{this.template_loadingCover()}</div>);
     }
 }
