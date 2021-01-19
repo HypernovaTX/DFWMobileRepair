@@ -54,6 +54,10 @@ export default class ManageUsers extends React.Component<Props, State> {
     }
 
     /************************************************** API / UI **************************************************/
+    notLoggedIn(input: string): void {
+        
+    }
+
     getUsers(): void {
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_list`)
             .then((response) => {
