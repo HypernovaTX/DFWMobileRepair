@@ -96,7 +96,7 @@ export default class UserEdit extends React.Component<Props, State> {
         const errorMsg = (message: string): void => { this.props.promptOpen(message, this.stopLoading, () => {}, true); };
         
         if (DATA.username === '' || DATA.name === '' || DATA.email === '') { errorMsg(`Username, email, and name cannot be empty!`); return; }
-        if (this.props.role !== '0' && this.props.me !== DATA.uid) { errorMsg(`Only root admins can modify users!`); return; }
+        if (this.props.role !== '0' && this.props.me !== this.props.user) { errorMsg(`Only root admins can modify other users!`); return; }
         
         let api_param = 'acp_updateuser';
         if (newUser) {
@@ -166,6 +166,7 @@ export default class UserEdit extends React.Component<Props, State> {
         const errorMsg = (message: string): void => { this.props.promptOpen(message, this.stopLoading, () => {}, true); };
 
         //Errors
+        if (this.props.role !== '0' && this.props.me !== this.props.user) { errorMsg(`Only root admins can modify other user's passwords!`); return; }
         if (DATA.newPassword === '' || DATA.newPasswordConfirm === '' || DATA.oldPassword === '') { errorMsg(`All of the fields cannot be empty!`); return; }
         if (DATA.newPassword !== DATA.newPasswordConfirm) { errorMsg(`New passwords are not matching!`); return; }
         if (DATA.newPassword === DATA.oldPassword) { errorMsg(`New password cannot be the same as before!`); return; }

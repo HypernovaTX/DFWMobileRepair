@@ -312,6 +312,7 @@ export default class Admin extends React.Component<Props, State> {
                             this.comp_user_ref.current?.startEditing('n'); }
                     }}
                 ><FontAwesomeIcon icon={faPlus} /><span key='nav_txt1' className='nav-text'>  Create User</span></button>;
+                if (session.role !== '0') { additionalNav = <React.Fragment key='no-add-user'></React.Fragment>; }
                 break;
         }
 
