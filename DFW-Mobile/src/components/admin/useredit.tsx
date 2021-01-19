@@ -11,6 +11,7 @@ type Props = {
     promptOpen: (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => void, 
     me: string, //Current user ID
     role: string, //current user role
+    logout: (value: string) => void,
 };
 type State = {
     show: number,
@@ -29,6 +30,7 @@ export default class UserEdit extends React.Component<Props, State> {
     private props_bg_off: {};
     private props_bg_on: {};
     private props_bg_down: {};
+    private _ismounted: boolean = false;
     constructor(p: Props) {
         super(p);
 
@@ -44,6 +46,9 @@ export default class UserEdit extends React.Component<Props, State> {
             editing: {}, refresh: false, loading: false,
         }
     }
+
+    componentDidMount() { this._ismounted = true; }
+    componentWillUnmount() { this._ismounted = false; }
     /************************************************** UE - API **************************************************/
     getData(): void {
         //Make sure this is NOT a new user
@@ -53,11 +58,15 @@ export default class UserEdit extends React.Component<Props, State> {
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_userinfo`, postData)
         .then((response: AxiosResponse<any>) => {
-            this.setState({ DATA: response.data });
-            const { DATA } = this.state;
-            DATA.phone = this.formatPhoneText(this.state.DATA?.phone);
-            DATA.root = (DATA.role === '0') ? true : false;
-            this.setState({ DATA });
+            this.props.logout(JSON.stringify(response.data));
+
+            if (this._ismounted && typeof response.data !== 'string') {
+                this.setState({ DATA: response.data });
+                const { DATA } = this.state;
+                DATA.phone = this.formatPhoneText(this.state.DATA?.phone);
+                DATA.root = (DATA.role === '0') ? true : false;
+                this.setState({ DATA });
+            }
         });
     };
 
@@ -129,11 +138,15 @@ export default class UserEdit extends React.Component<Props, State> {
                         }
                         this.setState({ refresh: true });
                         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=${api_param}`, postData)
-                        .then(() => {
-                            setTimeout(() => {
-                                this.close();
-                                setTimeout(() => { this.setState({ loading: false }); }, 200);
-                            },1000);
+                        .then((response) => {
+                            this.props.logout(response.data);
+
+                            if (this._ismounted) {
+                                setTimeout(() => {
+                                    this.close();
+                                    setTimeout(() => { this.setState({ loading: false }); }, 200);
+                                },1000);
+                            }
                         });
                     }
                 });
@@ -168,11 +181,15 @@ export default class UserEdit extends React.Component<Props, State> {
             postNewPW.append('newpassword', DATA.newPassword);
 
             axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_updatepw`, postNewPW)
-            .then(() => {
-                setTimeout(() => {
-                    this.close();
-                    setTimeout(() => { this.setState({ loading: false }); }, 200);
-                },1000);
+            .then((response) => {
+                this.props.logout(response.data);
+
+                if (this._ismounted) {
+                    setTimeout(() => {
+                        this.close();
+                        setTimeout(() => { this.setState({ loading: false }); }, 200);
+                    },1000);
+                }
             });
         }); 
     }

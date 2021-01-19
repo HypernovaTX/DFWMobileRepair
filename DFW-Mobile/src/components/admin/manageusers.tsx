@@ -12,6 +12,7 @@ type Props = {
     func_updateUsername: (param: any) => any,
     username: string, 
     role: string, 
+    func_logout: () => void,
 };
 type State = {
     list: {[index: string]: any},
@@ -27,6 +28,8 @@ type State = {
 export default class ManageUsers extends React.Component<Props, State> {
     private edit_ref: React.RefObject<UserEdit>;
     private dialogue_ref: React.RefObject<AdminPrompt>;
+    private _ismounted: boolean = false;
+
     constructor(p: Props) {
         super(p);
 
@@ -51,34 +54,47 @@ export default class ManageUsers extends React.Component<Props, State> {
             this.setState({ list: JSON.parse( tempObj || '{}') });
         }
         this.getUsers();
+
+        this._ismounted = true;
+    }
+
+    componentWillUnmount() {
+        this._ismounted = false;
     }
 
     /************************************************** API / UI **************************************************/
     notLoggedIn(input: string): void {
-        
+        if (input === `12 - User is not logged in!` || input === `"ERROR 12 - User is not logged in!"`) {
+            this.props.func_logout();
+        }
     }
 
     getUsers(): void {
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_list`)
             .then((response) => {
-                const { list } = this.state;
-                const jsonData = response.data; //JSON.parse() doesn't work
-                for (const uid in jsonData) {
-                    if (!list.hasOwnProperty(uid)) { jsonData[uid]._show = false; }
-                    else { jsonData[uid]._show = (!list[uid].hasOwnProperty('_show')) ? false : list[uid]._show; }
-                    jsonData[uid]._no_edit = false;
-                    jsonData[uid]._no_pw = false;
-                    jsonData[uid]._no_delete = false;
-                    jsonData[uid]._existingData = true;
+                this.notLoggedIn(JSON.stringify(response.data)) //ensure it is logged in
 
-                    if (jsonData[uid].username !== this.props.username
-                     && jsonData[uid].uid === this.props.uid) {
-                        this.props.func_updateUsername(jsonData[uid].username);
-                    }
-                };
-                this.setState({ list: jsonData });
-                this.deleteAdditionalKeys();
-                this.saveToLocalStorage();
+                if (this._ismounted && typeof response.data !== 'string') {
+                    const { list } = this.state;
+                    const jsonData = response.data; //JSON.parse() doesn't work
+                    for (const uid in jsonData) {
+                        if (!list.hasOwnProperty(uid)) { jsonData[uid]._show = false; }
+                        else { jsonData[uid]._show = (!list[uid].hasOwnProperty('_show')) ? false : list[uid]._show; }
+                        jsonData[uid]._no_edit = false;
+                        jsonData[uid]._no_pw = false;
+                        jsonData[uid]._no_delete = false;
+                        jsonData[uid]._existingData = true;
+
+                        if (jsonData[uid].username !== this.props.username
+                        && jsonData[uid].uid === this.props.uid) {
+                            this.props.func_updateUsername(jsonData[uid].username);
+                        }
+                    };
+                    
+                    this.setState({ list: jsonData });
+                    this.deleteAdditionalKeys();
+                    this.saveToLocalStorage();
+                }
             }
         );
     };
@@ -135,12 +151,16 @@ export default class ManageUsers extends React.Component<Props, State> {
             this.specialMessage(`Only root admins can delete users!`, endFunction, endFunction, true); return; }
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=acp_deleteuser`, postData)
-        .then(() => {
-            const { list } = this.state;
-            this.endEdit(true);
-            if (list.hasOwnProperty(`user${uid}`)) {
-                delete list[`user${uid}`];
-                this.setState({ list });
+        .then((response) => {
+            this.notLoggedIn(response.data);
+
+            if (this._ismounted) {
+                const { list } = this.state;
+                this.endEdit(true);
+                if (list.hasOwnProperty(`user${uid}`)) {
+                    delete list[`user${uid}`];
+                    this.setState({ list });
+                }
             }
         });
     }
@@ -262,6 +282,7 @@ export default class ManageUsers extends React.Component<Props, State> {
                 promptOpen={this.specialMessage}
                 role={this.props.role}
                 me={this.props.uid}
+                logout={(value: string) => {this.notLoggedIn(value)}}
 
                 ref={this.edit_ref}
             />}{<AdminPrompt

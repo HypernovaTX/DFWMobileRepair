@@ -7,8 +7,9 @@ import AdminPrompt from './prompt';
 import QuoteEdit from './quoteedit';
 
 type Props = {
-    loggedIn: boolean;
-    uid: string;
+    loggedIn: boolean,
+    uid: string,
+    func_logout: () => void,
 };
 type State = {
     list: {[index: string]: any},
@@ -59,7 +60,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
         this.getYears();
         this._ismounted = true;
     }
-
+    
     componentWillUnmount() { this._ismounted = false; }
 
     /************************************************** REQUESTS **************************************************/
@@ -68,15 +69,20 @@ export default class ManageQuotes extends React.Component<Props, State> {
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=year`)
             .then((response) => {
                 let { list } = this.state;
-                const responseArray = response.data.split(',');
-                responseArray.forEach((year: any) => {
-                    if (list[year] === undefined) {
-                        list[year] = { '_show': false };
-                    } else if (list[year]?._show === true) {
-                        this.getMakeModel(year);
-                    }
-                });
-                if (this._ismounted) { this.setState({ list }); }
+                this.notLoggedIn(response.data);
+                //console.log(response.data);
+
+                if (this._ismounted) {
+                    const responseArray = response.data.split(',');
+                    responseArray.forEach((year: any) => {
+                        if (list[year] === undefined) {
+                            list[year] = { '_show': false };
+                        } else if (list[year]?._show === true) {
+                            this.getMakeModel(year);
+                        }
+                    });
+                    this.setState({ list });
+                }
             });
     };
 
@@ -92,26 +98,36 @@ export default class ManageQuotes extends React.Component<Props, State> {
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&${requestParam}`, postData)
             .then((response) => {
-                let { list } = this.state;
-                const responseArray = response.data.split(',');
-                responseArray.forEach((key: any) => {
-                    if (make !== null) {
-                        const splitInfo = key.split(/\[sep\]/);
-                        if (list[year][make][splitInfo[0]] === undefined) {
-                            list[year][make][splitInfo[0]] = { '_no_delete': false, '_no_edit': false, id: splitInfo[1] };
+                this.notLoggedIn(response.data);
+
+                if (this._ismounted) {
+                    let { list } = this.state;
+                    const responseDataRaw = response.data+'';
+                    const responseArray = responseDataRaw.split(',');
+                    responseArray.forEach((key: any) => {
+                        if (make !== null) {
+                            const splitInfo = key.split(/\[sep\]/);
+                            if (list[year][make][splitInfo[0]] === undefined) {
+                                list[year][make][splitInfo[0]] = { '_no_delete': false, '_no_edit': false, id: splitInfo[1] };
+                            }
+                        } else {
+                            if (list[year][key] === undefined) {
+                                list[year][key] = { '_show': false };
+                            } else  if (list[year][key]?._show === true) {
+                                this.getMakeModel(year, key);
+                            }
                         }
-                    } else {
-                        if (list[year][key] === undefined) {
-                            list[year][key] = { '_show': false };
-                        } else  if (list[year][key]?._show === true) {
-                            this.getMakeModel(year, key);
-                        }
-                    }
-                });
-                if (this._ismounted) { this.setState({ list }); }
+                    });
+                    this.setState({ list });
+                }
             });
     }
 
+    notLoggedIn(input: string): void {
+        if (input === `ERROR 12 - User is not logged in!` || input === `"ERROR 12 - User is not logged in!"`) {
+            this.props.func_logout();
+        }
+    }
 
     //Can be called by other instances
     specialMessage = (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => {
@@ -211,8 +227,10 @@ export default class ManageQuotes extends React.Component<Props, State> {
         const postData = new FormData();
         postData.append('id', toDelete.id);
 
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=delete`, postData).then(() => {
-            this.removeKey(toDelete.year, toDelete.make, toDelete.model);
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=delete`, postData).then((response) => {
+            this.notLoggedIn(response.data);
+            if (this._ismounted) {
+                this.removeKey(toDelete.year, toDelete.make, toDelete.model); }
         });
     }
 
@@ -258,6 +276,7 @@ export default class ManageQuotes extends React.Component<Props, State> {
                 newQuote={toEdit.new}
                 endEditAction={this.endEdit}
                 promptOpen={this.specialMessage}
+                logout={(value: string) => {this.notLoggedIn(value)}}
 
                 ref={this.edit_ref}
             />

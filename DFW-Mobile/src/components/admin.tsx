@@ -208,14 +208,18 @@ export default class Admin extends React.Component<Props, State> {
     }
 
     logout(): void {
+        //console.log('logout!');
+        this.setState({ loading: true });
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=logout`)
             .then((response) => {
                 if (response.status === 200) {
-                    this.setState({ menuOn: false });
+                    this.setState({ menuOn: false, loggedin: false });
                     this.getCurrentUser();
                 }
+                this.setState({ endLoad: true });
+                this.beginTransition(() => {});
             });
-    }
+    };
 
     /* TEMPLATES */
     template_login(): JSX.Element {
@@ -278,7 +282,12 @@ export default class Admin extends React.Component<Props, State> {
         let additionalNav = <React.Fragment key='admin_nav_none'></React.Fragment>
         switch (adminPanel) {
             case ('Quote'): 
-                panel = <ManageQuotes loggedIn={loggedin} uid={session.uid} ref={this.comp_quote_ref}/>;
+                panel = <ManageQuotes 
+                    loggedIn={loggedin} 
+                    uid={session.uid} 
+                    func_logout={() => {this.logout()}} 
+                    ref={this.comp_quote_ref} 
+                />;
                 additionalNav = <button
                     key='acpnav_q_add'
                     className='nav-button'
@@ -292,7 +301,9 @@ export default class Admin extends React.Component<Props, State> {
                 panel = <ManageUsers
                     loggedIn={loggedin} uid={session.uid} username={session.currentUser} role={session.role}
                     func_updateUsername={this.callable_updateUsername} 
-                    ref={this.comp_user_ref}/>;
+                    func_logout={() => {this.logout()}}
+                    ref={this.comp_user_ref} 
+                />;
                 additionalNav = <button
                     key='acpnav_u_add'
                     className='nav-button'

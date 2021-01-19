@@ -12,6 +12,7 @@ type Props = {
     newQuote: boolean,
     endEditAction: (refresh: boolean) => void,
     promptOpen: (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => void,
+    logout: (value: string) => void,
 };
 type State = {
     show: number,
@@ -34,6 +35,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     private props_bg_off: {};
     private props_bg_on: {};
     private props_bg_down: {};
+    private _ismounted: boolean = false;
     constructor(p: Props) {
         super(p);
 
@@ -69,7 +71,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
     /************************************************** QE - EVENTS **************************************************/
     componentDidMount() {
         window.addEventListener('keydown', this.handleKeypress);
+        this._ismounted = true;
     }
+    componentWillUnmount() { this._ismounted = false; }
 
     //Keyboard stuffs
     handleKeypress = (ev: KeyboardEvent) => {
@@ -110,8 +114,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=data`, postData)
         .then((response) => {
-            let sortedData = this.sortObj(response.data);
-            this.setState({ DATA: sortedData, OLD: JSON.stringify(sortedData) });
+            this.props.logout(JSON.stringify(response.data));
+
+            if (this._ismounted && typeof response.data !== 'string') {
+                let sortedData = this.sortObj(response.data);
+                this.setState({ DATA: sortedData, OLD: JSON.stringify(sortedData) });
+            }
         });
     };
 
@@ -136,11 +144,15 @@ export default class QuoteEdit extends React.Component<Props, State> {
         if (this.props.newQuote === true) { param = 'create'; }
         else { postData.append('id', this.props.vehicleID); }
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=${param}`, postData)
-        .then(() => {
-            setTimeout(() => {
-                this.close();
-                setTimeout(() => { this.setState({ loading: false }); }, 200);
-            },1000);
+        .then((response) => {
+            this.props.logout(response.data);
+
+            if (this._ismounted) {
+                setTimeout(() => {
+                    this.close();
+                    setTimeout(() => { this.setState({ loading: false }); }, 200);
+                },1000);
+            }
         });
     }
 
