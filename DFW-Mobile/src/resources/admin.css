@@ -620,6 +620,7 @@
     user-select: none;
     cursor: pointer;
 }
+.admin-ue-check.disabled { cursor: not-allowed; }
 .admin-ue-check::before {
     width: 4em;
     height: 1.75em;
@@ -629,9 +630,10 @@
     border-radius: 1em;
     transition: 200ms linear all;
 }
-.admin-ue-check:checked::before {
+.admin-ue-check.check::before {
     background-color: #399c41;
 }
+.admin-ue-check.disabled::before { background-color: #777; }
 .admin-ue-check::after {
     width: 2em;
     height: 1.3em;
@@ -640,14 +642,13 @@
     border-radius: 1em;
     display: inline-block;
     position: relative;
-    right: 49px;
+    right: 60px;
     bottom: 3px;
     transition: 400ms cubic-bezier(0, 0, 0.2, 1) all;
 }
-.admin-ue-check:checked::after {
-    right: 31px;
-    
-}
+.admin-ue-check.check::after { right: 35px; }
+.admin-ue-check.disabled::after { background-color: #AAA; }
+
 .acpform-important { color: #cc4848; }
 
 .quotelist-load {

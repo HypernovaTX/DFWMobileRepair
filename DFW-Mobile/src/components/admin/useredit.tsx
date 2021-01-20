@@ -1,8 +1,6 @@
 import React from 'react';
 import axios, { AxiosResponse } from 'axios';
 import * as CONFIG from '../../config.json';
-//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import { faCheck, faTimes, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
     user: string, //must be user ID
@@ -11,7 +9,7 @@ type Props = {
     promptOpen: (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => void, 
     me: string, //Current user ID
     role: string, //current user role
-    logout: (value: string) => void,
+    logout: (value: string) => void, //Always calls after an API calls, if the user is not logged in, the system automatically logs out
 };
 type State = {
     show: number,
@@ -24,6 +22,7 @@ type State = {
 
     refresh: boolean,
     loading: boolean,
+    wait: boolean,
 };
 
 export default class UserEdit extends React.Component<Props, State> {
@@ -43,7 +42,7 @@ export default class UserEdit extends React.Component<Props, State> {
             DATA: {
                 username: '', name: '', email: '', phone: '', address: '', role: '', root: false, oldPassword: '', newPassword: '', newPasswordConfirm: '',
             },
-            editing: {}, refresh: false, loading: false,
+            editing: {}, refresh: false, loading: false, wait: false, 
         }
     }
 
@@ -57,6 +56,7 @@ export default class UserEdit extends React.Component<Props, State> {
             axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=checkLogin`, ckError)
             .then((response: AxiosResponse<string>) => {
                 this.props.logout(response.data);
+                this.setState({ wait: false });
             });
             return;
         }
@@ -72,17 +72,18 @@ export default class UserEdit extends React.Component<Props, State> {
                 const { DATA } = this.state;
                 DATA.phone = this.formatPhoneText(this.state.DATA?.phone);
                 DATA.root = (DATA.role === '0') ? true : false;
-                this.setState({ DATA });
+                this.setState({ DATA, wait: false });
             }
         });
     };
 
-    stopLoading = (): void => { this.setState({ loading: false }); }
+    stopLoading = (): void => { this.setState({ loading: false, wait: false }); }
 
+    //Main event call for saving data
     saveData(): void {
         const { loading } = this.state; 
         if (loading) { return; } //don't call more than once
-        this.setState({ loading: true });
+        this.setState({ loading: true, wait: true });
         switch (this.props.kind) {
             case ('n'): this.saveData_info(true); break;
             case ('p'): this.saveData_password(false); break;
@@ -90,7 +91,7 @@ export default class UserEdit extends React.Component<Props, State> {
             default: this.close(); break;
         }
     }
-
+    //Saves user details (editing a user), also saves details and password for new users
     saveData_info(newUser: boolean): void {
         const { DATA } = this.state;
         const errorMsg = (message: string): void => { this.props.promptOpen(message, this.stopLoading, () => {}, true); };
@@ -160,7 +161,7 @@ export default class UserEdit extends React.Component<Props, State> {
             }
         });
     }
-
+    //Only saves user password
     saveData_password(newUser: boolean): void {
         const { DATA } = this.state;
         const errorMsg = (message: string): void => { this.props.promptOpen(message, this.stopLoading, () => {}, true); };
@@ -211,6 +212,7 @@ export default class UserEdit extends React.Component<Props, State> {
             propsM: { 'top': '0px', 'opacity': '1' },
             refresh: false,
             DATA: resetDATA, 
+            wait: true, 
         });
         setTimeout(() => {
             if (this.state.show === 1) { this.getData(); }
@@ -276,12 +278,11 @@ export default class UserEdit extends React.Component<Props, State> {
             <div key='admin_ue_title' className='admin-ue-title'>{content.title}</div>
             {content.template}
             {this.template_buttons(content.ok)}
-            {this.template_loadingCover()}
         </div>);
     }
 
     template_edit(newUser: boolean): JSX.Element {
-        const { DATA } = this.state;
+        const { DATA, wait } = this.state;
         let password = (newUser === false) 
             ? <React.Fragment key='ue_password_none'></React.Fragment>
             : this.template_password(true);
@@ -289,7 +290,7 @@ export default class UserEdit extends React.Component<Props, State> {
             <div key='aues_username' className='admin_ue_section'>
                 <div key='admin_uet_username' className='admin-qe-ttext'>{this.form_important('auesI_uname_title')}Username:</div>
                 <input key='admin_uei_username' placeholder='Username' size={4} 
-                    className={`admin-ue-txt`} value={DATA.username}
+                    className={`admin-ue-txt`} value={DATA.username} disabled={wait} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.username = e.currentTarget.value; this.setState({ DATA });
                     }}></input>
@@ -297,7 +298,7 @@ export default class UserEdit extends React.Component<Props, State> {
             <div key='aues_name' className='admin_ue_section'>
                 <div key='admin_uet_name' className='admin-qe-ttext'>{this.form_important('auesI_name_title')}Full Name:</div>
                 <input key='admin_uei_name' placeholder='Full Name' size={4} 
-                    className={`admin-ue-txt`} value={DATA.name}
+                    className={`admin-ue-txt`} value={DATA.name} disabled={wait} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.name = e.currentTarget.value; this.setState({ DATA });
                     }}></input>
@@ -305,7 +306,7 @@ export default class UserEdit extends React.Component<Props, State> {
             <div key='aues_email' className='admin_ue_section'>
                 <div key='admin_uet_email' className='admin-qe-ttext'>{this.form_important('auesI_email_title')}Email Address:</div>
                 <input key='admin_uei_email' placeholder='Email' size={4} 
-                    className={`admin-ue-txt`} value={DATA.email}
+                    className={`admin-ue-txt`} value={DATA.email} disabled={wait} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.email = e.currentTarget.value; this.setState({ DATA });
                     }}></input>
@@ -313,7 +314,7 @@ export default class UserEdit extends React.Component<Props, State> {
             <div key='aues_phone' className='admin_ue_section'>
                 <div key='admin_uet_phone' className='admin-qe-ttext'>Phone Number:</div>
                 <input key='admin_uei_phone' placeholder='Phone' size={4} 
-                    className={`admin-ue-txt`} value={DATA.phone}
+                    className={`admin-ue-txt`} value={DATA.phone} disabled={wait} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.phone = this.formatPhoneText(e.currentTarget.value);
                         this.setState({ DATA });
@@ -321,43 +322,44 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_address' className='admin_ue_section wide'>
                 <div key='admin_uet_address' className='admin-qe-ttext'>Address:</div>
-                <input key='admin_uei_address' placeholder='Address' 
+                <input key='admin_uei_address' placeholder='Address' disabled={wait} 
                     className={`admin-ue-txt`} value={DATA.address} size={8} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.address = e.currentTarget.value;
                         this.setState({ DATA });
                     }}></input>
             </div>
+            {this.template_rootaccess()}
             {password}
         </div>);
     }
 
     template_rootaccess(): JSX.Element {
-        const { DATA } = this.state;
+        const { DATA, wait } = this.state;
         if (this.props.user === this.props.me || this.props.role !== '0') { return <React.Fragment key='no_rootedit'></React.Fragment>; }
 
         return(<React.Fragment key='temp_rootaccess_edit_container'>
             <div key='aues_rootaccess' className='admin_ue_section'>
             <div key='admin_uet_rootaccess' className='admin-qe-ttext'>Root access (ability to edit other users):</div>
-            <input key='admin_uei_address' placeholder='Address' type='checkbox'
-                className={`admin-ue-check`} checked={DATA.root} disabled={false}
-                onChange={() => {
+            <div key='admin_uei_address' placeholder='Address' 
+                className={`admin-ue-check ${(DATA.root) ? 'check' : ''} ${(wait) ? 'disabled' : ''}`} 
+                onClick={() => {
                     DATA.root = !DATA.root;
                     DATA.role = (DATA.root) ? '0' : '1'; // 0 - root access, 1 - regular user
                     this.setState({ DATA });
-                }}></input>
+                }}></div>
             </div>
         </React.Fragment>);
     }
 
     template_password(newUser: boolean): JSX.Element {
-        const { DATA } = this.state;
+        const { DATA, wait } = this.state;
         const form_oldpassword = (newUser)
             ? (<React.Fragment key='temp_oldpassword_section'></React.Fragment>)
             : (<React.Fragment key='temp_oldpassword_section'>
                 <div key='aues_oldPW' className='admin_ue_section wide'>
                     <div key='aues_oldPW_title' className='admin-qe-ttext'>{this.form_important('auesI_oldPW_title')}Old password:</div>
-                    <input key='aues_oldPW_input' placeholder='Old Password' size={12} type = 'password' 
+                    <input key='aues_oldPW_input' placeholder='Old Password' size={12} type = 'password' disabled={wait} 
                         className={`admin-ue-txt`} value={DATA.oldPassword}
                         onChange={(e: React.FormEvent<HTMLInputElement>) => {
                             DATA.oldPassword = e.currentTarget.value; this.setState({ DATA });
@@ -368,7 +370,7 @@ export default class UserEdit extends React.Component<Props, State> {
             {form_oldpassword}
             <div key='aues_newPW' className='admin_ue_section wide'>
                 <div key='aues_newPW_title' className='admin-qe-ttext'>{this.form_important('auesI_newPW_title')}New password (min: 6 characters):</div>
-                <input key='aues_newPW_input' placeholder='New Password' size={12} type = 'password' 
+                <input key='aues_newPW_input' placeholder='New Password' size={12} type = 'password' disabled={wait} 
                     className={`admin-ue-txt`} value={DATA.newPassword}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.newPassword = e.currentTarget.value; this.setState({ DATA });
@@ -376,7 +378,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_newPW2' className='admin_ue_section wide'>
                 <div key='aues_newPW2_title' className='admin-qe-ttext'>{this.form_important('auesI_newPW2_title')}Confirm:</div>
-                <input key='aues_newPW2_input' placeholder='Confirm' size={12} type = 'password' 
+                <input key='aues_newPW2_input' placeholder='Confirm' size={12} type = 'password' disabled={wait} 
                     className={`admin-ue-txt`} value={DATA.newPasswordConfirm}
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.newPasswordConfirm = e.currentTarget.value; this.setState({ DATA });
@@ -411,16 +413,19 @@ export default class UserEdit extends React.Component<Props, State> {
     }
 
     template_buttons(saveButtonName: string): JSX.Element {
+        const { wait } = this.state;
         return(<div key='admin_ue_bc'  className='admin-qe-buttonbox'>
             <button
                 key='admin_ue_confirm'
                 onClick={() => { this.saveData(); }}
                 className='admin-qe-btn main'
+                disabled={wait} 
             >{saveButtonName}</button>
             <button
                 key='admin_ue_cancel'
                 onClick={() => { this.close(); }}
                 className='admin-qe-btn'
+                disabled={wait} 
             >Cancel</button>
         </div>);
     }
