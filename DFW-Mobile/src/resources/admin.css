@@ -703,13 +703,21 @@
 .ue-toploadbar {
     display: block;
     width: 100%;
-    background: #777;
+    background: #555;
     color: #FFF;
+    line-height: 0.9em;
+    padding: 8px 24px 16px;
+    transition: 200ms linear all;
 }
 
-.ue-toploadbar .ld, .ue-toploadbar img {
-    width: 1.2em;
-    height: 1.2em;
-    margin: 2px 2px;
+.ue-toploadbar .ld {
     display: inline-block;
+    position: relative;
+    text-indent: initial;
+    top: 7px;
 }
+.ue-toploadbar .ld, .ue-toploadbar img {
+    width: 1.5em;
+    height: 1.5em;
+}
+.ue-toploadbar img { filter: invert(10); }
