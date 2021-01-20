@@ -218,7 +218,9 @@ export default class UserEdit extends React.Component<Props, State> {
             if (this.state.show === 1) { this.getData(); }
             setTimeout(() => {
                 this.setState({ show: 2 });
-                if (this.props.kind === 'n') {
+
+                //No need to load and wait for new user and password
+                if (this.props.kind === 'n' || this.props.kind === 'p') {
                     this.setState({ wait: false });
                 }
             }, 300);
@@ -339,19 +341,24 @@ export default class UserEdit extends React.Component<Props, State> {
     }
 
     template_loadTopBar(): JSX.Element {
-        const { wait } = this.state;
-        const styleSpinner = { animationDuration: '2.0s' };
-        return (
-            <div key='useredit_toploadbar' className={`ue-toploadbar ${(wait) ? 'show' : ''}`}>
-                <div key={`useredit_load_spinner`} className='ld ld-spin' style={styleSpinner}>
-                    <img
-                        src={require('./../../resources/images/nut.png')}
-                        alt='loading'
-                        key={`useredit_load_img`} 
-                    ></img>
-                </div> Loading user data...
-            </div>
-        )
+        const { wait, loading } = this.state;
+        if (!loading) {
+            const styleSpinner = { animationDuration: '2.0s' };
+            return (
+                <div key='useredit_toploadbar' className={`ue-toploadbar ${(wait) ? 'show' : ''}`}>
+                    <div key={`useredit_load_spinner`} className='ld ld-spin' style={styleSpinner}>
+                        <img
+                            src={require('./../../resources/images/nut.png')}
+                            alt='loading'
+                            key={`useredit_load_img`} 
+                        ></img>
+                    </div> Loading user data...
+                </div>
+            )
+        }
+        else {
+            return (<React.Fragment key='useredit_toploadbar'></React.Fragment>)
+        }
     }
 
     template_rootaccess(): JSX.Element {
