@@ -675,6 +675,8 @@
 }
 .quotelist-load img, .quotelist-load2 img { width: 1em; height: 1em; user-select: none; filter: invert(0.8); }
 .quotelist-load .ld, .quotelist-load2 .ld { width: 1em; height: 1em; margin: auto; }
+.qe-cat.add img { width: 2em; height: 2em; user-select: none; filter: invert(0.8); }
+.qe-cat.add .ld { width: 2em; height: 2em; margin: auto; }
 
 .loading-cover {
     width: 100%;

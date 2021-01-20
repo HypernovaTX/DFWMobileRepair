@@ -91,17 +91,28 @@ export default class Admin extends React.Component<Props, State> {
     }
     componentDidMount() {
         axios.defaults.withCredentials = true;
+        const cookieUser = Cookies.get('uid') || '-1';
+        if (cookieUser !== '-1') {
+            this.setState({ loading: true });
+        }
         this.getCurrentUser();
     }
 
     getCurrentUser(): void {
         axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=user&u=check`)
             .then((response) => {
+                const { loading } = this.state;
                 let responseString: string[];
                 let loggedin = false;
                 responseString = response.data.split(/\[sep\]/);; //split the 3 part of the data
 
-                if (responseString[0] !== 'GUEST') { loggedin = true; }
+                if (responseString[0] !== 'GUEST') {
+                    loggedin = true;
+                    if (loading) {
+                        this.setState({ endLoad: true });
+                        this.beginTransition(() => {});
+                    }
+                }
 
                 this.setState({
                     loggedin, 

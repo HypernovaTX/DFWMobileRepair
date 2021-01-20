@@ -29,6 +29,7 @@ type State = {
 
     refresh: boolean,
     loading: boolean,
+    wait: boolean,
 };
 
 export default class QuoteEdit extends React.Component<Props, State> {
@@ -66,6 +67,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
             refresh: false,
             loading: false,
+            wait: false,
         }
     }
     /************************************************** QE - EVENTS **************************************************/
@@ -118,7 +120,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
             if (this._ismounted && typeof response.data !== 'string') {
                 let sortedData = this.sortObj(response.data);
-                this.setState({ DATA: sortedData, OLD: JSON.stringify(sortedData) });
+                this.setState({ DATA: sortedData, OLD: JSON.stringify(sortedData), wait: false, });
             }
         });
     };
@@ -138,7 +140,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         postData.append('make', MAKE);
         postData.append('model', MODEL);
         postData.append('data', JSON.stringify(DATA));
-        this.setState({ refresh: true, loading: true });
+        this.setState({ refresh: true, loading: true, wait: true, });
 
         let param = 'update';
         if (this.props.newQuote === true) { param = 'create'; }
@@ -150,7 +152,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             if (this._ismounted) {
                 setTimeout(() => {
                     this.close();
-                    setTimeout(() => { this.setState({ loading: false }); }, 200);
+                    setTimeout(() => { this.setState({ loading: false, wait: false, }); }, 200);
                 },1000);
             }
         });
@@ -173,6 +175,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             propsBG: this.props_bg_on,
             propsM: { 'top': '0px', 'opacity': '1' },
             refresh: false,
+            wait: true,
         });
         setTimeout(() => {
             //Have to delay getData since it take a delay to have vehicle props to be sent over
@@ -184,6 +187,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             if (this.state.show === 1) { this.getData(); }
             setTimeout(() => {
                 this.setState({ show: 2 });
+                if (this.props.newQuote) { this.setState({ wait: false }); }
             }, 300);
         }, 5);
     }
@@ -200,7 +204,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 this.setState({
                     show: 0,
                     propsBG: this.props_bg_off,
-                    propsM: { 'top': '-64px', 'opacity': '0' },
+                    propsM: { 'top': '-64px', 'opacity': '0' }, 
+                    DATA: {}, YEAR: '', MAKE: '', MODEL: '',
                 });
                 this.props.endEditAction(refresh);
             }, 250);
@@ -305,8 +310,11 @@ export default class QuoteEdit extends React.Component<Props, State> {
     /************************************************** QE - TEMPLATE **************************************************/
     //Template for all of the quote items on the editing window (it is a mess unfortunately)
     template_formatData(): JSX.Element {
-        const { DATA, editing } = this.state;
+        const { DATA, editing, wait } = this.state;
         let output = [<div key='qe_placeholder_cat'></div>];
+
+        if (wait) { return (this.template_loadBar()) }
+
         //For each of the category (this is the worst codes I have made)
         for (const category in DATA) {
             //"addon" is the list of quotes for each category
@@ -541,10 +549,25 @@ export default class QuoteEdit extends React.Component<Props, State> {
             </div>
         );
     }
+
+    template_loadBar(): JSX.Element {
+        const styleSpinner = { animationDuration: '2.0s' };
+        return(
+            <div key={`quoteedit_loading_content`} className={`qe-cat add`}>
+                <div key={`quoteedit_load_spinner`} className='ld ld-spin' style={styleSpinner}>
+                    <img
+                        src={require('./../../resources/images/nut.png')}
+                        alt='loading'
+                        key={`quoteedit_load_img`} 
+                    ></img>
+                </div>
+            </div>
+        );
+    }
     
     //Main template
     template(): JSX.Element {
-        const { propsM, YEAR, MAKE, MODEL } = this.state;
+        const { propsM, YEAR, MAKE, MODEL, wait } = this.state;
         const { newQuote } = this.props;
         let reset = <React.Fragment key='admin_qe_reset_empty'></React.Fragment>;
         let saveButtonName = 'Create';
@@ -557,6 +580,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         false);
                     this.setState({ inBackground: true });
                 }}
+                disabled={wait}
                 className='admin-qe-btn'
             >Reset</button>;
             saveButtonName = 'Update';
@@ -572,6 +596,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         type='number'
                         placeholder='year'
                         size={1}
+                        disabled={wait}
                         onChange={(e: React.FormEvent<HTMLInputElement>) => {
                             this.setState({ YEAR: e.currentTarget.value.replace(/\D/, '') });
                         }}></input>
@@ -581,6 +606,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         value={MAKE}
                         placeholder='make'
                         size={10}
+                        disabled={wait}
                         onChange={(e: React.FormEvent<HTMLInputElement>) => {
                             this.setState({ MAKE: e.currentTarget.value });
                         }}></input>
@@ -590,6 +616,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         value={MODEL}
                         placeholder='model'
                         size={20}
+                        disabled={wait}
                         onChange={(e: React.FormEvent<HTMLInputElement>) => {
                             this.setState({ MODEL: e.currentTarget.value });
                         }}></input>
@@ -602,11 +629,13 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     <button
                         key='admin_qe_confirm'
                         onClick={() => { this.saveData(); }}
+                        disabled={wait}
                         className='admin-qe-btn main'
                     >{saveButtonName}</button>
                     <button
                         key='admin_qe_cancel'
                         onClick={() => { this.close(); }}
+                        disabled={wait}
                         className='admin-qe-btn'
                     >Cancel</button>
                     {reset}
