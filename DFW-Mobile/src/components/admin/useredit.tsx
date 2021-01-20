@@ -218,6 +218,9 @@ export default class UserEdit extends React.Component<Props, State> {
             if (this.state.show === 1) { this.getData(); }
             setTimeout(() => {
                 this.setState({ show: 2 });
+                if (this.props.kind === 'n') {
+                    this.setState({ wait: false });
+                }
             }, 300);
         }, 5);
     }
