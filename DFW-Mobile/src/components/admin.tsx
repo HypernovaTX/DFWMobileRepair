@@ -91,10 +91,7 @@ export default class Admin extends React.Component<Props, State> {
     }
     componentDidMount() {
         axios.defaults.withCredentials = true;
-        const cookieUser = Cookies.get('uid') || '-1';
-        if (cookieUser !== '-1') {
-            this.setState({ loading: true });
-        }
+        this.setState({ loading: true });
         this.getCurrentUser();
     }
 
@@ -108,12 +105,7 @@ export default class Admin extends React.Component<Props, State> {
 
                 if (responseString[0] !== 'GUEST') {
                     loggedin = true;
-                    if (loading) {
-                        this.setState({ endLoad: true });
-                        this.beginTransition(() => {});
-                    }
                 }
-
                 this.setState({
                     loggedin, 
                     session: {
@@ -121,7 +113,7 @@ export default class Admin extends React.Component<Props, State> {
                         admin: this.state.session.admin,
                         uid: responseString[1], 
                         role: responseString[2], 
-                    },
+                    }, 
                 });
                 const getCookieUid = Cookies.get('uid') || '-1';
                 if (responseString[1] !== getCookieUid) {
@@ -130,6 +122,11 @@ export default class Admin extends React.Component<Props, State> {
                 } else {
                     this.setState({ adminPanel: Cookies.get('panel') || 'Quote' }); 
                 }
+
+                if (loading) {
+                    this.setState({ endLoad: true });
+                }
+                this.beginTransition(() => {});
             });
     };
 
@@ -228,7 +225,9 @@ export default class Admin extends React.Component<Props, State> {
                     this.getCurrentUser();
                 }
                 this.setState({ endLoad: true });
-                this.beginTransition(() => {});
+                this.beginTransition(() => {
+                    Cookies.remove('uid');
+                });
             });
     };
 

@@ -26,7 +26,7 @@
     .model-list.active { font-size: 1.3em; padding: 8px 8px; line-height: 1.6em; }
     .edit-icon { width: 2.5em; font-size: 0.75em; padding: 4px 8px; height: auto; border-radius: 4px; }
     .list-button-txt { display: none; }
-    .admin-qe-box { min-width: 80%; max-width: 100%; max-height: 100%; overflow-x: hidden; overflow-y: scroll; }
+    .admin-qe-box { min-width: 80%; max-width: 100%; max-height: 70%; overflow-x: hidden; overflow-y: scroll; }
     .admin-qe-content { margin: 4px 8px; border-radius: 4px; padding: 0px; }
     .admin-qe-title-txt { font-size: 1em; padding: 4px 8px; border-radius: 4px; width: 4em; }
     .qe-cat { border-radius: 4px; margin: 8px; display: block; min-height: 1.6em; }
