@@ -292,7 +292,7 @@ export default class UserEdit extends React.Component<Props, State> {
         return(<div key='admin_ue_edit'  className='admin-ue-content'>
             <div key='aues_username' className='admin_ue_section'>
                 <div key='admin_uet_username' className='admin-qe-ttext'>{this.form_important('auesI_uname_title')}Username:</div>
-                <input key='admin_uei_username' placeholder='Username' size={4} 
+                <input key='admin_uei_username' placeholder={(wait) ? '...' : 'Username'} size={4} 
                     className={`admin-ue-txt`} value={DATA.username} disabled={wait} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.username = e.currentTarget.value; this.setState({ DATA });
@@ -300,7 +300,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_name' className='admin_ue_section'>
                 <div key='admin_uet_name' className='admin-qe-ttext'>{this.form_important('auesI_name_title')}Full Name:</div>
-                <input key='admin_uei_name' placeholder='Full Name' size={4} 
+                <input key='admin_uei_name' placeholder={(wait) ? '...' : 'Full Name'} size={4} 
                     className={`admin-ue-txt`} value={DATA.name} disabled={wait} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.name = e.currentTarget.value; this.setState({ DATA });
@@ -308,7 +308,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_email' className='admin_ue_section'>
                 <div key='admin_uet_email' className='admin-qe-ttext'>{this.form_important('auesI_email_title')}Email Address:</div>
-                <input key='admin_uei_email' placeholder='Email' size={4} 
+                <input key='admin_uei_email' placeholder={(wait) ? '...' : 'Email'} size={4} 
                     className={`admin-ue-txt`} value={DATA.email} disabled={wait} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.email = e.currentTarget.value; this.setState({ DATA });
@@ -316,7 +316,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_phone' className='admin_ue_section'>
                 <div key='admin_uet_phone' className='admin-qe-ttext'>Phone Number:</div>
-                <input key='admin_uei_phone' placeholder='Phone' size={4} 
+                <input key='admin_uei_phone' placeholder={(wait) ? '...' : 'Phone'} size={4} 
                     className={`admin-ue-txt`} value={DATA.phone} disabled={wait} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.phone = this.formatPhoneText(e.currentTarget.value);
@@ -325,7 +325,7 @@ export default class UserEdit extends React.Component<Props, State> {
             </div>
             <div key='aues_address' className='admin_ue_section wide'>
                 <div key='admin_uet_address' className='admin-qe-ttext'>Address:</div>
-                <input key='admin_uei_address' placeholder='Address' disabled={wait} 
+                <input key='admin_uei_address' placeholder={(wait) ? '...' : 'Address'} disabled={wait} 
                     className={`admin-ue-txt`} value={DATA.address} size={8} 
                     onChange={(e: React.FormEvent<HTMLInputElement>) => {
                         DATA.address = e.currentTarget.value;
@@ -335,6 +335,12 @@ export default class UserEdit extends React.Component<Props, State> {
             {this.template_rootaccess()}
             {password}
         </div>);
+    }
+
+    template_loadTopBar(): JSX.Element {
+        return (
+            <div></div>
+        )
     }
 
     template_rootaccess(): JSX.Element {
