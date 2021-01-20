@@ -290,6 +290,7 @@ export default class UserEdit extends React.Component<Props, State> {
             ? <React.Fragment key='ue_password_none'></React.Fragment>
             : this.template_password(true);
         return(<div key='admin_ue_edit'  className='admin-ue-content'>
+            {this.template_loadTopBar()}
             <div key='aues_username' className='admin_ue_section'>
                 <div key='admin_uet_username' className='admin-qe-ttext'>{this.form_important('auesI_uname_title')}Username:</div>
                 <input key='admin_uei_username' placeholder={(wait) ? '...' : 'Username'} size={4} 
@@ -339,10 +340,16 @@ export default class UserEdit extends React.Component<Props, State> {
 
     template_loadTopBar(): JSX.Element {
         const { wait } = this.state;
-
+        const styleSpinner = { animationDuration: '2.0s' };
         return (
             <div key='useredit_toploadbar' className={`ue-toploadbar ${(wait) ? 'show' : ''}`}>
-                
+                <div key={`useredit_load_spinner`} className='ld ld-spin' style={styleSpinner}>
+                    <img
+                        src={require('./../../resources/images/nut.png')}
+                        alt='loading'
+                        key={`useredit_load_img`} 
+                    ></img>
+                </div> Loading user data...
             </div>
         )
     }

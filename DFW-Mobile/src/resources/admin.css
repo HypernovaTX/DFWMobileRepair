@@ -699,3 +699,17 @@
     height: 32px;
     margin: auto;
 }
+
+.ue-toploadbar {
+    display: block;
+    width: 100%;
+    background: #777;
+    color: #FFF;
+}
+
+.ue-toploadbar .ld, .ue-toploadbar img {
+    width: 1.2em;
+    height: 1.2em;
+    margin: 2px 2px;
+    display: inline-block;
+}
