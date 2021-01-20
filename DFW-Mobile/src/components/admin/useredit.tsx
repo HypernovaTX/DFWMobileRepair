@@ -338,8 +338,12 @@ export default class UserEdit extends React.Component<Props, State> {
     }
 
     template_loadTopBar(): JSX.Element {
+        const { wait } = this.state;
+
         return (
-            <div></div>
+            <div key='useredit_toploadbar' className={`ue-toploadbar ${(wait) ? 'show' : ''}`}>
+                
+            </div>
         )
     }
 
