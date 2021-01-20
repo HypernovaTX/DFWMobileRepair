@@ -701,13 +701,21 @@
 }
 
 .ue-toploadbar {
+    overflow: hidden;
+    line-height: 0em;
+    font-size: 0em;
+    transition: 200ms linear all;
+    padding: 0px 32px 0px;
+}
+
+.ue-toploadbar.show {
     display: block;
     width: 100%;
     background: #555;
+    font-size: 0.9em;
     color: #FFF;
     line-height: 0.9em;
     padding: 8px 24px 16px;
-    transition: 200ms linear all;
 }
 
 .ue-toploadbar .ld {
