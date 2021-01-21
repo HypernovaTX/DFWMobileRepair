@@ -8,11 +8,32 @@ import * as CONFIG from '../config.json';
 type Props = {
 };
 type State = {
+    SELECTION: {[parameter: string]: any}, 
+    DATA: {[parameter: string]: any}, 
+    
+    list_year: string[], 
+    list_make: string[], 
+    list_model: string[], 
+
+    load_general: boolean,
+    load_list: boolean, 
 };
 
 export default class Quotes extends React.Component<Props, State> {
     constructor(p: Props) {
         super(p);
+
+        this.state = {
+            SELECTION: { year: '', make: '', model: '', }, 
+            DATA: {}, 
+
+            list_year: [], 
+            list_make: [], 
+            list_model: [], 
+
+            load_general: false, 
+            load_list: false,
+        }
     }
 
     render() {

@@ -135,27 +135,40 @@ export default class QuoteEdit extends React.Component<Props, State> {
             return;
         }
 
+        let param = 'update';
         const postData = new FormData();
         postData.append('year', YEAR);
         postData.append('make', MAKE);
         postData.append('model', MODEL);
-        postData.append('data', JSON.stringify(DATA));
         this.setState({ refresh: true, loading: true, wait: true, });
 
-        let param = 'update';
-        if (this.props.newQuote === true) { param = 'create'; }
-        else { postData.append('id', this.props.vehicleID); }
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=${param}`, postData)
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=exists`, postData)
         .then((response) => {
-            this.props.logout(response.data);
-
-            if (this._ismounted) {
-                setTimeout(() => {
-                    this.close();
-                    setTimeout(() => { this.setState({ loading: false, wait: false, }); }, 200);
-                },1000);
+            if (this.props.newQuote && response.data === 'nogo') {
+                this.props.promptOpen(`"${YEAR} ${MAKE} ${MODEL}" already exists in the database!`, () => {
+                    this.setState({ refresh: false, loading: false, wait: false, });
+                }, () => {}, true);
+                return;
             }
+
+            postData.append('data', JSON.stringify(DATA));
+            if (this.props.newQuote) { param = 'create'; }
+            else { postData.append('id', this.props.vehicleID); }
+            axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=${param}`, postData)
+            .then((response) => {
+                this.props.logout(response.data);
+
+                if (this._ismounted) {
+                    setTimeout(() => {
+                        this.close();
+                        setTimeout(() => { this.setState({ loading: false, wait: false, }); }, 200);
+                    },1000);
+                }
+            });
         });
+
+        
+        
     }
 
     deleteKey(cat: string, item: string | null = null): void {

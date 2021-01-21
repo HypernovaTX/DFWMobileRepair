@@ -28,9 +28,11 @@ export default class Template extends React.Component<Props, State> {
 
     constructor(p: Props) {
         super(p);
+
+
         this.state = {
             sel_service: 'Diagnostic',
-            service_list_cname: ['done','done','done','done','done','done','done','done','done','done'],
+            service_list_cname: Array(10).fill('done'), 
             service_list_trans: 'none',
             timeout: [],
             sel_service_last: 'Diagnostic',
