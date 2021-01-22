@@ -36,6 +36,21 @@ export default class Quotes extends React.Component<Props, State> {
         }
     }
 
+    template_lander() {
+
+    }
+    template_selector() {
+
+    }
+    template_quotesection() {
+        const { DATA } = this.state;
+    }
+    template_main() {
+        return(<div key='q_wrapper' className='wrapper'>
+            
+        </div>)
+    }
+
     render() {
         return(<React.Fragment key='na'></React.Fragment>);
     }
