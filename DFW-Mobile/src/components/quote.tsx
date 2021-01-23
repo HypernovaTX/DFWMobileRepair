@@ -1,6 +1,7 @@
 import React from 'react';
-import axios from 'axios';
-import * as CONFIG from '../config.json';
+import '../resources/quote.css';
+//import axios from 'axios';
+//import * as CONFIG from '../config.json';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
 //import Cookies from 'js-cookie';
@@ -20,6 +21,8 @@ type State = {
 };
 
 export default class Quotes extends React.Component<Props, State> {
+    private ref_top: React.RefObject<HTMLDivElement> = React.createRef();
+
     constructor(p: Props) {
         super(p);
 
@@ -35,23 +38,49 @@ export default class Quotes extends React.Component<Props, State> {
             load_list: false,
         }
     }
-
-    template_lander() {
-
-    }
-    template_selector() {
+    //-------------------------------------------------------------------- COMPONENT --------------------------------------------------------------------
+    public componentDidMount(): void {
+        this.setState({ load_general: true });
 
     }
-    template_quotesection() {
+
+    //-------------------------------------------------------------------- API --------------------------------------------------------------------
+
+    //-------------------------------------------------------------------- LOGICS --------------------------------------------------------------------
+
+    //-------------------------------------------------------------------- TEMPLATE --------------------------------------------------------------------
+    private template_lander(): JSX.Element {
+        const LOGO_IMG = require('./../resources/images/logo-current.png');
+        const style = { backgroundPositionY: window.pageYOffset / 2 };
+        const preventDrag = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); };
+        const key = ['qt_ld', 'qt_ld_co', 'qt_ld_co_lo'];
+
+        return (
+            <div key={key[0]} className='lander quote' style={style} ref={this.ref_top}>
+                <div key={key[1]} className='lander-contain quote' draggable='false' onDragStart={preventDrag}>
+                    <div key={key[2]} className='logo'>
+                        <img key={`${key[2]}_im`} src={LOGO_IMG} alt='DFW Mobile Repair Logo' draggable="false" onDragStart={preventDrag}></img>
+                        <div key={`${key[2]}_sc`} className='land-btn-section'>
+                            <span key={`${key[2]}_sc_bt`} className='land-item' onClick={() => {}}>RETURN TO HOME</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    private template_selector() {
+
+    }
+    private template_quotesection() {
         const { DATA } = this.state;
     }
-    template_main() {
+    private template_main(): JSX.Element {
         return(<div key='q_wrapper' className='wrapper'>
-            
+            {this.template_lander()}
         </div>)
     }
 
-    render() {
-        return(<React.Fragment key='na'></React.Fragment>);
+    public render() {
+        return(this.template_main());
     }
 }
