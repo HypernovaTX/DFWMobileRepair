@@ -3,6 +3,17 @@ import axios from 'axios';
 import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+interface label { label: string };
+type typePromptFunction = (
+    message: string, 
+    functionYes: () => void, 
+    functionNo: () => void, 
+    isCancelOnly: boolean
+) => void;
+//interface treeObj { [key: string]: (string | treeObj ) };
+interface typeTreeObject {[key: string]: any}; //{ title: string, children: (Node | string)[] };
+//type typeObjectPlain = {[index: string]: string};
+//type Node = { 'title': string, children: Node[] };
 
 type Props = {
     vehicleID: string,
@@ -10,22 +21,22 @@ type Props = {
     vehicleMake: string,
     vehicleModel: string,
     newQuote: boolean,
-    endEditAction: (refresh: boolean) => void,
-    promptOpen: (msg: string, action: () => any, cancel: () => any, confirmOnly: boolean) => void,
-    logout: (value: string) => void,
+    endEditAction: ( param: boolean ) => void, 
+    promptOpen: typePromptFunction,
+    logout: ( param: string ) => void,
 };
 type State = {
     show: number,
     inBackground: boolean,
-    propsBG: {[index: string]: any},
-    propsM: {[index: string]: any},
+    propsBG: object,
+    propsM: object,
 
     YEAR: string,
     MAKE: string,
     MODEL: string,
-    DATA: {[index: string]: any},
+    DATA: typeTreeObject,
     OLD: string,
-    editing: {[index: string]: any},
+    editing: typeTreeObject,
 
     refresh: boolean,
     loading: boolean,
@@ -90,10 +101,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     /************************************************** QE - LIB **************************************************/
-    sortObj = (object: {[index: string]: any}): {[index: string]: any} => {
+    sortObj = (object: typeTreeObject): typeTreeObject => {
         let keys = Object.keys(object);
         keys.sort();
-        let newObject: {[index: string]: any} = {};
+        let newObject: typeTreeObject = {};
         for (var i = 0; i < keys.length; i ++) {
             //Only applies to objects recursively to prevent infinite loops
             if (typeof object[keys[i]] === 'object') { 
@@ -104,6 +115,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
         return newObject;
     };
+
     objKeyExists(obj: object, prop: string): boolean {
         if (obj.hasOwnProperty(prop)) { return true; }
         return false;
@@ -173,8 +185,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     deleteKey(cat: string, item: string | null = null): void {
         const { DATA } = this.state;
-        if (item !== null)
-            { delete DATA[cat][item]; }
+        if (item !== null) {
+                delete DATA[cat][item]
+            }
         else
             { delete DATA[cat]; }
         
@@ -265,7 +278,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         this.quitEdit();
     }
 
-    createKey():void {
+    createKey(): void {
         const { editing, DATA } = this.state;
 
         const creationErrorMessage = (): void => {

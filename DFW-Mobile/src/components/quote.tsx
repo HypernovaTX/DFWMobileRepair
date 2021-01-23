@@ -6,11 +6,15 @@ import '../resources/quote.css';
 //import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
 //import Cookies from 'js-cookie';
 
+type typeNestObject = {[index: string]: any};
+type typeRefDiv = React.RefObject<HTMLDivElement>;
+type typeDragEv = React.DragEvent<HTMLElement>;
+
 type Props = {
 };
 type State = {
-    SELECTION: {[parameter: string]: any}, 
-    DATA: {[parameter: string]: any}, 
+    SELECTION: typeNestObject, 
+    DATA: typeNestObject, 
     
     list_year: string[], 
     list_make: string[], 
@@ -21,7 +25,7 @@ type State = {
 };
 
 export default class Quotes extends React.Component<Props, State> {
-    private ref_top: React.RefObject<HTMLDivElement> = React.createRef();
+    private ref_top: typeRefDiv = React.createRef();
 
     constructor(p: Props) {
         super(p);
@@ -52,7 +56,7 @@ export default class Quotes extends React.Component<Props, State> {
     private template_lander(): JSX.Element {
         const LOGO_IMG = require('./../resources/images/logo-current.png');
         const style = { backgroundPositionY: window.pageYOffset / 2 };
-        const preventDrag = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); };
+        const preventDrag = (e: typeDragEv) => { e.preventDefault(); };
         const key = ['qt_ld', 'qt_ld_co', 'qt_ld_co_lo'];
 
         return (
