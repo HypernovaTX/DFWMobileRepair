@@ -6,15 +6,25 @@ import '../resources/quote.css';
 //import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
 //import Cookies from 'js-cookie';
 
-type typeNestObject = {[index: string]: any};
+interface intTreeObj {
+    title: string;
+    child: intTreeObj[] | string;
+};
+interface intSelector {
+    year: string;
+    make: string;
+    model: string;
+}
+interface intRawJSON {[key: string]: any};
+
 type typeRefDiv = React.RefObject<HTMLDivElement>;
 type typeDragEv = React.DragEvent<HTMLElement>;
 
 type Props = {
 };
 type State = {
-    SELECTION: typeNestObject, 
-    DATA: typeNestObject, 
+    SELECTION: intSelector, 
+    DATA: intTreeObj, 
     
     list_year: string[], 
     list_make: string[], 
@@ -32,7 +42,7 @@ export default class Quotes extends React.Component<Props, State> {
 
         this.state = {
             SELECTION: { year: '', make: '', model: '', }, 
-            DATA: {}, 
+            DATA: { title: 'root', child: '(null)' }, 
 
             list_year: [], 
             list_make: [], 
