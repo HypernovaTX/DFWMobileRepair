@@ -1,19 +1,21 @@
 import React from 'react';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
-interface label { label: string };
+
+interface intTreeObj {
+    title: string;
+    child: intTreeObj[] | string;
+    show?: boolean;
+};
+interface intRawJSON {[key: string]: any};
 type typePromptFunction = (
     message: string, 
     functionYes: () => void, 
     functionNo: () => void, 
     isCancelOnly: boolean
 ) => void;
-//interface treeObj { [key: string]: (string | treeObj ) };
-interface typeTreeObject {[key: string]: any}; //{ title: string, children: (Node | string)[] };
-//type typeObjectPlain = {[index: string]: string};
-//type Node = { 'title': string, children: Node[] };
 
 type Props = {
     vehicleID: string,
@@ -34,9 +36,10 @@ type State = {
     YEAR: string,
     MAKE: string,
     MODEL: string,
-    DATA: typeTreeObject,
+    DATA: intRawJSON,
+    TESTDATA: intTreeObj;
     OLD: string,
-    editing: typeTreeObject,
+    editing: intRawJSON,
 
     refresh: boolean,
     loading: boolean,
@@ -44,16 +47,13 @@ type State = {
 };
 
 export default class QuoteEdit extends React.Component<Props, State> {
-    private props_bg_off: {};
-    private props_bg_on: {};
-    private props_bg_down: {};
-    private _ismounted: boolean = false;
+    private props_bg_off = { 'background': 'rgba(0, 0, 0, 0)', 'zIndex': '-10', 'opacity': '0', 'backdropFilter': 'blur(0px)' };
+    private props_bg_on = { 'background': 'rgba(0, 0, 0, 0.5)', 'zIndex': '10', 'opacity': '1', 'backdropFilter': 'blur(8px)' };
+    private props_bg_down = { 'background': 'rgba(0, 0, 0, 0)', 'zIndex': '10', 'opacity': '1', 'backdropFilter': 'blur(0px)' };
+    private _ismounted = false;
+
     constructor(p: Props) {
         super(p);
-
-        this.props_bg_off = { 'background': 'rgba(0, 0, 0, 0)', 'zIndex': '-10', 'opacity': '0', 'backdropFilter': 'blur(0px)' };
-        this.props_bg_down = { 'background': 'rgba(0, 0, 0, 0)', 'zIndex': '10', 'opacity': '1', 'backdropFilter': 'blur(0px)' };
-        this.props_bg_on = { 'background': 'rgba(0, 0, 0, 0.5)', 'zIndex': '10', 'opacity': '1', 'backdropFilter': 'blur(8px)' };
         
         this.state = {
             show: 0,
@@ -65,6 +65,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             MAKE: '',
             MODEL: '',
             DATA: {},
+            TESTDATA: { title: 'root', child: '(null)' },
             OLD: '',
             editing: {
                 'edit': false,
@@ -101,10 +102,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     /************************************************** QE - LIB **************************************************/
-    sortObj = (object: typeTreeObject): typeTreeObject => {
+    sortObj = (object: intRawJSON): intRawJSON => {
         let keys = Object.keys(object);
         keys.sort();
-        let newObject: typeTreeObject = {};
+        let newObject: intRawJSON = {};
         for (var i = 0; i < keys.length; i ++) {
             //Only applies to objects recursively to prevent infinite loops
             if (typeof object[keys[i]] === 'object') { 
@@ -121,18 +122,40 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return false;
     }
 
+    obj_setTree(title: string, child: intRawJSON | string): intTreeObj {
+        let childData: intTreeObj[] = [];
+        let childString: string | undefined;
+
+        if (typeof child !== 'string') {
+            for (const key in child) {
+                childData.push(this.obj_setTree(key, child[key]));
+            }
+        } else {
+            childString = child;
+        }
+        let output = {
+            title: title,
+            child: childString || childData,
+        };
+        return output;
+    }
+
     /************************************************** QE - REQUESTS **************************************************/
     getData(): void {
         const postData = new FormData();
         postData.append('id', this.props.vehicleID);
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=data`, postData)
-        .then((response) => {
-            this.props.logout(JSON.stringify(response.data));
+        .then((response: AxiosResponse<any>) => {
 
+            
+            this.props.logout(JSON.stringify(response.data));
             if (this._ismounted && typeof response.data !== 'string') {
                 let sortedData = this.sortObj(response.data);
-                this.setState({ DATA: sortedData, OLD: JSON.stringify(sortedData), wait: false, });
+
+                const refinedData = this.obj_setTree('root', response.data);
+
+                this.setState({ DATA: sortedData, OLD: JSON.stringify(sortedData), wait: false, TESTDATA: refinedData });
             }
         });
     };
