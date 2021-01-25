@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { OutputFileType } from 'typescript';
 
 interface intTreeObj {
     title: string;
@@ -138,6 +139,19 @@ export default class QuoteEdit extends React.Component<Props, State> {
             child: childString || childData,
         };
         return output;
+    }
+
+    obj_turnIntoUnrefinedJson(data: intTreeObj[] | string) : intRawJSON | string {
+        let output: intRawJSON = {};
+        if (typeof data !== 'string') {
+            for (const item of data) {
+                const keyName = item.title;
+                output[keyName] = this.obj_turnIntoUnrefinedJson(item.child);
+            }
+            return output; 
+        } else {
+            return data;
+        }
     }
 
     /************************************************** QE - REQUESTS **************************************************/
