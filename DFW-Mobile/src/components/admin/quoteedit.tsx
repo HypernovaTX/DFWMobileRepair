@@ -3,7 +3,6 @@ import axios, { AxiosResponse } from 'axios';
 import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { OutputFileType } from 'typescript';
 
 interface intTreeObj {
     title: string;
@@ -17,6 +16,9 @@ type typePromptFunction = (
     functionNo: () => void, 
     isCancelOnly: boolean
 ) => void;
+enum listKinds {
+    category, item, price
+}
 
 type Props = {
     vehicleID: string,
@@ -168,6 +170,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 let sortedData = this.sortObj(response.data);
 
                 const refinedData = this.obj_setTree('root', response.data);
+                console.log(JSON.stringify(this.obj_turnIntoUnrefinedJson([refinedData])));
 
                 this.setState({ DATA: sortedData, OLD: JSON.stringify(sortedData), wait: false, TESTDATA: refinedData });
             }
@@ -372,7 +375,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     /************************************************** QE - TEMPLATE **************************************************/
     //Template for all of the quote items on the editing window (it is a mess unfortunately)
-    template_formatData(): JSX.Element {
+    template_formatData(): JSX.Element { //OLD
         const { DATA, editing, wait } = this.state;
         let output = [<div key='qe_placeholder_cat'></div>];
 
@@ -594,7 +597,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return (<React.Fragment key='qe_list'>{output}</React.Fragment>);
     }
 
-    template_loadingCover(): JSX.Element {
+    template_loadingCover(): JSX.Element { //OLD
         const { loading } = this.state;
         let loadCSS: {[index: string]: any} = {};
         const styleSpinner = { animationDuration: '2s' };
@@ -611,6 +614,52 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 </div>
             </div>
         );
+    }
+
+    handle_dataToList(inObj: intTreeObj, resursive: boolean): JSX.Element[] { //NEW
+        let output = [<div key='qe_placeholder_cat'></div>];
+
+        //avoid using root for creating any elements
+        if (inObj.title === 'root') {
+            if (typeof inObj.child !== 'string') {
+                for (const childItem of inObj.child) { output = this.handle_dataToList(childItem, false); }
+            }
+        } else {
+            const elementKind = (resursive) ? listKinds.item : listKinds.category;
+            output.push(this.template_listItems(inObj.title, elementKind));
+            if (typeof inObj.child !== 'string' && resursive) {
+                for (const childItem of inObj.child) { output = this.handle_dataToList(childItem, true); }
+            }
+        }
+        return output;
+    }
+
+    template_listItems(data: string, kind: number): JSX.Element { //NEW
+        const { category, item, price } = listKinds;
+        let output: JSX.Element = <React.Fragment key='listItemNA'></React.Fragment>;
+        switch (kind) {
+            case (category): output = this.template_listCategory(data); break;
+        }
+        return output;
+    }
+
+    template_listCategory(category: string): JSX.Element { //NEW
+        //Delete button
+        const catDelete = <span key={`qe_cat_s_${category}`} className='qe-bar-text right'>
+            <span key={`qe_cat_st_${category}`} className='qe-bar-button delete'
+                onClick={() => { this.props.promptOpen(`Confirm to delete "${category}"?`, () => { this.deleteKey(category); }, () => {}, false);}}
+            ><FontAwesomeIcon icon={faTrash}/></span>
+        </span>;
+
+        return (
+            <span key={`qe_cat_${category}`} className='qe-bar-text'>
+                <span key={`qe_cat_et_${category}`} className='qe-bar-text-span'>{category}</span>
+                <span key={`qe_car_e_${category}`} className='qe-bar-button' onClick={() => { this.startEdit(category, category) }}>
+                    <FontAwesomeIcon icon={faPen}/>
+                </span>
+                {catDelete}
+            </span>
+        )
     }
 
     template_loadBar(): JSX.Element {
