@@ -54,6 +54,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     private props_bg_on = { 'background': 'rgba(0, 0, 0, 0.5)', 'zIndex': '10', 'opacity': '1', 'backdropFilter': 'blur(8px)' };
     private props_bg_down = { 'background': 'rgba(0, 0, 0, 0)', 'zIndex': '10', 'opacity': '1', 'backdropFilter': 'blur(0px)' };
     private _ismounted = false;
+    private doNot = () => {};
 
     constructor(p: Props) {
         super(p);
@@ -182,8 +183,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         if (loading) { return; } //don't call it more than once
 
-        if (YEAR === '' || MAKE === '' || MODEL === '') {
-            this.props.promptOpen(`Vehicle's "Year", "Make", and "Model" cannot be empty!`, () => {}, () => {}, true);
+        if (YEAR === '' || MAKE === '' || MODEL === '') {                                   
+            this.props.promptOpen(`Vehicle's "Year", "Make", and "Model" cannot be empty!`, ()=>{}, ()=>{}, true);
             return;
         }
 
@@ -199,7 +200,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             if (this.props.newQuote && response.data === 'nogo') {
                 this.props.promptOpen(`"${YEAR} ${MAKE} ${MODEL}" already exists in the database!`, () => {
                     this.setState({ refresh: false, loading: false, wait: false, });
-                }, () => {}, true);
+                }, ()=>{}, true);
                 return;
             }
 
@@ -296,7 +297,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         //EMPTY VALUE
         if (editing.value === '') {
-            this.props.promptOpen('Input cannot be empty!', () => {}, () => {}, true);
+            this.props.promptOpen('Input cannot be empty!', ()=>{}, ()=>{}, true);
             return;
         }
 
@@ -322,7 +323,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         const { editing, DATA } = this.state;
 
         const creationErrorMessage = (): void => {
-            this.props.promptOpen('Inputs cannot be empty!', () => {}, () => {}, true);
+            this.props.promptOpen('Inputs cannot be empty!', ()=>{}, ()=>{}, true);
         }
 
         //create quote item
@@ -622,11 +623,15 @@ export default class QuoteEdit extends React.Component<Props, State> {
         //avoid using root for creating any elements
         if (inObj.title === 'root') {
             if (typeof inObj.child !== 'string') {
+                //dig deeper into the object
                 for (const childItem of inObj.child) { output = this.handle_dataToList(childItem, false); }
             }
-        } else {
+        } 
+        //Begin handle data and turn them into elements
+        else {
             const elementKind = (resursive) ? listKinds.item : listKinds.category;
-            output.push(this.template_listItems(inObj.title, elementKind));
+            output.push(this.template_chooseKind(inObj.title, elementKind));
+            //recursively get each of the child's details
             if (typeof inObj.child !== 'string' && resursive) {
                 for (const childItem of inObj.child) { output = this.handle_dataToList(childItem, true); }
             }
@@ -634,7 +639,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
 
-    template_listItems(data: string, kind: number): JSX.Element { //NEW
+    template_chooseKind(data: string, kind: number): JSX.Element { //NEW
         const { category, item, price } = listKinds;
         let output: JSX.Element = <React.Fragment key='listItemNA'></React.Fragment>;
         switch (kind) {
@@ -644,12 +649,42 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     template_listCategory(category: string): JSX.Element { //NEW
+        const { editing } = this.state;
         //Delete button
-        const catDelete = <span key={`qe_cat_s_${category}`} className='qe-bar-text right'>
-            <span key={`qe_cat_st_${category}`} className='qe-bar-button delete'
-                onClick={() => { this.props.promptOpen(`Confirm to delete "${category}"?`, () => { this.deleteKey(category); }, () => {}, false);}}
-            ><FontAwesomeIcon icon={faTrash}/></span>
-        </span>;
+        const catDelete =
+            <span key={`qec_s_${category}`} className='qe-bar-text right'>
+                <span key={`qec_b_${category}`} className='qe-bar-button delete'
+                    onClick={() => { this.props.promptOpen(`Confirm to delete "${category}"?`, () => { this.deleteKey(category); }, () => {}, false);}}
+                ><FontAwesomeIcon icon={faTrash}/></span>
+            </span>;
+
+        //Main category content
+        let catContent = 
+            <span key={`qe_c_${category}`} className='qe-bar-text'>
+                <span key={`qec_t_${category}`} className='qe-bar-text-span'>{category}</span>
+                <span key={`qec_e_${category}`} className='qe-bar-button' onClick={() => { this.startEdit(category, category) }}>
+                    <FontAwesomeIcon icon={faPen}/></span>
+                {catDelete}
+            </span>;
+
+        //Category template (EDITING)
+        if (editing.cat === category && editing.item === '' && editing.edit) {
+            catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
+                <input key={`qe_cat_input_${category}`} className='edit-item-txt' value={editing['value']}
+                    onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
+                        editing['value'] = change.target.value;
+                        this.setState({ editing });
+                    }}
+                ></input>
+                <span key={`qe_car_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
+                    <FontAwesomeIcon icon={faCheck}/>
+                </span>
+                <span key={`qe_car_eq_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                    <FontAwesomeIcon icon={faTimes}/>
+                </span>
+                {catDelete}
+            </span>;
+        }
 
         return (
             <span key={`qe_cat_${category}`} className='qe-bar-text'>
@@ -664,17 +699,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     template_loadBar(): JSX.Element {
         const styleSpinner = { animationDuration: '2.0s' };
-        return(
-            <div key={`quoteedit_loading_content`} className={`qe-cat add`}>
-                <div key={`quoteedit_load_spinner`} className='ld ld-spin' style={styleSpinner}>
-                    <img
-                        src={require('./../../resources/images/nut.png')}
-                        alt='loading'
-                        key={`quoteedit_load_img`} 
-                    ></img>
-                </div>
-            </div>
-        );
+        return(<div key={`quoteedit_loading_content`} className={`qe-cat add`}>
+            <div key={`quoteedit_load_spinner`} className='ld ld-spin' style={styleSpinner}>
+                <img src={require('./../../resources/images/nut.png')} alt='loading' key={`quoteedit_load_img`}></img></div></div>);
     }
     
     //Main template
