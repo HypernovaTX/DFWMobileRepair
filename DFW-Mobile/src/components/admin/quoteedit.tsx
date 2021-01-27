@@ -630,25 +630,26 @@ export default class QuoteEdit extends React.Component<Props, State> {
         //Begin handle data and turn them into elements
         else {
             const elementKind = (resursive) ? listKinds.item : listKinds.category;
-            output.push(this.template_chooseKind(inObj.title, elementKind));
+            
             //recursively get each of the child's details
             if (typeof inObj.child !== 'string' && resursive) {
                 for (const childItem of inObj.child) { output = this.handle_dataToList(childItem, true); }
             }
+            output.push(this.template_chooseKind(inObj.title, elementKind, output));
         }
         return output;
     }
 
-    template_chooseKind(data: string, kind: number): JSX.Element { //NEW
+    template_chooseKind(data: string, kind: number, addon: JSX.Element | JSX.Element[]): JSX.Element { //NEW
         const { category, item, price } = listKinds;
         let output: JSX.Element = <React.Fragment key='listItemNA'></React.Fragment>;
         switch (kind) {
-            case (category): output = this.template_listCategory(data); break;
+            case (category): output = this.template_listCategory(data, addon); break;
         }
         return output;
     }
 
-    template_listCategory(category: string): JSX.Element { //NEW
+    template_listCategory(category: string, addOn: JSX.Element | JSX.Element[]): JSX.Element { //NEW
         const { editing } = this.state;
         //Delete button
         const catDelete =
@@ -660,7 +661,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         //Main category content
         let catContent = 
-            <span key={`qe_c_${category}`} className='qe-bar-text'>
+            <span key={`qec_${category}`} className='qe-bar-text'>
                 <span key={`qec_t_${category}`} className='qe-bar-text-span'>{category}</span>
                 <span key={`qec_e_${category}`} className='qe-bar-button' onClick={() => { this.startEdit(category, category) }}>
                     <FontAwesomeIcon icon={faPen}/></span>
@@ -669,17 +670,17 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         //Category template (EDITING)
         if (editing.cat === category && editing.item === '' && editing.edit) {
-            catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
-                <input key={`qe_cat_input_${category}`} className='edit-item-txt' value={editing['value']}
+            catContent = <span key={`qec_${category}`} className='qe-bar-text'>
+                <input key={`qec_i_${category}`} className='edit-item-txt' value={editing['value']}
                     onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
                         editing['value'] = change.target.value;
                         this.setState({ editing });
                     }}
                 ></input>
-                <span key={`qe_car_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
+                <span key={`qec_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
                     <FontAwesomeIcon icon={faCheck}/>
                 </span>
-                <span key={`qe_car_eq_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                <span key={`qec_eq_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
                     <FontAwesomeIcon icon={faTimes}/>
                 </span>
                 {catDelete}
@@ -687,13 +688,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
 
         return (
-            <span key={`qe_cat_${category}`} className='qe-bar-text'>
-                <span key={`qe_cat_et_${category}`} className='qe-bar-text-span'>{category}</span>
-                <span key={`qe_car_e_${category}`} className='qe-bar-button' onClick={() => { this.startEdit(category, category) }}>
-                    <FontAwesomeIcon icon={faPen}/>
-                </span>
-                {catDelete}
-            </span>
+            <div key={`qe_cat_${category}`} className='qe-cat'>
+                {catContent}
+                {addOn}
+            </div>
         )
     }
 
