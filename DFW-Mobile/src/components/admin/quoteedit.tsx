@@ -16,6 +16,7 @@ type typePromptFunction = (
     functionNo: () => void, 
     isCancelOnly: boolean
 ) => void;
+type typeInputChange = React.ChangeEvent<HTMLInputElement>;
 enum listKinds {
     category, item, price
 }
@@ -617,14 +618,16 @@ export default class QuoteEdit extends React.Component<Props, State> {
         );
     }
 
-    handle_dataToList(inObj: intTreeObj, resursive: boolean): JSX.Element[] { //NEW
+    handle_dataToList(inObj: intTreeObj, resursive: boolean = false, passTitle: string | undefined = undefined): JSX.Element[] { //NEW
         let output = [<div key='qe_placeholder_cat'></div>];
 
         //avoid using root for creating any elements
         if (inObj.title === 'root') {
             if (typeof inObj.child !== 'string') {
                 //dig deeper into the object
-                for (const childItem of inObj.child) { output = this.handle_dataToList(childItem, false); }
+                for (const childItem of inObj.child) { output = this.handle_dataToList(childItem);
+                    console.log(JSON.stringify(childItem));
+                }
             }
         } 
         //Begin handle data and turn them into elements
@@ -632,19 +635,28 @@ export default class QuoteEdit extends React.Component<Props, State> {
             const elementKind = (resursive) ? listKinds.item : listKinds.category;
             
             //recursively get each of the child's details
-            if (typeof inObj.child !== 'string' && resursive) {
-                for (const childItem of inObj.child) { output = this.handle_dataToList(childItem, true); }
+            if (typeof inObj.child !== 'string') {
+                for (const childItem of inObj.child) { output = this.handle_dataToList(childItem, true, inObj.title); }
+                output.push(this.template_chooseKind(inObj.title, elementKind, output));
+            } else {
+                const addonVar = (passTitle) ? `${passTitle}[sep]` : '';
+                output.push(this.template_chooseKind(`${addonVar + inObj.title}[sep]${inObj.child}`, elementKind, output));
             }
-            output.push(this.template_chooseKind(inObj.title, elementKind, output));
+            
         }
         return output;
     }
 
     template_chooseKind(data: string, kind: number, addon: JSX.Element | JSX.Element[]): JSX.Element { //NEW
-        const { category, item, price } = listKinds;
+        const { category, item } = listKinds;
         let output: JSX.Element = <React.Fragment key='listItemNA'></React.Fragment>;
+        let arrayData: string[] = [];
+        if (kind = item) {
+            arrayData = data.split('[sep]');
+        }
         switch (kind) {
             case (category): output = this.template_listCategory(data, addon); break;
+            case (item): output = this.template_listItem('', data[0], data[1]); break;
         }
         return output;
     }
@@ -672,10 +684,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         if (editing.cat === category && editing.item === '' && editing.edit) {
             catContent = <span key={`qec_${category}`} className='qe-bar-text'>
                 <input key={`qec_i_${category}`} className='edit-item-txt' value={editing['value']}
-                    onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
-                        editing['value'] = change.target.value;
-                        this.setState({ editing });
-                    }}
+                    onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
                 ></input>
                 <span key={`qec_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
                     <FontAwesomeIcon icon={faCheck}/>
@@ -693,6 +702,76 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 {addOn}
             </div>
         )
+    }
+
+    template_listItem(category: string, item: string, price: string): JSX.Element {
+        const { editing } = this.state;
+        const forKey = category + item;
+        
+        //Normal quote item (no editing)
+        let itemName = 
+            <span key={`qei_${forKey}`} className='qe-bar-text left'>
+                <span key={`qei_et_${forKey}`} className='qe-bar-text-span'>{item}</span>
+                <span key={`qei_e_${forKey}`} className='qe-bar-button' onClick={() => { this.startEdit(item, category, item) }}>
+                    <FontAwesomeIcon icon={faPen}/>
+                </span>
+            </span>;
+
+        //Quote item price (no editing)
+        let itemValue = 
+            <span key={`qei_V_${forKey}`} className='qe-bar-text'>${price}
+                <span key={`qe_itemV_e_${forKey}`} className='qe-bar-button'
+                    onClick={() => { this.startEdit(price, category, item, price) }}
+                ><FontAwesomeIcon icon={faPen}/></span>
+            </span>;
+
+        //While it is editing
+        if (editing.cat === category && 
+            editing.item === item && 
+            editing.edit) {
+            //quote item name
+            if (editing.price === '') {
+                itemName =
+                    <span key={`qei_${forKey}`} className='qe-bar-text left'>
+                        <input key={`qeit_input_${forKey}`} className='edit-item-txt' value={editing['value']}
+                            onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
+                        ></input>
+                        <span key={`qei_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
+                            <FontAwesomeIcon icon={faCheck}/>
+                        </span>
+                        <span key={`qei_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                            <FontAwesomeIcon icon={faTimes}/>
+                        </span>
+                    </span>;
+            }
+            
+            //quote item price
+            if (editing.price === '') {
+                itemValue = 
+                    <span key={`qeit_p_${forKey}`} className='qe-bar-text'>
+                        $<input key={`qei_p_i_${forKey}`} className='edit-item-txt short' value={editing['value']} type='number' min='0.00'
+                            onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
+                        ></input>
+                        <span key={`qei_p_sv_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}><FontAwesomeIcon icon={faCheck}/></span>
+                        <span key={`qei_p_qt_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}><FontAwesomeIcon icon={faTimes}/></span>
+                    </span>;
+            }
+        }
+    
+        //Delete button
+        let itemBar = 
+            <span key={`qei_I_${forKey}`} className='qe-bar-text right'>
+                <span key={`qei_I_btxt_${forKey}`} className='qe-bar-delete-txt'>Delete "{item}"</span>
+                <span key={`qei_I_t_${forKey}`} className='qe-bar-button delete'
+                    onClick={() => {
+                        this.props.promptOpen(`Confirm to delete "${category} - ${item}"?`, () => { this.deleteKey(category, item); }, () => {}, false);
+                    }}
+                ><FontAwesomeIcon icon={faTrash}/></span>
+            </span>;
+    
+        return (
+            <div key={`qei_MAIN_${forKey}`} className='qe-item'>{itemName} {itemValue} {itemBar}</div>
+        );
     }
 
     template_loadBar(): JSX.Element {
@@ -761,6 +840,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 <div key='admin_qe_content_sub' className='admin-qe-ttext'>List of quotes:</div>
                 <div key='admin_qe_content' className='admin-qe-content'>
                     {this.template_formatData()}
+                    {this.handle_dataToList(this.state.TESTDATA, false)}
                 </div>
                 <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
                     <button
