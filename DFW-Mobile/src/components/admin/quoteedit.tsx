@@ -620,7 +620,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
         );
     }
     
-    handle_dataToList(inObj: intTreeObj, resursive: boolean = false, passTitle: string | undefined = undefined): typeArrayElement { //NEW
+    //DATA STRUCTURE as represented in "node , child": root , { category , { item , price } }
+    handle_dataToList(inObj: intTreeObj, resursive: boolean = false, passTitle: string | undefined = undefined): typeArrayElement {
         let output: typeArrayElement = [<div key='qe_placeholder_cat'>XXX</div>];
         let tempOutput: typeArrayElement = [];
 
@@ -635,14 +636,18 @@ export default class QuoteEdit extends React.Component<Props, State> {
         else {
             const elementKind = (resursive) ? listKinds.item : listKinds.category;
             
-            //recursively get each of the child's details
-            if (typeof inObj.child !== 'string' && !resursive) { //!isTreeObj(inObj.child)
+            //Used for items
+            if (typeof inObj.child !== 'string' && !resursive) {
+                //For each of the child of category
                 for (const childItem of inObj.child) { tempOutput.push(this.handle_dataToList(childItem as intTreeObj, true, inObj.title)[0]); }
-                const catElement = this.template_chooseKind(inObj.title, elementKind, tempOutput);
-                console.log('__done cat ::: ' + inObj.title + '; type ::: ' + elementKind);
-                output = [];
+
+                //Call to render category
+                const catElement = this.template_chooseKind(inObj.title, elementKind, tempOutput); //call a myself to render 
                 output.push(catElement);
-            } else {
+                output.shift();
+            }
+            else {
+                //Call to render each item
                 const addonVar = (passTitle) ? `${passTitle}[sep]` : '';
                 output.push(this.template_chooseKind(`${addonVar + inObj.title}[sep]${inObj.child}`, elementKind, output));
                 output.shift();
@@ -748,7 +753,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             if (editing.price === '') {
                 itemName =
                     <span key={`qei_${forKey}`} className='qe-bar-text left'>
-                        <input key={`qeit_input_${forKey}`} className='edit-item-txt' value={editing['value']}
+                        <input key={`qeit_input_${forKey}`} className='edit-item-txt' value={editing.value}
                             onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
                         ></input>
                         <span key={`qei_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
@@ -761,10 +766,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
             }
             
             //quote item price
-            if (editing.price === '') {
+            if (editing.price === price) {
                 itemValue = 
                     <span key={`qeit_p_${forKey}`} className='qe-bar-text'>
-                        $<input key={`qei_p_i_${forKey}`} className='edit-item-txt short' value={editing['value']} type='number' min='0.00'
+                        $<input key={`qei_p_i_${forKey}`} className='edit-item-txt short' value={editing.value} type='number' min='0.00'
                             onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
                         ></input>
                         <span key={`qei_p_sv_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}><FontAwesomeIcon icon={faCheck}/></span>
