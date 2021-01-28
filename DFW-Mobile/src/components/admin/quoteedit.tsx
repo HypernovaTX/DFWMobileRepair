@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { json } from 'express';
 
 interface intTreeObj {
     title: string;
@@ -17,6 +18,7 @@ type typePromptFunction = (
     isCancelOnly: boolean
 ) => void;
 type typeInputChange = React.ChangeEvent<HTMLInputElement>;
+type typeArrayElement = JSX.Element[];
 enum listKinds {
     category, item, price
 }
@@ -617,17 +619,16 @@ export default class QuoteEdit extends React.Component<Props, State> {
             </div>
         );
     }
-
-    handle_dataToList(inObj: intTreeObj, resursive: boolean = false, passTitle: string | undefined = undefined): JSX.Element[] { //NEW
-        let output = [<div key='qe_placeholder_cat'></div>];
+    
+    handle_dataToList(inObj: intTreeObj, resursive: boolean = false, passTitle: string | undefined = undefined): typeArrayElement { //NEW
+        let output: typeArrayElement = [<div key='qe_placeholder_cat'>XXX</div>];
+        let tempOutput: typeArrayElement = [];
 
         //avoid using root for creating any elements
         if (inObj.title === 'root') {
             if (typeof inObj.child !== 'string') {
                 //dig deeper into the object
-                for (const childItem of inObj.child) { output = this.handle_dataToList(childItem);
-                    console.log(JSON.stringify(childItem));
-                }
+                for (const childItem of inObj.child) { output = [...output, ...this.handle_dataToList(childItem)]; }
             }
         } 
         //Begin handle data and turn them into elements
@@ -635,12 +636,16 @@ export default class QuoteEdit extends React.Component<Props, State> {
             const elementKind = (resursive) ? listKinds.item : listKinds.category;
             
             //recursively get each of the child's details
-            if (typeof inObj.child !== 'string') {
-                for (const childItem of inObj.child) { output = this.handle_dataToList(childItem, true, inObj.title); }
-                output.push(this.template_chooseKind(inObj.title, elementKind, output));
+            if (typeof inObj.child !== 'string' && !resursive) { //!isTreeObj(inObj.child)
+                for (const childItem of inObj.child) { tempOutput.push(this.handle_dataToList(childItem as intTreeObj, true, inObj.title)[0]); }
+                const catElement = this.template_chooseKind(inObj.title, elementKind, tempOutput);
+                console.log('__done cat ::: ' + inObj.title + '; type ::: ' + elementKind);
+                output = [];
+                output.push(catElement);
             } else {
                 const addonVar = (passTitle) ? `${passTitle}[sep]` : '';
                 output.push(this.template_chooseKind(`${addonVar + inObj.title}[sep]${inObj.child}`, elementKind, output));
+                output.shift();
             }
             
         }
@@ -648,21 +653,30 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     template_chooseKind(data: string, kind: number, addon: JSX.Element | JSX.Element[]): JSX.Element { //NEW
-        const { category, item } = listKinds;
         let output: JSX.Element = <React.Fragment key='listItemNA'></React.Fragment>;
         let arrayData: string[] = [];
-        if (kind = item) {
-            arrayData = data.split('[sep]');
+        console.log('[CHOOSE] data: ' + data);
+        console.log('[CHOOSE] kind: ' + kind);
+        if (kind === listKinds.item) {
+            arrayData = data.split(/\[sep\]/);
+            
+            console.log(`[CHOOSE] - DATA SPLIT: ${arrayData}`)
         }
         switch (kind) {
-            case (category): output = this.template_listCategory(data, addon); break;
-            case (item): output = this.template_listItem('', data[0], data[1]); break;
+            case (listKinds.category): 
+                output = this.template_listCategory(data, addon);
+                break;
+            case (listKinds.item):
+                output = this.template_listItem(arrayData[0], arrayData[1], arrayData[2]); 
+                break;
         }
         return output;
     }
 
     template_listCategory(category: string, addOn: JSX.Element | JSX.Element[]): JSX.Element { //NEW
         const { editing } = this.state;
+        console.log('<cat>');
+
         //Delete button
         const catDelete =
             <span key={`qec_s_${category}`} className='qe-bar-text right'>
@@ -707,6 +721,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     template_listItem(category: string, item: string, price: string): JSX.Element {
         const { editing } = this.state;
         const forKey = category + item;
+        console.log('<item>'); 
         
         //Normal quote item (no editing)
         let itemName = 
