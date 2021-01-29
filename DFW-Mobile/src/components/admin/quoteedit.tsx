@@ -601,18 +601,15 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return (<React.Fragment key='qe_list'>{output}</React.Fragment>);
     }
 
-    template_loadingCover(): JSX.Element { //OLD
+    template_loadingCover(): JSX.Element { 
         const { loading } = this.state;
-        let loadCSS: {[index: string]: any} = {};
+        const loadCSS = (loading) ? { opacity: 1, zIndex: 10 } : {};
         const styleSpinner = { animationDuration: '2s' };
-        if (loading) { loadCSS = { opacity: 1, zIndex: 10 }; }
         return(
             <div key='quoteedit_loading_cover' className='loading-cover' style={loadCSS}>
                 <div key='quoteedit_loading_cover_center' className='loading-cover-center'>
                     <div key='quoteedit_loading_icon' className='ld ld-clock' style={styleSpinner}><img
-                            src={require('./../../resources/images/nut.png')}
-                            alt='loading'
-                            key='quoteedit_loading_img' 
+                        src={require('./../../resources/images/nut.png')} alt='loading' key='quoteedit_loading_img' 
                     ></img></div>
                     <div key='quoteedit_loading_txt' className='loading-cover-text'>Saving data...</div>
                 </div>
@@ -633,6 +630,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
                 //Add category button
                 output.push(this.template_addCategory());
+                output.shift();
             }
         } 
         //Begin handle data and turn them into elements
@@ -645,6 +643,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 for (const childItem of inObj.child) { tempOutput.push(this.handle_dataToList(childItem as intTreeObj, true, inObj.title)[0]); }
 
                 //Call to render category
+                tempOutput.push(this.template_addItem(inObj.title));
                 const catElement = this.template_chooseKind(inObj.title, elementKind, tempOutput); //call a myself to render 
                 output.push(catElement);
                 output.shift();
@@ -660,7 +659,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
 
-    template_chooseKind(data: string, kind: number, addon: JSX.Element | JSX.Element[]): JSX.Element { //NEW
+    template_chooseKind(data: string, kind: number, addon: JSX.Element | JSX.Element[]): JSX.Element { 
         let output: JSX.Element = <React.Fragment key='listItemNA'></React.Fragment>;
         let arrayData: string[] = [];
         console.log('[CHOOSE] data: ' + data);
@@ -681,7 +680,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
 
-    template_listCategory(category: string, addOn: JSX.Element | JSX.Element[]): JSX.Element { //NEW
+    template_listCategory(category: string, addOn: JSX.Element | JSX.Element[]): JSX.Element { 
         const { editing } = this.state;
         console.log('<cat>');
 
@@ -800,35 +799,80 @@ export default class QuoteEdit extends React.Component<Props, State> {
     template_addCategory(): JSX.Element {
         let { editing } = this.state;
         let output: JSX.Element;
-        //----- editing
+        //Editing mode
         if (editing.cat === '_<!!NewCategory!!>_' && editing.edit === true) {
             output = 
-                <div key={`qe_addmore`} className='qe-cat'>
-                    <span key={`qe_addmore_name`} className='qe-bar-text left'>
-                        <input key={`qe_addmore_name_i`} className='edit-item-txt' value={editing.value}
+                <div key={`qe_addC`} className='qe-cat'>
+                    <span key={`qe_addC_name`} className='qe-bar-text left'>
+                        <input key={`qe_addC_name_i`} className='edit-item-txt' value={editing.value}
                             onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
                         ></input>
                     </span>
-                    <span key={`qe_addmore_e`} className='qe-bar-text right'>
-                        <span key={`qe_addmore_eq`} className='qe-bar-button ok' onClick={() => { this.createKey() }}>
+                    <span key={`qe_add_e`} className='qe-bar-text right'>
+                        <span key={`qe_add_eq`} className='qe-bar-button ok' onClick={() => { this.createKey() }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
-                        <span key={`qe_addmore_ed`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                        <span key={`qe_add_ed`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
                             <FontAwesomeIcon icon={faTimes}/>
                         </span>
                     </span>
                 </div>;
         }
-        //----- button
+        //As a button
         else {
             output =
-                <div key='qe_addmore' className='qe-cat add' onClick={() => {
+                <div key='qe_addC' className='qe-cat add' onClick={() => {
                     editing.item = '';
                     editing.cat = '_<!!NewCategory!!>_';
                     editing.edit = true;
                     editing.value = '';
                     this.setState({ editing });
                 }}>Add Category</div>;
+        }
+        return output;
+    }
+
+    template_addItem(category: string): JSX.Element {
+        let { editing } = this.state;
+        let output: JSX.Element;
+        
+        //When it is in editing mode
+        if (editing.cat === category && editing.item === '_<!!NewItem!!>_' && editing.edit) {
+            output = 
+                <div key={`qe_addI_${category}`} className='qe-item'>
+                    <span key={`qe_addI_n_${category}`} className='qe-bar-text left'>
+                        <input key={`qe_addI_n_i_${category}`} className='edit-item-txt' value={editing.value}
+                            onChange={(change: typeInputChange) => { editing['value'] = change.target.value; this.setState({ editing }); }}
+                        ></input>
+                    </span>
+                    <span key={`qe_addI_p_${category}`} className='qe-bar-text'>
+                        $<input key={`qe_addI_p_i_${category}`} className='edit-item-txt short' value={editing.value2} type='number' min='0.00'
+                            onChange={(change: typeInputChange) => { editing['value2'] = change.target.value; this.setState({ editing }); }}
+                        ></input>
+                    </span>
+                    <span key={`qe_addI_e_${category}`} className='qe-bar-text right'>
+                        <span key={`qe_addI_eq_${category}`} className='qe-bar-button ok' onClick={() => { this.createKey() }}>
+                            <FontAwesomeIcon icon={faCheck}/>
+                        </span>
+                        <span key={`qe_addI_ed_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                            <FontAwesomeIcon icon={faTimes}/>
+                        </span>
+                    </span>
+                </div>;
+        }
+        //As a button
+        else {
+            output = 
+                <div key={`qe_addI_${category}`} className='qe-item add'
+                    onClick={() => {
+                        editing.cat = category;
+                        editing.item = '_<!!NewItem!!>_';
+                        editing.edit = true;
+                        editing.value = '';
+                        editing.value2 = '0.00';
+                        this.setState({ editing });
+                    }}
+                >Add Quote</div>;
         }
         return output;
     }
