@@ -630,6 +630,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
             if (typeof inObj.child !== 'string') {
                 //dig deeper into the object
                 for (const childItem of inObj.child) { output = [...output, ...this.handle_dataToList(childItem)]; }
+
+                //Add category button
+                output.push(this.template_addCategory());
             }
         } 
         //Begin handle data and turn them into elements
@@ -792,6 +795,42 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return (
             <div key={`qei_MAIN_${forKey}`} className='qe-item'>{itemName} {itemValue} {itemBar}</div>
         );
+    }
+
+    template_addCategory(): JSX.Element {
+        let { editing } = this.state;
+        let output: JSX.Element;
+        //----- editing
+        if (editing.cat === '_<!!NewCategory!!>_' && editing.edit === true) {
+            output = 
+                <div key={`qe_addmore`} className='qe-cat'>
+                    <span key={`qe_addmore_name`} className='qe-bar-text left'>
+                        <input key={`qe_addmore_name_i`} className='edit-item-txt' value={editing.value}
+                            onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
+                        ></input>
+                    </span>
+                    <span key={`qe_addmore_e`} className='qe-bar-text right'>
+                        <span key={`qe_addmore_eq`} className='qe-bar-button ok' onClick={() => { this.createKey() }}>
+                            <FontAwesomeIcon icon={faCheck}/>
+                        </span>
+                        <span key={`qe_addmore_ed`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                            <FontAwesomeIcon icon={faTimes}/>
+                        </span>
+                    </span>
+                </div>;
+        }
+        //----- button
+        else {
+            output =
+                <div key='qe_addmore' className='qe-cat add' onClick={() => {
+                    editing.item = '';
+                    editing.cat = '_<!!NewCategory!!>_';
+                    editing.edit = true;
+                    editing.value = '';
+                    this.setState({ editing });
+                }}>Add Category</div>;
+        }
+        return output;
     }
 
     template_loadBar(): JSX.Element {
