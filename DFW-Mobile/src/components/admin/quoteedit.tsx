@@ -320,10 +320,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
         this.quitEdit();
     }
 
-    editAction_save(): void {
+    edit_save(): void {
         let { editing, TESTDATA } = this.state;
         const saveObj: intTreeObjAlt = {
-            t: editing.category,
+            t: editing.cat,
             c: (editing.item === '') ? '' : {
                 t: editing.item, 
                 c: (editing.price === '') ? '' : {
@@ -332,9 +332,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 }
             }
         }
-
+        console.log(JSON.stringify(saveObj));
         TESTDATA = this.editLogic_save(saveObj, TESTDATA);
         this.setState({ TESTDATA });
+        this.quitEdit();
     }
 
     editLogic_save(toSave: intTreeObjAlt, input: intTreeObj): intTreeObj {
@@ -344,13 +345,16 @@ export default class QuoteEdit extends React.Component<Props, State> {
         //start from the category
         if (input.title === 'root' && typeof input.child !== 'string') {
             //Each of the category
-            for (let subcat of input.child) { 
+            for (let c = 0; c < input.child.length; c ++) { 
                 //Skip if it doesn't match
-                if (subcat.title === toSave.t) {
+                if (input.child[c].title === toSave.t) {
+                    if (typeof output.child === 'string') { output.child = []; }
                     if (typeof toSave.c !== 'string') {
-                        if (typeof output.child === 'string') { output.child = []; }
-                        output.child.push(this.editLogic_save(toSave.c, subcat));
-                    } else { output.title = editing.value; }
+                        input.child[c] = this.editLogic_save(toSave.c, input.child[c]);
+                    } else {
+                        input.child[c].title = editing.value;
+                        //output.child.push(subcat);
+                    }
                 }
             }
         }
@@ -677,7 +681,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
                 //Add category button
                 output.push(this.template_addCategory());
-                output.shift();
+                //output.shift(); //Comment this out for debugging with the original element (it will show XXX to split between the two)
             }
         } 
         //Begin handle data and turn them into elements
@@ -709,12 +713,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
     template_chooseKind(data: string, kind: number, addon: JSX.Element | JSX.Element[]): JSX.Element { 
         let output: JSX.Element = <React.Fragment key='listItemNA'></React.Fragment>;
         let arrayData: string[] = [];
-        console.log('[CHOOSE] data: ' + data);
-        console.log('[CHOOSE] kind: ' + kind);
+
         if (kind === listKinds.item) {
             arrayData = data.split(/\[sep\]/);
-            
-            console.log(`[CHOOSE] - DATA SPLIT: ${arrayData}`)
         }
         switch (kind) {
             case (listKinds.category): 
@@ -729,7 +730,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     template_listCategory(category: string, addOn: JSX.Element | JSX.Element[]): JSX.Element { 
         const { editing } = this.state;
-        console.log('<cat>');
 
         //Delete button
         const catDelete =
@@ -754,7 +754,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 <input key={`qec_i_${category}`} className='edit-item-txt' value={editing['value']}
                     onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
                 ></input>
-                <span key={`qec_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
+                <span key={`qec_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.edit_save() }}>
                     <FontAwesomeIcon icon={faCheck}/>
                 </span>
                 <span key={`qec_eq_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
@@ -775,7 +775,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
     template_listItem(category: string, item: string, price: string): JSX.Element {
         const { editing } = this.state;
         const forKey = category + item;
-        console.log('<item>'); 
         
         //Normal quote item (no editing)
         let itemName = 
@@ -805,7 +804,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         <input key={`qeit_input_${forKey}`} className='edit-item-txt' value={editing.value}
                             onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
                         ></input>
-                        <span key={`qei_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
+                        <span key={`qei_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.edit_save() }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
                         <span key={`qei_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
