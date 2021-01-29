@@ -348,31 +348,28 @@ export default class QuoteEdit extends React.Component<Props, State> {
             for (let c = 0; c < input.child.length; c ++) { 
                 //Skip if it doesn't match
                 if (input.child[c].title === toSave.t) {
-                    if (typeof output.child === 'string') { output.child = []; }
-                    if (typeof toSave.c !== 'string') {
-                        input.child[c] = this.editLogic_save(toSave.c, input.child[c]);
-                    } else {
-                        input.child[c].title = editing.value;
-                        //output.child.push(subcat);
-                    }
+                    //In case the output OBJ's child is a string
+                    if (typeof output.child === 'string') { output.child = []; } 
+                    //Dig further if it's not just the category
+                    if (typeof toSave.c !== 'string') { input.child[c] = this.editLogic_save(toSave.c, input.child[c]); }
+                    //Update the category
+                    else { input.child[c].title = editing.value; }
                 }
             }
         }
 
-        //subcategory (items)
+        //items
         if (input.title !== 'root' && typeof input.child !== 'string') {
             //Each of the category
-            for (let subcat of input.child) { 
+            for (let i = 0; i < input.child.length; i ++) { 
                 //Skip if it doesn't match
-                if (subcat.title === toSave.t) {
-                    if (typeof toSave.c !== 'string') {
-                        output.child = editing.value;
-                    } else { 
-                        output.title = editing.value; 
-                        if (editing.value2) {
-                            output.child = editing.value2;
-                        }
-                    }
+                if (input.child[i].title === toSave.t) {
+                    //In case the output OBJ's child is a string
+                    if (typeof output.child === 'string') { output.child = []; } 
+                    //Update the price
+                    if (toSave.c === '') { output.child[i].title = editing.value; }
+                    //update the item name
+                    else { output.child[i].child = editing.value; }
                 }
             }
         }
@@ -820,8 +817,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         $<input key={`qei_p_i_${forKey}`} className='edit-item-txt short' value={editing.value} type='number' min='0.00'
                             onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
                         ></input>
-                        <span key={`qei_p_sv_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}><FontAwesomeIcon icon={faCheck}/></span>
-                        <span key={`qei_p_qt_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}><FontAwesomeIcon icon={faTimes}/></span>
+                        <span key={`qei_p_sv_${forKey}`} className='qe-bar-button ok' onClick={() => { this.edit_save() }}>
+                            <FontAwesomeIcon icon={faCheck}/>
+                        </span>
+                        <span key={`qei_p_qt_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                            <FontAwesomeIcon icon={faTimes}/>
+                        </span>
                     </span>;
             }
         }
