@@ -320,12 +320,21 @@ export default class QuoteEdit extends React.Component<Props, State> {
         this.quitEdit();
     }
 
-    //The first argument is already set to "true"
-    edit_confirm(category: string, item: typeStrOrNo, price: typeStrOrNo): void {
-        const { editing, TESTDATA } = this.state;
+    editAction_save(): void {
+        let { editing, TESTDATA } = this.state;
         const saveObj: intTreeObjAlt = {
-            t: category, c: (!item) ? '' : { t: item, c: (!price) ? '' : { t: price, c: '' }}
+            t: editing.category,
+            c: (editing.item === '') ? '' : {
+                t: editing.item, 
+                c: (editing.price === '') ? '' : {
+                    t: editing.price,
+                    c: '' 
+                }
+            }
         }
+
+        TESTDATA = this.editLogic_save(saveObj, TESTDATA);
+        this.setState({ TESTDATA });
     }
 
     editLogic_save(toSave: intTreeObjAlt, input: intTreeObj): intTreeObj {
@@ -333,8 +342,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         let output = input;
 
         //start from the category
-        if (input.title === 'root' 
-        && typeof input.child !== 'string') {
+        if (input.title === 'root' && typeof input.child !== 'string') {
             //Each of the category
             for (let subcat of input.child) { 
                 //Skip if it doesn't match
@@ -342,8 +350,25 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     if (typeof toSave.c !== 'string') {
                         if (typeof output.child === 'string') { output.child = []; }
                         output.child.push(this.editLogic_save(toSave.c, subcat));
+                    } else { output.title = editing.value; }
+                }
+            }
+        }
+
+        //subcategory (items)
+        if (input.title !== 'root' && typeof input.child !== 'string') {
+            //Each of the category
+            for (let subcat of input.child) { 
+                //Skip if it doesn't match
+                if (subcat.title === toSave.t) {
+                    if (typeof toSave.c !== 'string') {
+                        output.child = editing.value;
+                    } else { 
+                        output.title = editing.value; 
+                        if (editing.value2) {
+                            output.child = editing.value2;
+                        }
                     }
-                    else { output.title = toSave.t; }
                 }
             }
         }
