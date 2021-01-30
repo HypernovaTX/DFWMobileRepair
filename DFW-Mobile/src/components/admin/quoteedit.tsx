@@ -338,6 +338,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
         this.quitEdit();
     }
 
+    edit_create(): void {
+        let { editing, TESTDATA } = this.state;
+    }
+
     editLogic_save(toSave: intTreeObjAlt, input: intTreeObj): intTreeObj {
         const { editing } = this.state;
         let output = input;
@@ -376,6 +380,47 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         return output;
     }
+
+    editLogic_create(toCreate: intTreeObjAlt, input: intTreeObj): intTreeObj {
+        const { editing } = this.state;
+        let output = input;
+
+        //Start from the root
+        if (input.title === 'root') {
+            //Convert the child to string just in case
+            if (typeof input.child === 'string') { input.child = []; }
+
+            //If the child of toCreate obj (to data needs to save is )
+            if (typeof toCreate.c !== 'string') {
+                let undefinedChild = true;
+                //Find the correct child and dig/save recursively
+                for (let c = 0; c < input.child.length; c ++) { 
+                    if (input.child[c].title === toCreate.t) {
+                        input.child[c] = this.editLogic_create(toCreate.c, input.child[c]);
+                        undefinedChild = false;
+                    }
+                }
+                //In case the child node doesn't exists
+                if (undefinedChild) {
+                    input.child.push({
+                        title: toCreate.t,
+                        child: [{
+                            title: editing.value,
+                            child: (typeof toCreate.c.c !== 'string') ? editing.value2 : ''
+                        }]
+                    });
+                }
+            }
+            //If the child of toCreate obj is a string, save it
+            else {
+                input.child.push({ title: editing.value, child: []});
+            }
+        } else {
+
+        }
+        
+        return output;
+    }   
 
     createKey(): void { //OLD
         const { editing, DATA } = this.state;
