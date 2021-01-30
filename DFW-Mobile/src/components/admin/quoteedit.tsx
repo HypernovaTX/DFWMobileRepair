@@ -55,7 +55,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
     private props_bg_on = { 'background': 'rgba(0, 0, 0, 0.5)', 'zIndex': '10', 'opacity': '1', 'backdropFilter': 'blur(8px)' };
     private props_bg_down = { 'background': 'rgba(0, 0, 0, 0)', 'zIndex': '10', 'opacity': '1', 'backdropFilter': 'blur(0px)' };
     private _ismounted = false;
-    private doNot = () => {};
 
     constructor(p: Props) {
         super(p);
@@ -144,7 +143,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         };
         return output;
     }
-
+    //Convert the tree object to raw JSON for saving purposes.
     obj_turnIntoUnrefinedJson(data: intTreeObj[] | string) : intRawJSON | string {
         let output: intRawJSON = {};
         if (typeof data !== 'string') {
@@ -185,9 +184,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         if (loading) { return; } //don't call it more than once
 
         if (YEAR === '' || MAKE === '' || MODEL === '') {                                   
-            this.props.promptOpen(`Vehicle's "Year", "Make", and "Model" cannot be empty!`, ()=>{}, ()=>{}, true);
-            return;
-        }
+            this.quickPrompt(`Vehicle's "Year", "Make", and "Model" cannot be empty!`); return; }
 
         let param = 'update';
         const postData = new FormData();
@@ -280,6 +277,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
     }
 
+    //To save time and organize this class, since this is used frequently, this function will be added to reduce the work. 
+    //Message with OK button ONLY! No functions will be called.
+    quickPrompt(message: string): void {
+        this.props.promptOpen(message, ()=>{}, ()=>{}, true);
+    }
+
     /************************************************** QE - EDITING **************************************************/
     startEdit(value: string, category: string, item: typeStrOrNo = undefined, price: typeStrOrNo = undefined): void {
         this.setState({
@@ -297,10 +300,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         const { editing, DATA } = this.state;
 
         //EMPTY VALUE
-        if (editing.value === '') {
-            this.props.promptOpen('Input cannot be empty!', ()=>{}, ()=>{}, true);
-            return;
-        }
+        if (editing.value === '') { this.quickPrompt('Input cannot be empty!'); return; }
 
         //Update category
         if (editing.item === '' && !DATA.hasOwnProperty(editing.value)) {
@@ -334,6 +334,15 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
         console.log(JSON.stringify(saveObj));
         TESTDATA = this.editLogic_save(saveObj, TESTDATA);
+        if (TESTDATA.title === 'ERROR') {
+            switch(TESTDATA.child) {
+                case('save_cat'): this.quickPrompt('There is already an existing category on the list!'); break;
+                case('save_itm'): this.quickPrompt('There is already an existing quote item on the list!'); break;
+                
+            }
+            
+            return;
+        }
         this.setState({ TESTDATA });
         this.quitEdit();
     }
@@ -344,38 +353,76 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     editLogic_save(toSave: intTreeObjAlt, input: intTreeObj): intTreeObj {
         const { editing } = this.state;
+        let ERROR: null | string = null;
         let output = input;
 
         //start from the category
-        if (input.title === 'root' && typeof input.child !== 'string') {
+        if (input.title === 'root' && typeof input.child !== 'string' && !ERROR) {
+            //Scan the category in case of collision
+            for (const searchItem of input.child) {
+                if (searchItem.title.toLowerCase() === editing.value.toLowerCase()
+                && typeof toSave.c === 'string'
+                && editing.value.toLowerCase() !== editing.cat.toLowerCase()) {
+                    ERROR = 'cat'; break;
+                }
+            }
             //Each of the category
             for (let c = 0; c < input.child.length; c ++) { 
+                //Stop running the loop if it's error
+                if (ERROR) { break; }
                 //Skip if it doesn't match
-                if (input.child[c].title === toSave.t) {
+                if (input.child[c].title === toSave.t && !ERROR) {
                     //In case the output OBJ's child is a string
                     if (typeof output.child === 'string') { output.child = []; } 
                     //Dig further if it's not just the category
-                    if (typeof toSave.c !== 'string') { input.child[c] = this.editLogic_save(toSave.c, input.child[c]); }
+                    if (typeof toSave.c !== 'string') {
+                        //In case of error, make sure it is passed down
+                        if (this.editLogic_save(toSave.c, input.child[c]).title === 'ERROR') { ERROR = 'itm'; break; }
+                        //input.child[c] = this.editLogic_save(toSave.c, input.child[c]); //Removed this because it is causing a lot of infinite loops
+                    }
                     //Update the category
                     else { input.child[c].title = editing.value; }
+
+                    break;
                 }
             }
         }
 
         //items
-        if (input.title !== 'root' && typeof input.child !== 'string') {
+        else if (input.title !== 'root' && typeof input.child !== 'string' && !ERROR) {
+            //Scan the items in case of collision
+            for (const searchItem of input.child) {
+                if (searchItem.title.toLowerCase() === editing.value.toLowerCase()
+                && typeof toSave.c === 'string'
+                && editing.value.toLowerCase() !== editing.item.toLowerCase()) {
+                    ERROR = 'itm'; break;
+                }
+            }
             //Each of the category
             for (let i = 0; i < input.child.length; i ++) { 
+                //Stop running the loop if it's error
+                if (ERROR) { break; }
                 //Skip if it doesn't match
-                if (input.child[i].title === toSave.t) {
+                if (input.child[i].title === toSave.t && !ERROR) {
                     //In case the output OBJ's child is a string
                     if (typeof output.child === 'string') { output.child = []; } 
                     //Update the price
                     if (toSave.c === '') { output.child[i].title = editing.value; }
                     //update the item name
                     else { output.child[i].child = editing.value; }
+
+                    break;
                 }
             }
+        }
+        //if none applies
+        else {
+            output = { title: 'ERROR', child: ''};
+        }
+
+        //Pass the error down
+        if (ERROR) {
+            output = { title: 'ERROR', child: `save_${ERROR}`};
         }
 
         return output;
