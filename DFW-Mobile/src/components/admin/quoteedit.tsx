@@ -3,7 +3,6 @@ import axios, { AxiosResponse } from 'axios';
 import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { json } from 'express';
 
 interface intTreeObj { title: string; child: intTreeObj[] | string; };
 interface intTreeObjAlt { t: string; c: intTreeObjAlt | string; };
@@ -284,7 +283,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     /************************************************** QE - EDITING **************************************************/
-    startEdit(value: string, category: string, item: typeStrOrNo = undefined, price: typeStrOrNo = undefined): void {
+    private startEdit(value: string, category: string, item: typeStrOrNo = undefined, price: typeStrOrNo = undefined): void {
         const { editing } = this.state;
         editing.edit = true;
         editing.cat = category;
@@ -322,8 +321,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
      * The main method to update the changes to the data
      * @param kind - Choose either 'save', 'create'
      */
-    edit_update(kind: 'save' | 'create' | 'delete'): void {
+    private edit_update(kind: 'save' | 'create' | 'delete'): void {
         let { editing, TESTDATA } = this.state;
+        let processingObj: intTreeObj;
+
+        //EMPTY VALUE
+        if (editing.value === '') { this.quickPrompt('Input cannot be empty!'); return; }
 
         //This is an object to reference where to update the edit
         const saveObj: intTreeObjAlt = {
@@ -340,17 +343,21 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         //Choose the correct logic for the "kind" of update
         switch (kind) {
-            case ('save'): TESTDATA = this.editLogic_save(saveObj, TESTDATA); break;
-            case ('create'): TESTDATA = this.editLogic_create(saveObj, TESTDATA); break;
-            case ('delete'): break;
+            case ('save'): processingObj = this.editLogic_save(saveObj, TESTDATA); break;
+            case ('create'): processingObj = this.editLogic_create(saveObj, TESTDATA); break;
+            case ('delete'): processingObj = this.editLogic_save(saveObj, TESTDATA); break;
         }
 
         //When it returns error
-        if (TESTDATA.title === 'ERROR') {
-            switch (TESTDATA.child) {
+        if (processingObj.title === 'ERROR') {
+            switch (processingObj.child) {
                 case ('save_cat'): this.quickPrompt('There is already an existing category on the list!'); break;
                 case ('save_itm'): this.quickPrompt('There is already an existing quote item on the list!'); break;
-                case ('unknown'): this.quickPrompt('An unknown error has occured! Please contact the developer on this.'); break;
+                case ('save_illegal'): this.quickPrompt('ILLEGAL SAVING ACTION! How did you know?!'); break;
+                case ('create_cat'): this.quickPrompt('There is already an existing category on the list!'); break;
+                case ('create_itm'): this.quickPrompt('There is already an existing quote item on the list!'); break;
+                case ('create_illegal'): this.quickPrompt('ILLEGAL CREATION ACTION! How did you know?!'); break;
+                case ('unknown'): this.quickPrompt('An unknown error has occured! Please contact the developer over this.'); break;
             }
             
             //Exit the method when error occurs
@@ -358,7 +365,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
 
         //If nothing's wrong, save
-        this.setState({ TESTDATA });
+        this.setState({ TESTDATA: processingObj });
         this.quitEdit();
     }
 
@@ -368,10 +375,13 @@ export default class QuoteEdit extends React.Component<Props, State> {
      * @param input - Actual object in (intTreeObj) to save to
      * @returns - intTreeObj (it there's error, it will be: { title: 'ERROR', child: <error code here>})
      */
-    editLogic_save(toSave: intTreeObjAlt, input: intTreeObj): intTreeObj {
+    private editLogic_save(toSave: intTreeObjAlt, input: intTreeObj): intTreeObj {
         const { editing } = this.state;
         let ERROR: null | string = null;
         let output = input;
+
+        //First thing first, check for certain string if the user is crazy to pull this off
+        if (editing.value === '_<!!NewCategory!!>_' || editing.value === '_<!!NewItem!!>_') { ERROR = 'illegal'; }
 
         //start from the category
         if (input.title === 'root' && typeof input.child !== 'string' && !ERROR) {
@@ -431,7 +441,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 }
             }
         }
-        //if none applies
+        //How did you (end user) get here? Are you a hacker?!
         else {
             output = { title: 'ERROR', child: 'unknown'};
         }
@@ -450,65 +460,77 @@ export default class QuoteEdit extends React.Component<Props, State> {
      * @param input - Actual object in (intTreeObj) to save to
      * @returns - intTreeObj (it there's error, it will be: { title: 'ERROR', child: <error code here>})
      */
-    editLogic_create(toCreate: intTreeObjAlt, input: intTreeObj): intTreeObj {
+    private editLogic_create(toCreate: intTreeObjAlt, input: intTreeObj): intTreeObj {
         const { editing } = this.state;
         let output = input;
         let ERROR: null | string = null;
-        const preloadObj = (title: string, child: intTreeObj[] | string): intTreeObj => {
-            return { title: title, child: child }
-        }
+
+        //First thing first, check if the end user is insane
+        if (editing.value === '_<!!NewCategory!!>_' || editing.value === '_<!!NewItem!!>_') { ERROR = 'illegal'; }
 
         //Start from the root
-        if (input.title === 'root') {
+        if (input.title === 'root' && !ERROR) {
             //Convert the child to string just in case
             if (typeof output.child === 'string') { output.child = []; }
             if (typeof input.child === 'string') { input.child = []; }
 
-            //If the child of toCreate object is a string, then it is an item to add
+            //SAVE ITEM - If the child(.c) of toCreate object IS NOT a string
             if (typeof toCreate.c !== 'string') {
                 let undefinedChild = true;
 
                 //Find the correct child and dig/save recursively
                 for (let c = 0; c < input.child.length; c ++) { 
-                    //If the title matches with the reference object (toCreate)
+                    //If the title matches with the reference object (toCreate), create 
                     if (input.child[c].title === toCreate.t) {
-                        let tempValue: intTreeObj[] | string = output.child[c].child;
-                        if (typeof tempValue === 'string') { tempValue = []; }
+                        //Have to create a placeholder varlable since TypeScript always think "output.child[c].child" ...
+                        //... is "string | intTreeObj[]" even with "as" and "typeof", this is the only workaround I know of.
+                        let tempValue: intTreeObj[] = output.child[c].child as intTreeObj[];
+
+                        //First check for duplicate item names
+                        for (const test of tempValue) {
+                            if (test.title.toLowerCase() === editing.value.toLowerCase()) { ERROR = 'itm'; break; } 
+                        }
+
+                        //Save 
                         tempValue.push({
                             title: editing.value,
                             child: (typeof toCreate.c.c !== 'string') ? editing.value2 : ''
                         });
                         output.child[c].child = tempValue;
 
-                        //preloadObj(editing.value, (typeof toCreate.c.c !== 'string') ? editing.value2 : '');
+                        //Confirm that there's something that matches in the for loop
                         undefinedChild = false;
                         break;
                     }
                 }
                 //In case the child node doesn't exists
                 if (undefinedChild && !ERROR) {
-                    output.child.push(preloadObj(
-                        toCreate.t,
-                        (typeof toCreate.c.c !== 'string') ? editing.value2 : ''
-                    ));
+                    output.child.push({
+                        title: toCreate.t,
+                        child: (typeof toCreate.c.c !== 'string') ? editing.value2 : ''
+                    });
                 }
             }
-            //If the child of toCreate obj is a string, save it as category
+            //CREATE CATEGORY - If the child(.c) of toCreate obj IS a string
             else if (typeof output.child !== 'string') {
                 //Scan the category in case of collision
                 for (const searchItem of output.child) {
                     if (searchItem.title.toLowerCase() === editing.value.toLowerCase()
-                    && typeof toCreate.c === 'string'
-                    && editing.value.toLowerCase() !== editing.cat.toLowerCase()) {
-                        ERROR = 'cat'; break;
-                    }
+                    && typeof toCreate.c === 'string') {
+                        ERROR = 'cat'; break; }
                 }
+                //Save if there's no error found
                 if (!ERROR) {
                     output.child.push({ title: editing.value, child: []});
                 }
             }
-        } else {
-            ERROR = 'unknown';
+        } else if (!ERROR) { //Seriously. I would be impressed if you (the end user) got here.
+            output = { title: 'ERROR', child: 'unknown'};
+        }
+
+        //Pass the error down
+        if (ERROR) {
+            output = { title: 'ERROR', child: `create_${ERROR}`};
         }
         
         return output;

@@ -86,7 +86,7 @@ export default class Quotes extends React.Component<Props, State> {
 
     }
     private template_quotesection() {
-        const { DATA } = this.state;
+        //const { DATA } = this.state;
     }
     private template_main(): JSX.Element {
         return(<div key='q_wrapper' className='wrapper'>
