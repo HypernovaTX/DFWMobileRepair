@@ -318,7 +318,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         this.quitEdit();
     }
 
-    edit_save(): void {
+    edit_update(kind: 'save' | 'create' | 'delete'): void {
         let { editing, TESTDATA } = this.state;
 
         //This is an object to reference where to update the edit
@@ -332,23 +332,30 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 }
             }
         }
-        console.log(JSON.stringify(saveObj));
-        TESTDATA = this.editLogic_save(saveObj, TESTDATA);
+        console.log(JSON.stringify(saveObj)); //for debugging purposes
+
+        //Choose the correct logic for the "kind" of update
+        switch (kind) {
+            case ('save'): TESTDATA = this.editLogic_save(saveObj, TESTDATA); break;
+            case ('create'): TESTDATA = this.editLogic_create(saveObj, TESTDATA); break;
+            case ('delete'): break;
+        }
+
+        //When it returns error
         if (TESTDATA.title === 'ERROR') {
-            switch(TESTDATA.child) {
-                case('save_cat'): this.quickPrompt('There is already an existing category on the list!'); break;
-                case('save_itm'): this.quickPrompt('There is already an existing quote item on the list!'); break;
-                
+            switch (TESTDATA.child) {
+                case ('save_cat'): this.quickPrompt('There is already an existing category on the list!'); break;
+                case ('save_itm'): this.quickPrompt('There is already an existing quote item on the list!'); break;
+                case ('unknown'): this.quickPrompt('An unknown error has occured! Please contact the developer on this.'); break;
             }
             
+            //Exit the method when error occurs
             return;
         }
+
+        //If nothing's wrong, save
         this.setState({ TESTDATA });
         this.quitEdit();
-    }
-
-    edit_create(): void {
-        let { editing, TESTDATA } = this.state;
     }
 
     editLogic_save(toSave: intTreeObjAlt, input: intTreeObj): intTreeObj {
@@ -440,22 +447,35 @@ export default class QuoteEdit extends React.Component<Props, State> {
         if (input.title === 'root') {
             //Convert the child to string just in case
             if (typeof output.child === 'string') { output.child = []; }
+            if (typeof input.child === 'string') { input.child = []; }
 
             //If the child of toCreate object is a string, then it is an item to add
             if (typeof toCreate.c !== 'string') {
                 let undefinedChild = true;
 
                 //Find the correct child and dig/save recursively
-                for (let c = 0; c < output.child.length; c ++) { 
-                    if (output.child[c].title === toCreate.t) {
+                for (let c = 0; c < input.child.length; c ++) { 
+                    console.log(JSON.stringify(input.child[c]));
+                    if (input.child[c].title === toCreate.t) {
                         //We'll get to that tomorrow.
-                        output.child[c] = preloadObj(editing.value, (typeof toCreate.c.c !== 'string') ? editing.value2 : '');
+                        console.log('This is a child obj');
+                        let tempValue: intTreeObj[] | string = output.child[c].child;
+                        if (typeof tempValue === 'string') { tempValue = []; }
+                        tempValue.push({
+                            title: editing.value,
+                            child: (typeof toCreate.c.c !== 'string') ? editing.value2 : ''
+                        });
+                        output.child[c].child = tempValue;
+
+                        //preloadObj(editing.value, (typeof toCreate.c.c !== 'string') ? editing.value2 : '');
                         undefinedChild = false;
+                        break;
                     }
                 }
                 //In case the child node doesn't exists
                 if (undefinedChild && !ERROR) {
-                    output.child.push(preloadObj(toCreate.t,
+                    output.child.push(preloadObj(
+                        toCreate.t,
                         (typeof toCreate.c.c !== 'string') ? editing.value2 : ''
                     ));
                 }
@@ -530,7 +550,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     
 
     /************************************************** QE - TEMPLATE **************************************************/
-    //Template for all of the quote items on the editing window (it is a mess unfortunately)
+    //Template for all of the quote items on the editing window (it is a mess unfortunately will be removed shortly with the new data)
     template_formatData(): JSX.Element { //OLD
         const { DATA, editing, wait } = this.state;
         let output = [<div key='qe_placeholder_cat'></div>];
@@ -855,7 +875,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 <input key={`qec_i_${category}`} className='edit-item-txt' value={editing['value']}
                     onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
                 ></input>
-                <span key={`qec_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.edit_save() }}>
+                <span key={`qec_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.edit_update('save') }}>
                     <FontAwesomeIcon icon={faCheck}/>
                 </span>
                 <span key={`qec_eq_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
@@ -905,7 +925,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         <input key={`qeit_input_${forKey}`} className='edit-item-txt' value={editing.value}
                             onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
                         ></input>
-                        <span key={`qei_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.edit_save() }}>
+                        <span key={`qei_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.edit_update('save') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
                         <span key={`qei_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
@@ -921,7 +941,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         $<input key={`qei_p_i_${forKey}`} className='edit-item-txt short' value={editing.value} type='number' min='0.00'
                             onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
                         ></input>
-                        <span key={`qei_p_sv_${forKey}`} className='qe-bar-button ok' onClick={() => { this.edit_save() }}>
+                        <span key={`qei_p_sv_${forKey}`} className='qe-bar-button ok' onClick={() => { this.edit_update('save') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
                         <span key={`qei_p_qt_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
@@ -941,7 +961,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     }}
                 ><FontAwesomeIcon icon={faTrash}/></span>
             </span>;
-    
+
+        //Combie and return
         return (
             <div key={`qei_MAIN_${forKey}`} className='qe-item'>{itemName} {itemValue} {itemBar}</div>
         );
@@ -960,7 +981,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         ></input>
                     </span>
                     <span key={`qe_add_e`} className='qe-bar-text right'>
-                        <span key={`qe_add_eq`} className='qe-bar-button ok' onClick={() => { this.createKey() }}>
+                        <span key={`qe_add_eq`} className='qe-bar-button ok' onClick={() => { this.edit_update('create') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
                         <span key={`qe_add_ed`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
@@ -1002,7 +1023,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         ></input>
                     </span>
                     <span key={`qe_addI_e_${category}`} className='qe-bar-text right'>
-                        <span key={`qe_addI_eq_${category}`} className='qe-bar-button ok' onClick={() => { this.createKey() }}>
+                        <span key={`qe_addI_eq_${category}`} className='qe-bar-button ok' onClick={() => { this.edit_update('create') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
                         <span key={`qe_addI_ed_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
