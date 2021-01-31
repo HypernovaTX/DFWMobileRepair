@@ -318,6 +318,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
         this.quitEdit();
     }
 
+    /**
+     * The main method to update the changes to the data
+     * @param kind - Choose either 'save', 'create'
+     */
     edit_update(kind: 'save' | 'create' | 'delete'): void {
         let { editing, TESTDATA } = this.state;
 
@@ -332,7 +336,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 }
             }
         }
-        console.log(JSON.stringify(saveObj)); //for debugging purposes
+        console.log('SAVE OBJ' + JSON.stringify(saveObj)); //for debugging purposes
 
         //Choose the correct logic for the "kind" of update
         switch (kind) {
@@ -358,6 +362,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
         this.quitEdit();
     }
 
+    /**
+     * Process the data from editing to the object to __save__ to
+     * @param toSave - Reference object (see edit_update method above) 
+     * @param input - Actual object in (intTreeObj) to save to
+     * @returns - intTreeObj (it there's error, it will be: { title: 'ERROR', child: <error code here>})
+     */
     editLogic_save(toSave: intTreeObjAlt, input: intTreeObj): intTreeObj {
         const { editing } = this.state;
         let ERROR: null | string = null;
@@ -385,7 +395,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     if (typeof toSave.c !== 'string') {
                         //In case of error, make sure it is passed down
                         if (this.editLogic_save(toSave.c, input.child[c]).title === 'ERROR') { ERROR = 'itm'; break; }
-                        //input.child[c] = this.editLogic_save(toSave.c, input.child[c]); //Removed this because it is causing a lot of infinite loops
                     }
                     //Update the category
                     else { input.child[c].title = editing.value; }
@@ -435,6 +444,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
 
+    /**
+     * Process the data from editing to the object to __create__
+     * @param toCreate - Reference object (see edit_update method above) 
+     * @param input - Actual object in (intTreeObj) to save to
+     * @returns - intTreeObj (it there's error, it will be: { title: 'ERROR', child: <error code here>})
+     */
     editLogic_create(toCreate: intTreeObjAlt, input: intTreeObj): intTreeObj {
         const { editing } = this.state;
         let output = input;
@@ -455,10 +470,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
                 //Find the correct child and dig/save recursively
                 for (let c = 0; c < input.child.length; c ++) { 
-                    console.log(JSON.stringify(input.child[c]));
+                    //If the title matches with the reference object (toCreate)
                     if (input.child[c].title === toCreate.t) {
-                        //We'll get to that tomorrow.
-                        console.log('This is a child obj');
                         let tempValue: intTreeObj[] | string = output.child[c].child;
                         if (typeof tempValue === 'string') { tempValue = []; }
                         tempValue.push({
@@ -1040,6 +1053,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         editing.cat = category;
                         editing.item = '_<!!NewItem!!>_';
                         editing.edit = true;
+                        editing.price = '_<!!NewPrice!!>_'
                         editing.value = '';
                         editing.value2 = '0.00';
                         this.setState({ editing });
