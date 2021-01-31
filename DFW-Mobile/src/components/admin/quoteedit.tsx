@@ -8,11 +8,11 @@ import { json } from 'express';
 interface intTreeObj { title: string; child: intTreeObj[] | string; };
 interface intTreeObjAlt { t: string; c: intTreeObjAlt | string; };
 interface intRawJSON {[key: string]: any};
+interface intEditing {
+    edit: boolean; cat: string; item: string; value: string; value2: string; price: string, error: boolean;
+};
 type typePromptFunction = (
-    message: string, 
-    functionYes: () => void, 
-    functionNo: () => void, 
-    isCancelOnly: boolean
+    message: string, functionYes: () => void, functionNo: () => void, isCancelOnly: boolean
 ) => void;
 type typeInputChange = React.ChangeEvent<HTMLInputElement>;
 type typeArrayElement = JSX.Element[];
@@ -43,7 +43,7 @@ type State = {
     DATA: intRawJSON,
     TESTDATA: intTreeObj;
     OLD: string,
-    editing: intRawJSON,
+    editing: intEditing,
 
     refresh: boolean,
     loading: boolean,
@@ -285,15 +285,13 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     /************************************************** QE - EDITING **************************************************/
     startEdit(value: string, category: string, item: typeStrOrNo = undefined, price: typeStrOrNo = undefined): void {
-        this.setState({
-            editing: {
-                'edit': true,
-                'cat': category,
-                'item': item || '',
-                'value': value,
-                'price': price || '',
-            }
-        })
+        const { editing } = this.state;
+        editing.edit = true;
+        editing.cat = category;
+        editing.item = item || '';
+        editing.price = price || '';
+        editing.value = value;
+        this.setState({ editing })
     }
 
     saveEdit(): void {
@@ -322,6 +320,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     edit_save(): void {
         let { editing, TESTDATA } = this.state;
+
+        //This is an object to reference where to update the edit
         const saveObj: intTreeObjAlt = {
             t: editing.cat,
             c: (editing.item === '') ? '' : {
@@ -417,7 +417,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
         //if none applies
         else {
-            output = { title: 'ERROR', child: ''};
+            output = { title: 'ERROR', child: 'unknown'};
         }
 
         //Pass the error down
@@ -431,39 +431,51 @@ export default class QuoteEdit extends React.Component<Props, State> {
     editLogic_create(toCreate: intTreeObjAlt, input: intTreeObj): intTreeObj {
         const { editing } = this.state;
         let output = input;
+        let ERROR: null | string = null;
+        const preloadObj = (title: string, child: intTreeObj[] | string): intTreeObj => {
+            return { title: title, child: child }
+        }
 
         //Start from the root
         if (input.title === 'root') {
             //Convert the child to string just in case
-            if (typeof input.child === 'string') { input.child = []; }
+            if (typeof output.child === 'string') { output.child = []; }
 
-            //If the child of toCreate obj (to data needs to save is )
+            //If the child of toCreate object is a string, then it is an item to add
             if (typeof toCreate.c !== 'string') {
                 let undefinedChild = true;
+
                 //Find the correct child and dig/save recursively
-                for (let c = 0; c < input.child.length; c ++) { 
-                    if (input.child[c].title === toCreate.t) {
-                        input.child[c] = this.editLogic_create(toCreate.c, input.child[c]);
+                for (let c = 0; c < output.child.length; c ++) { 
+                    if (output.child[c].title === toCreate.t) {
+                        //We'll get to that tomorrow.
+                        output.child[c] = preloadObj(editing.value, (typeof toCreate.c.c !== 'string') ? editing.value2 : '');
                         undefinedChild = false;
                     }
                 }
                 //In case the child node doesn't exists
-                if (undefinedChild) {
-                    input.child.push({
-                        title: toCreate.t,
-                        child: [{
-                            title: editing.value,
-                            child: (typeof toCreate.c.c !== 'string') ? editing.value2 : ''
-                        }]
-                    });
+                if (undefinedChild && !ERROR) {
+                    output.child.push(preloadObj(toCreate.t,
+                        (typeof toCreate.c.c !== 'string') ? editing.value2 : ''
+                    ));
                 }
             }
-            //If the child of toCreate obj is a string, save it
-            else {
-                input.child.push({ title: editing.value, child: []});
+            //If the child of toCreate obj is a string, save it as category
+            else if (typeof output.child !== 'string') {
+                //Scan the category in case of collision
+                for (const searchItem of output.child) {
+                    if (searchItem.title.toLowerCase() === editing.value.toLowerCase()
+                    && typeof toCreate.c === 'string'
+                    && editing.value.toLowerCase() !== editing.cat.toLowerCase()) {
+                        ERROR = 'cat'; break;
+                    }
+                }
+                if (!ERROR) {
+                    output.child.push({ title: editing.value, child: []});
+                }
             }
         } else {
-
+            ERROR = 'unknown';
         }
         
         return output;
@@ -494,7 +506,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     quitEdit(): void {
         this.setState({
-            editing: { 'edit': false, 'cat': '', 'item': '', 'value': '', 'value2': '', 'price': '', }
+            editing: { edit: false, cat: '', item: '', value: '', value2: '', price: '', error: false, }
         })
     }
 
