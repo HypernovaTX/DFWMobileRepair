@@ -125,7 +125,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return false;
     }
 
-    obj_setTree(title: string, child: intRawJSON | string): intTreeObj {
+    private obj_setTree(title: string, child: intRawJSON | string): intTreeObj {
         let childData: intTreeObj[] = [];
         let childString: typeStrOrNo;
 
@@ -143,7 +143,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
     //Convert the tree object to raw JSON for saving purposes.
-    obj_turnIntoUnrefinedJson(data: intTreeObj[] | string) : intRawJSON | string {
+    private obj_turnIntoUnrefinedJson(data: intTreeObj[] | string) : intRawJSON | string {
         let output: intRawJSON = {};
         if (typeof data !== 'string') {
             for (const item of data) {
@@ -565,8 +565,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
      * @returns - intTreeObj (it there's error, it will be: { title: 'ERROR', child: <error code here>})
      */
     private editLogic_delete(toDelete: intTreeObjAlt, input: intTreeObj): intTreeObj {
-        //const { editing } = this.state;
-        //let ERROR: null | string = null;
         let deleted = false;
         let output = input;
 
@@ -588,14 +586,15 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     }
                     //if toDelete.child is not a string, dig deeper
                     else {
-                        let tempChildO = output.child[eachCat].child as intTreeObj[];
-                        const tempChildI = input.child[eachCat].child as intTreeObj[];
-                        let eachItem = tempChildI.length;
+                        //Prepare these since Typescript thinks this is ALWAYS "string | intTreeObj[]" even with typeof
+                        let tempChild = output.child[eachCat].child as intTreeObj[];
+                        let eachItem = tempChild.length;
                         //Delete the item if matches in the loop
                         while (eachItem --) {
-                            if (toDelete.c.t === input.child[eachCat].child[eachItem]) {
-                                tempChildO.splice(eachItem, 1);
-                                input.child[eachCat].child = tempChildO;
+                            const matchTitle = tempChild[eachItem] as intTreeObj;
+                            if (toDelete.c.t === matchTitle.title) {
+                                tempChild.splice(eachItem, 1);
+                                input.child[eachCat].child = tempChild;
                                 deleted = true;
                                 break;
                             }
