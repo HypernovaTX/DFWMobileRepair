@@ -157,7 +157,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     /************************************************** QE - REQUESTS **************************************************/
-    getData(): void {
+    private getData(): void {
         const postData = new FormData();
         postData.append('id', this.props.vehicleID);
 
@@ -177,7 +177,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         });
     };
 
-    saveData(): void {
+    private saveData(): void {
         const { YEAR, MAKE, MODEL, DATA, loading } = this.state;
 
         if (loading) { return; } //don't call it more than once
@@ -233,7 +233,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     /************************************************** QE - WINDOW **************************************************/
-    open(): void {
+    public open(): void {
         this.setState({
             show: 1,
             propsBG: this.props_bg_on,
@@ -256,7 +256,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }, 5);
     }
 
-    close(): void {
+    public close(): void {
         const { show, refresh } = this.state;
         if (show === 2) {
             this.setState({
@@ -277,8 +277,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     //To save time and organize this class, since this is used frequently, this function will be added to reduce the work. 
-    //Message with OK button ONLY! No functions will be called.
-    quickPrompt(message: string): void {
+    //(Message with OK button ONLY! No functions will be called.)
+    private quickPrompt(message: string): void {
         this.props.promptOpen(message, ()=>{}, ()=>{}, true);
     }
 
@@ -326,7 +326,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         let processingObj: intTreeObj;
 
         //EMPTY VALUE
-        if (editing.value === '') { this.quickPrompt('Input cannot be empty!'); return; }
+        if (editing.value === '' && kind !== 'delete') { this.quickPrompt('Input cannot be empty!'); return; }
 
         //This is an object to reference where to update the edit
         const saveObj: intTreeObjAlt = {
@@ -345,7 +345,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         switch (kind) {
             case ('save'): processingObj = this.editLogic_save(saveObj, TESTDATA); break;
             case ('create'): processingObj = this.editLogic_create(saveObj, TESTDATA); break;
-            case ('delete'): processingObj = this.editLogic_save(saveObj, TESTDATA); break;
+            case ('delete'): processingObj = this.editLogic_delete(saveObj, TESTDATA); break;
         }
 
         //When it returns error
@@ -353,10 +353,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
             switch (processingObj.child) {
                 case ('save_cat'): this.quickPrompt('There is already an existing category on the list!'); break;
                 case ('save_itm'): this.quickPrompt('There is already an existing quote item on the list!'); break;
-                case ('save_illegal'): this.quickPrompt('ILLEGAL SAVING ACTION! How did you know?!'); break;
                 case ('create_cat'): this.quickPrompt('There is already an existing category on the list!'); break;
                 case ('create_itm'): this.quickPrompt('There is already an existing quote item on the list!'); break;
-                case ('create_illegal'): this.quickPrompt('ILLEGAL CREATION ACTION! How did you know?!'); break;
+                case ('delete'): this.quickPrompt('Cannot find the item to delete.'); break;
+                case ('illegal'): this.quickPrompt('ILLEGAL ACTION! How did you know?!'); break;
                 case ('unknown'): this.quickPrompt('An unknown error has occured! Please contact the developer over this.'); break;
             }
             
@@ -367,6 +367,24 @@ export default class QuoteEdit extends React.Component<Props, State> {
         //If nothing's wrong, save
         this.setState({ TESTDATA: processingObj });
         this.quitEdit();
+    }
+
+    /**
+     * Call this from the delete button and prepare the data to be deleted.
+     * @param cat - Which category node to delete
+     * @param item - (optional) which item node to delete
+     */
+    private prepare_deletion(category: string, item: string | null = null): void {
+        let { editing } = this.state;
+
+        const actual_deletion = () => {
+            editing.cat = category;
+            editing.item = item || '';
+            this.setState({ editing });
+            this.edit_update('delete');
+        }
+        const deleteMessage = (item) ? `item: "${category} - ${item}"` : `category: "${category}"`;
+        this.props.promptOpen(`Confirm to delete the ${deleteMessage}?`, actual_deletion, ()=>{}, false);
     }
 
     /**
@@ -381,7 +399,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
         let output = input;
 
         //First thing first, check for certain string if the user is crazy to pull this off
-        if (editing.value === '_<!!NewCategory!!>_' || editing.value === '_<!!NewItem!!>_') { ERROR = 'illegal'; }
+        if (editing.value === '_<!!NewCategory!!>_' || editing.value === '_<!!NewItem!!>_') { 
+            return { title: 'ERROR', child: 'illegal'};
+        }
 
         //start from the category
         if (input.title === 'root' && typeof input.child !== 'string' && !ERROR) {
@@ -457,7 +477,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     /**
      * Process the data from editing to the object to __create__
      * @param toCreate - Reference object (see edit_update method above) 
-     * @param input - Actual object in (intTreeObj) to save to
+     * @param input - Actual object in (intTreeObj) to create the node
      * @returns - intTreeObj (it there's error, it will be: { title: 'ERROR', child: <error code here>})
      */
     private editLogic_create(toCreate: intTreeObjAlt, input: intTreeObj): intTreeObj {
@@ -466,7 +486,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
         let ERROR: null | string = null;
 
         //First thing first, check if the end user is insane
-        if (editing.value === '_<!!NewCategory!!>_' || editing.value === '_<!!NewItem!!>_') { ERROR = 'illegal'; }
+        if (editing.value === '_<!!NewCategory!!>_' || editing.value === '_<!!NewItem!!>_') { 
+            return { title: 'ERROR', child: 'illegal'};
+        }
 
         //Start from the root
         if (input.title === 'root' && !ERROR) {
@@ -534,7 +556,57 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
         
         return output;
-    }   
+    }
+
+    /**
+     * Process the data from editing to the object for __deletion__ of a node
+     * @param toDelete - Reference object (see edit_update method above) 
+     * @param input - Actual object in (intTreeObj) to delete the node
+     * @returns - intTreeObj (it there's error, it will be: { title: 'ERROR', child: <error code here>})
+     */
+    private editLogic_delete(toDelete: intTreeObjAlt, input: intTreeObj): intTreeObj {
+        //const { editing } = this.state;
+        //let ERROR: null | string = null;
+        let deleted = false;
+        let output = input;
+
+        //start from the root
+        if (typeof input.child !== 'string') {
+            //Go through each of the child from the root
+            let eachCat = input.child.length;
+            while (eachCat --) {
+                //If it matches with the category title
+                if (toDelete.t === input.child[eachCat].title) {
+                    //just in case the output child is NOT an array, which is highly unlikely
+                    if (typeof output.child === 'string') { output.child = []; }
+
+                    //Delete the category if there's no child in toDelete reference object
+                    if (typeof toDelete.c === 'string') {
+                        output.child.splice(eachCat, 1);
+                        deleted = true;
+                        break;
+                    }
+                    //if toDelete.child is not a string, dig deeper
+                    else {
+                        let tempChildO = output.child[eachCat].child as intTreeObj[];
+                        const tempChildI = input.child[eachCat].child as intTreeObj[];
+                        let eachItem = tempChildI.length;
+                        //Delete the item if matches in the loop
+                        while (eachItem --) {
+                            if (toDelete.c.t === input.child[eachCat].child[eachItem]) {
+                                tempChildO.splice(eachItem, 1);
+                                input.child[eachCat].child = tempChildO;
+                                deleted = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (!deleted) { return { title: 'ERROR', child: 'delete' }; }
+        return output;
+    }
 
     createKey(): void { //OLD
         const { editing, DATA } = this.state;
@@ -559,13 +631,15 @@ export default class QuoteEdit extends React.Component<Props, State> {
         this.quitEdit();
     }
 
-    quitEdit(): void {
+    private cancel_edit(): void {
         this.setState({
             editing: { edit: false, cat: '', item: '', value: '', value2: '', price: '', error: false, }
         })
     }
 
-    reset(): void {
+    private quitEdit = this.cancel_edit;
+
+    reset(): void { //old
         this.setState({
             DATA: JSON.parse(this.state.OLD),
             YEAR: this.props.vehicleYear,
@@ -574,7 +648,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         });
     }
 
-    delete(cat: string, item: string | null = null): void {
+    delete(cat: string, item: string | null = null): void { //old
         const { DATA } = this.state;
         if (item !== null) {
             delete DATA[cat][item]; }
@@ -585,7 +659,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     
 
     /************************************************** QE - TEMPLATE **************************************************/
-    //Template for all of the quote items on the editing window (it is a mess unfortunately will be removed shortly with the new data)
+    //OLD OBSOLETE CODE
     template_formatData(): JSX.Element { //OLD
         const { DATA, editing, wait } = this.state;
         let output = [<div key='qe_placeholder_cat'></div>];
@@ -808,7 +882,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return (<React.Fragment key='qe_list'>{output}</React.Fragment>);
     }
 
-    template_loadingCover(): JSX.Element { 
+    private template_loadingCover(): JSX.Element { 
         const { loading } = this.state;
         const loadCSS = (loading) ? { opacity: 1, zIndex: 10 } : {};
         const styleSpinner = { animationDuration: '2s' };
@@ -825,7 +899,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
     
     //DATA STRUCTURE as represented in "node , child": root , { category , { item , price } }
-    handle_dataToList(inObj: intTreeObj, resursive: boolean = false, passTitle: typeStrOrNo = undefined): typeArrayElement {
+    private handle_dataToList(inObj: intTreeObj, resursive: boolean = false, passTitle: typeStrOrNo = undefined): typeArrayElement {
         let output: typeArrayElement = [<div key='qe_placeholder_cat'>XXX</div>];
         let tempOutput: typeArrayElement = [];
 
@@ -866,7 +940,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
 
-    template_chooseKind(data: string, kind: number, addon: JSX.Element | JSX.Element[]): JSX.Element { 
+    private template_chooseKind(data: string, kind: number, addon: JSX.Element | JSX.Element[]): JSX.Element { 
         let output: JSX.Element = <React.Fragment key='listItemNA'></React.Fragment>;
         let arrayData: string[] = [];
 
@@ -884,14 +958,14 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
 
-    template_listCategory(category: string, addOn: JSX.Element | JSX.Element[]): JSX.Element { 
+    private template_listCategory(category: string, addOn: JSX.Element | JSX.Element[]): JSX.Element { 
         const { editing } = this.state;
 
         //Delete button
         const catDelete =
             <span key={`qec_s_${category}`} className='qe-bar-text right'>
                 <span key={`qec_b_${category}`} className='qe-bar-button delete'
-                    onClick={() => { this.props.promptOpen(`Confirm to delete "${category}"?`, () => { this.deleteKey(category); }, () => {}, false);}}
+                    onClick={() => { this.prepare_deletion(category); }}
                 ><FontAwesomeIcon icon={faTrash}/></span>
             </span>;
 
@@ -913,7 +987,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 <span key={`qec_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.edit_update('save') }}>
                     <FontAwesomeIcon icon={faCheck}/>
                 </span>
-                <span key={`qec_eq_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                <span key={`qec_eq_${category}`} className='qe-bar-button' onClick={() => { this.cancel_edit() }}>
                     <FontAwesomeIcon icon={faTimes}/>
                 </span>
                 {catDelete}
@@ -928,7 +1002,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         )
     }
 
-    template_listItem(category: string, item: string, price: string): JSX.Element {
+    private template_listItem(category: string, item: string, price: string): JSX.Element {
         const { editing } = this.state;
         const forKey = category + item;
         
@@ -963,7 +1037,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         <span key={`qei_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.edit_update('save') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
-                        <span key={`qei_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                        <span key={`qei_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.cancel_edit() }}>
                             <FontAwesomeIcon icon={faTimes}/>
                         </span>
                     </span>;
@@ -991,9 +1065,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             <span key={`qei_I_${forKey}`} className='qe-bar-text right'>
                 <span key={`qei_I_btxt_${forKey}`} className='qe-bar-delete-txt'>Delete "{item}"</span>
                 <span key={`qei_I_t_${forKey}`} className='qe-bar-button delete'
-                    onClick={() => {
-                        this.props.promptOpen(`Confirm to delete "${category} - ${item}"?`, () => { this.deleteKey(category, item); }, () => {}, false);
-                    }}
+                    onClick={() => { this.prepare_deletion(category, item); }}
                 ><FontAwesomeIcon icon={faTrash}/></span>
             </span>;
 
@@ -1003,7 +1075,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         );
     }
 
-    template_addCategory(): JSX.Element {
+    private template_addCategory(): JSX.Element {
         let { editing } = this.state;
         let output: JSX.Element;
         //Editing mode
@@ -1019,7 +1091,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         <span key={`qe_add_eq`} className='qe-bar-button ok' onClick={() => { this.edit_update('create') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
-                        <span key={`qe_add_ed`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                        <span key={`qe_add_ed`} className='qe-bar-button' onClick={() => { this.cancel_edit() }}>
                             <FontAwesomeIcon icon={faTimes}/>
                         </span>
                     </span>
@@ -1039,7 +1111,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
 
-    template_addItem(category: string): JSX.Element {
+    private template_addItem(category: string): JSX.Element {
         let { editing } = this.state;
         let output: JSX.Element;
         
@@ -1061,7 +1133,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         <span key={`qe_addI_eq_${category}`} className='qe-bar-button ok' onClick={() => { this.edit_update('create') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
-                        <span key={`qe_addI_ed_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                        <span key={`qe_addI_ed_${category}`} className='qe-bar-button' onClick={() => { this.cancel_edit() }}>
                             <FontAwesomeIcon icon={faTimes}/>
                         </span>
                     </span>
@@ -1085,7 +1157,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
 
-    template_loadBar(): JSX.Element {
+    private template_loadBar(): JSX.Element {
         const styleSpinner = { animationDuration: '2.0s' };
         return(<div key={`quoteedit_loading_content`} className={`qe-cat add`}>
             <div key={`quoteedit_load_spinner`} className='ld ld-spin' style={styleSpinner}>
@@ -1093,7 +1165,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
     
     //Main template
-    template(): JSX.Element {
+    private template(): JSX.Element {
         const { propsM, YEAR, MAKE, MODEL, wait } = this.state;
         const { newQuote } = this.props;
         let reset = <React.Fragment key='admin_qe_reset_empty'></React.Fragment>;
@@ -1173,7 +1245,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         );
     }
 
-    render() {
+    public render() {
         const { propsBG } = this.state;
         return(<div key='admin_pm_body' className='admin-pm-body' style={propsBG}>{this.template()}{this.template_loadingCover()}</div>);
     }
