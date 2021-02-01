@@ -39,8 +39,7 @@ type State = {
     YEAR: string,
     MAKE: string,
     MODEL: string,
-    DATA: intRawJSON,
-    TESTDATA: intTreeObj;
+    _DATA: intTreeObj;
     OLD: string,
     editing: intEditing,
 
@@ -67,8 +66,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             YEAR: '',
             MAKE: '',
             MODEL: '',
-            DATA: {},
-            TESTDATA: { title: 'root', child: '(null)' },
+            _DATA: { title: 'root', child: '(null)' },
             OLD: '',
             editing: {
                 'edit': false,
@@ -86,45 +84,25 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
     }
     /************************************************** QE - EVENTS **************************************************/
-    componentDidMount() {
+    public componentDidMount() {
         window.addEventListener('keydown', this.handleKeypress);
         this._ismounted = true;
     }
-    componentWillUnmount() { this._ismounted = false; }
+    public componentWillUnmount() { this._ismounted = false; }
 
     //Keyboard stuffs
-    handleKeypress = (ev: KeyboardEvent) => {
+    public handleKeypress = (ev: KeyboardEvent) => {
         //Esc to close the editing window
         if (ev.key === 'Escape' && this.state.inBackground === false) {
             if (this.state.editing.edit === false) {
                 this.close();
             } else {
-                this.quitEdit();
+                this.edit_cancel();
             }
         }
     }
 
     /************************************************** QE - LIB **************************************************/
-    sortObj = (object: intRawJSON): intRawJSON => {
-        let keys = Object.keys(object);
-        keys.sort();
-        let newObject: intRawJSON = {};
-        for (var i = 0; i < keys.length; i ++) {
-            //Only applies to objects recursively to prevent infinite loops
-            if (typeof object[keys[i]] === 'object') { 
-                newObject[keys[i]] = this.sortObj(object[keys[i]]);
-            } else {
-                newObject[keys[i]] = object[keys[i]];
-            }
-        }
-        return newObject;
-    };
-
-    objKeyExists(obj: object, prop: string): boolean {
-        if (obj.hasOwnProperty(prop)) { return true; }
-        return false;
-    }
-
     private obj_setTree(title: string, child: intRawJSON | string): intTreeObj {
         let childData: intTreeObj[] = [];
         let childString: typeStrOrNo;
@@ -147,8 +125,13 @@ export default class QuoteEdit extends React.Component<Props, State> {
         let output: intRawJSON = {};
         if (typeof data !== 'string') {
             for (const item of data) {
-                const keyName = item.title;
-                output[keyName] = this.obj_turnIntoUnrefinedJson(item.child);
+                if (item.title !== 'root') {
+                    const keyName = item.title;
+                    output[keyName] = this.obj_turnIntoUnrefinedJson(item.child);
+                }
+                else {
+                    output = this.obj_turnIntoUnrefinedJson(item.child) as intRawJSON;
+                }
             }
             return output; 
         } else {
@@ -170,7 +153,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
             }
             output.child.sort(compareObjTitle);
         }
-
         return output;
     }
 
@@ -182,21 +164,17 @@ export default class QuoteEdit extends React.Component<Props, State> {
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=data`, postData)
         .then((response: AxiosResponse<any>) => {
 
-            
             this.props.logout(JSON.stringify(response.data));
             if (this._ismounted && typeof response.data !== 'string') {
-                let sortedData = this.sortObj(response.data);
-
                 const refinedData = this.obj_setTree('root', response.data);
-                console.log(JSON.stringify(this.obj_turnIntoUnrefinedJson([refinedData])));
-
-                this.setState({ DATA: sortedData, OLD: JSON.stringify(sortedData), wait: false, TESTDATA: refinedData });
+                this.setState({ _DATA: refinedData, OLD: JSON.stringify(refinedData), wait: false,  });
             }
         });
     };
 
     private saveData(): void {
-        const { YEAR, MAKE, MODEL, DATA, loading } = this.state;
+        const { YEAR, MAKE, MODEL, _DATA, loading } = this.state;
+        const DATA = this.obj_turnIntoUnrefinedJson([_DATA]);
 
         if (loading) { return; } //don't call it more than once
 
@@ -239,17 +217,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
         
     }
 
-    deleteKey(cat: string, item: string | null = null): void {
-        const { DATA } = this.state;
-        if (item !== null) {
-                delete DATA[cat][item]
-            }
-        else
-            { delete DATA[cat]; }
-        
-        this.setState({ DATA });
-    }
-
     /************************************************** QE - WINDOW **************************************************/
     public open(): void {
         this.setState({
@@ -287,7 +254,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     show: 0,
                     propsBG: this.props_bg_off,
                     propsM: { 'top': '-64px', 'opacity': '0' }, 
-                    DATA: {}, YEAR: '', MAKE: '', MODEL: '',
+                    _DATA: { title: 'root', child: '(null)'}, YEAR: '', MAKE: '', MODEL: '',
                 });
                 this.props.endEditAction(refresh);
             }, 250);
@@ -317,36 +284,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
         })
     }
 
-    saveEdit(): void {
-        const { editing, DATA } = this.state;
-
-        //EMPTY VALUE
-        if (editing.value === '') { this.quickPrompt('Input cannot be empty!'); return; }
-
-        //Update category
-        if (editing.item === '' && !DATA.hasOwnProperty(editing.value)) {
-            DATA[editing.value] = DATA[editing.cat];
-            delete DATA[editing.cat];
-        }
-        //Update item
-        else if (editing.price === '' && editing.item !== '' && !this.objKeyExists(DATA[editing.cat], editing.item)) {
-            DATA[editing.cat][editing.value] = DATA[editing.cat][editing.item];
-            delete DATA[editing.cat][editing.item];
-        }
-        //update quote value
-        else if (editing.price !== '') {
-            DATA[editing['cat']][editing['item']] = editing.value;
-        }
-        this.setState({ DATA: this.sortObj(DATA) });
-        this.quitEdit();
-    }
-
     /**
      * The main method to update the changes to the data
      * @param kind - Choose either 'save', 'create'
      */
     private edit_update(kind: 'save' | 'create' | 'delete'): void {
-        let { editing, TESTDATA } = this.state;
+        let { editing, _DATA} = this.state;
         let processingObj: intTreeObj;
 
         //EMPTY VALUE
@@ -367,9 +310,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
         //Choose the correct logic for the "kind" of update
         switch (kind) {
-            case ('save'): processingObj = this.editLogic_save(saveObj, TESTDATA); break;
-            case ('create'): processingObj = this.editLogic_create(saveObj, TESTDATA); break;
-            case ('delete'): processingObj = this.editLogic_delete(saveObj, TESTDATA); break;
+            case ('save'): processingObj = this.editLogic_save(saveObj, _DATA
+        ); break;
+            case ('create'): processingObj = this.editLogic_create(saveObj, _DATA
+        ); break;
+            case ('delete'): processingObj = this.editLogic_delete(saveObj, _DATA
+        ); break;
         }
 
         //When it returns error
@@ -391,8 +337,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
         processingObj = this.obj_sort(processingObj);
 
         //If nothing's wrong, save
-        this.setState({ TESTDATA: processingObj });
-        this.quitEdit();
+        this.setState({ _DATA: processingObj });
+        this.edit_cancel();
     }
 
     /**
@@ -633,274 +579,17 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
 
-    createKey(): void { //OLD
-        const { editing, DATA } = this.state;
-
-        const creationErrorMessage = (): void => {
-            this.props.promptOpen('Inputs cannot be empty!', ()=>{}, ()=>{}, true);
-        }
-
-        //create quote item
-        if (editing.item !== '') {
-            if (editing.value === '' || editing.value2 === '') { creationErrorMessage(); return; }
-            DATA[editing.cat][editing.value] = editing.value2;
-            this.setState({ DATA });
-        }
-        //create category
-        else {
-            if (editing.value === '') { creationErrorMessage(); return; }
-            DATA[editing.value] = {};
-            this.setState({ DATA });
-        }
-
-        this.quitEdit();
-    }
-
-    private quitEdit = this.edit_cancel;
-
     reset(): void { //old
         this.setState({
-            DATA: JSON.parse(this.state.OLD),
+            _DATA: JSON.parse(this.state.OLD),
             YEAR: this.props.vehicleYear,
             MAKE: this.props.vehicleMake,
             MODEL: this.props.vehicleModel,
         });
     }
-
-    delete(cat: string, item: string | null = null): void { //old
-        const { DATA } = this.state;
-        if (item !== null) {
-            delete DATA[cat][item]; }
-        else {
-            delete DATA[cat]; }
-        this.setState({ DATA });
-    }
     
 
     /************************************************** QE - TEMPLATE **************************************************/
-    //OLD OBSOLETE CODE
-    template_formatData(): JSX.Element { //OLD
-        const { DATA, editing, wait } = this.state;
-        let output = [<div key='qe_placeholder_cat'></div>];
-
-        if (wait) { return (this.template_loadBar()) }
-
-        //For each of the category (this is the worst codes I have made)
-        for (const category in DATA) {
-            //"addon" is the list of quotes for each category
-            let addon = [<React.Fragment key={`qe_placeholder_entry${category}`}></React.Fragment>];
-            if (DATA[category] !== {}) {
-                for (const item in DATA[category]) { //EWWW! Nested "for" loops!
-                    const forKey = `${category}${item}`;
-
-                    //Name of the quote
-                    let itemName = 
-                        <span key={`qe_item_${forKey}`} className='qe-bar-text left'>
-                            <span key={`qe_item_et_${forKey}`} className='qe-bar-text-span'>{item}</span>
-                            <span key={`qe_item_e_${forKey}`} className='qe-bar-button' onClick={() => { this.edit_start(item, category, item) }}>
-                                <FontAwesomeIcon icon={faPen}/>
-                            </span>
-                        </span>;
-                    // |QUOTE NAME --------> (EDITING)
-                    if (editing['cat'] === category && editing['item'] === item && editing['price'] === '' && editing['edit'] === true) {
-                        itemName = <span key={`qe_item_${forKey}`} className='qe-bar-text left'>
-                            <input key={`qe_item_input_${forKey}`} className='edit-item-txt' value={editing['value']}
-                                onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
-                                    editing['value'] = change.target.value;
-                                    this.setState({ editing });
-                                }}
-                            ></input>
-                            <span key={`qe_item_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
-                                <FontAwesomeIcon icon={faCheck}/>
-                            </span>
-                            <span key={`qe_item_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
-                                <FontAwesomeIcon icon={faTimes}/>
-                            </span>
-                        </span>;
-                    }
-
-                    //Quote pricing
-                    let itemValue = 
-                        <span key={`qe_itemV_${forKey}`} className='qe-bar-text'>
-                            ${DATA[category][item]}
-                            <span
-                                key={`qe_itemV_e_${forKey}`}
-                                className='qe-bar-button'
-                                onClick={() => { this.edit_start(DATA[category][item], category, item, DATA[category][item]) }}
-                            ><FontAwesomeIcon icon={faPen}/></span>
-                        </span>;
-                    // |QUOTE PRICING --------> (EDITING)
-                    if (editing['cat'] === category && editing['item'] === item && editing['price'] === DATA[category][item] && editing['edit'] === true) {
-                        itemValue = <span key={`qe_itemp_${forKey}`} className='qe-bar-text'>
-                            $<input key={`qe_item_inputp_${forKey}`} className='edit-item-txt short' value={editing['value']} type='number' min='0.00'
-                                onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
-                                    editing['value'] = change.target.value;
-                                    this.setState({ editing });
-                                }}
-                            ></input>
-                            <span key={`qe_itemp_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
-                                <FontAwesomeIcon icon={faCheck}/>
-                            </span>
-                            <span key={`qe_itemp_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
-                                <FontAwesomeIcon icon={faTimes}/>
-                            </span>
-                        </span>;
-                    }
-                    
-                    //Delete
-                    let itemBar = 
-                        <span key={`qe_itemI_${forKey}`} className='qe-bar-text right'>
-                            <span key={`qe_itemI_ttxt_${forKey}`} className='qe-bar-delete-txt'>Delete "{item}"</span>
-                            <span
-                                key={`qe_itemI_t_${forKey}`}
-                                className='qe-bar-button delete'
-                                onClick={() => {
-                                    this.props.promptOpen(`Confirm to delete "${category} - ${item}"?`, () => {
-                                        this.deleteKey(category, item);
-                                    }, () => {}, false);
-                                }}
-                            ><FontAwesomeIcon icon={faTrash}/></span>
-                        </span>;
-                    
-                    addon.push(
-                        <div key={`qe_item_${forKey}`} className='qe-item'>
-                            {itemName} {itemValue} {itemBar}
-                        </div>
-                    );
-                }
-
-                //ITEM - Add quote bar 
-                // ----- EDITING -----
-                if (editing.cat === category && editing.item === '_<!!NewItem!!>_' && editing.edit === true) {
-                    addon.push(<div key={`qe_addmore_i_${category}`} className='qe-item'>
-                        <span key={`qe_item_add_name_${category}`} className='qe-bar-text left'>
-                            <input key={`qe_item_add_name_i_${category}`} className='edit-item-txt' value={editing.value}
-                                onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
-                                    editing['value'] = change.target.value;
-                                    this.setState({ editing });
-                                }}
-                            ></input>
-                        </span>
-                        <span key={`qe_item_add_price_${category}`} className='qe-bar-text'>
-                            $<input key={`qe_item_add_price_i_${category}`} className='edit-item-txt short' value={editing.value2} type='number' min='0.01'
-                                onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
-                                    editing['value2'] = change.target.value;
-                                    this.setState({ editing });
-                                }}
-                            ></input>
-                        </span>
-                        <span key={`qe_item_add_e_${category}`} className='qe-bar-text right'>
-                            <span key={`qe_item_add_eq_${category}`} className='qe-bar-button ok' onClick={() => { this.createKey() }}>
-                                <FontAwesomeIcon icon={faCheck}/>
-                            </span>
-                            <span key={`qe_item_add_ed_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
-                                <FontAwesomeIcon icon={faTimes}/>
-                            </span>
-                        </span>
-                    </div>);
-                }
-                // ----- BUTTON -----
-                else {
-                    addon.push(<div
-                        key={`qe_addmore_i_${category}`}
-                        className='qe-item add'
-                        onClick={() => {
-                            editing.cat = category;
-                            editing.item = '_<!!NewItem!!>_';
-                            editing.edit = true;
-                            editing.value = '';
-                            editing.value2 = '0.00';
-                            this.setState({ editing });
-                        }}
-                    >Add Quote</div>);
-                }
-                addon.shift();
-            }
-
-            //Category delete
-            const catDelete =
-                <span key={`qe_cat_s_${category}`} className='qe-bar-text right'>
-                    <span key={`qe_cat_st_${category}`} className='qe-bar-button delete'
-                        onClick={() => { this.props.promptOpen(`Confirm to delete "${category}"?`, () => {
-                            this.deleteKey(category);
-                        }, () => {}, false);}}
-                    ><FontAwesomeIcon icon={faTrash}/></span></span>;
-
-            //Category template (NOT EDITING)
-            let catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
-                <span key={`qe_cat_et_${category}`} className='qe-bar-text-span'>{category}</span>
-                <span key={`qe_car_e_${category}`} className='qe-bar-button' onClick={() => { this.edit_start(category, category) }}>
-                    <FontAwesomeIcon icon={faPen}/>
-                </span>
-                {catDelete}
-            </span>;
-
-            //Category template (EDITING)
-            if (editing['cat'] === category && editing['item'] === '' && editing['edit'] === true) {
-                catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
-                    <input key={`qe_cat_input_${category}`} className='edit-item-txt' value={editing['value']}
-                        onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
-                            editing['value'] = change.target.value;
-                            this.setState({ editing });
-                        }}
-                    ></input>
-                    <span key={`qe_car_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.saveEdit() }}>
-                        <FontAwesomeIcon icon={faCheck}/>
-                    </span>
-                    <span key={`qe_car_eq_${category}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
-                        <FontAwesomeIcon icon={faTimes}/>
-                    </span>
-                    {catDelete}
-                </span>;
-            }
-            
-            output.push(
-                <div key={`qe_cat_${category}`} className='qe-cat'>
-                    {catContent}
-                    {addon}
-                </div>
-            );
-        }
-
-        //CAT - Add category bar 
-        //----- editing
-        if (editing.cat === '_<!!NewCategory!!>_' && editing.edit === true) {
-            output.push(<div key={`qe_addmore`} className='qe-cat'>
-                <span key={`qe_addmore_name`} className='qe-bar-text left'>
-                    <input key={`qe_addmore_name_i`} className='edit-item-txt' value={editing.value}
-                        onChange={(change: React.ChangeEvent<HTMLInputElement>) => {
-                            editing['value'] = change.target.value;
-                            this.setState({ editing });
-                        }}
-                    ></input>
-                </span>
-                <span key={`qe_addmore_e`} className='qe-bar-text right'>
-                    <span key={`qe_addmore_eq`} className='qe-bar-button ok' onClick={() => { this.createKey() }}>
-                        <FontAwesomeIcon icon={faCheck}/>
-                    </span>
-                    <span key={`qe_addmore_ed`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
-                        <FontAwesomeIcon icon={faTimes}/>
-                    </span>
-                </span>
-            </div>);
-        }
-        //----- button
-        else {
-            output.push(<div key='qe_addmore' className='qe-cat add' onClick={() => {
-                editing.item = '';
-                editing.cat = '_<!!NewCategory!!>_';
-                editing.edit = true;
-                editing.value = '';
-                this.setState({ editing });
-            }}>Add Category</div>);
-        }
-
-
-
-        output.shift();
-        return (<React.Fragment key='qe_list'>{output}</React.Fragment>);
-    }
-
     private template_loadingCover(): JSX.Element { 
         const { loading } = this.state;
         const loadCSS = (loading) ? { opacity: 1, zIndex: 10 } : {};
@@ -919,8 +608,11 @@ export default class QuoteEdit extends React.Component<Props, State> {
     
     //DATA STRUCTURE as represented in "node , child": root , { category , { item , price } }
     private handle_dataToList(inObj: intTreeObj, resursive: boolean = false, passTitle: typeStrOrNo = undefined): typeArrayElement {
+        const { wait } = this.state;
         let output: typeArrayElement = [<div key='qe_placeholder_cat'>XXX</div>];
         let tempOutput: typeArrayElement = [];
+
+        if (wait) { return [this.template_loadBar()]; }
 
         //avoid using root for creating any elements
         if (inObj.title === 'root') {
@@ -930,7 +622,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
                 //Add category button
                 output.push(this.template_addCategory());
-                //output.shift(); //Comment this out for debugging with the original element (it will show XXX to split between the two)
+                output.shift(); //Comment this out for debugging with the original element (it will show XXX to split between the two)
             }
         } 
         //Begin handle data and turn them into elements
@@ -1072,7 +764,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         <span key={`qei_p_sv_${forKey}`} className='qe-bar-button ok' onClick={() => { this.edit_update('save') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
-                        <span key={`qei_p_qt_${forKey}`} className='qe-bar-button' onClick={() => { this.quitEdit() }}>
+                        <span key={`qei_p_qt_${forKey}`} className='qe-bar-button' onClick={() => { this.edit_cancel() }}>
                             <FontAwesomeIcon icon={faTimes}/>
                         </span>
                     </span>;
@@ -1241,8 +933,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 </div>
                 <div key='admin_qe_content_sub' className='admin-qe-ttext'>List of quotes:</div>
                 <div key='admin_qe_content' className='admin-qe-content'>
-                    {this.template_formatData()}
-                    {this.handle_dataToList(this.state.TESTDATA, false)}
+                    {this.handle_dataToList(this.state._DATA, false)}
                 </div>
                 <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
                     <button
