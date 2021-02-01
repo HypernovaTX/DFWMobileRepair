@@ -156,6 +156,24 @@ export default class QuoteEdit extends React.Component<Props, State> {
         }
     }
 
+    private obj_sort(input: intTreeObj): intTreeObj {
+        let output = input;
+        const compareObjTitle = (a: intTreeObj, b: intTreeObj) => {
+            if (a.title.toLowerCase() > b.title.toLowerCase()) { return 1; }
+            if (a.title.toLowerCase() < b.title.toLowerCase()) { return -1; }
+            return 0;
+        }
+
+        if (typeof output.child !== 'string') {
+            for (let c = 0; c < output.child.length; c++) {
+                output.child[c] = this.obj_sort(output.child[c]);
+            }
+            output.child.sort(compareObjTitle);
+        }
+
+        return output;
+    }
+
     /************************************************** QE - REQUESTS **************************************************/
     private getData(): void {
         const postData = new FormData();
@@ -283,7 +301,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     }
 
     /************************************************** QE - EDITING **************************************************/
-    private startEdit(value: string, category: string, item: typeStrOrNo = undefined, price: typeStrOrNo = undefined): void {
+    private edit_start(value: string, category: string, item: typeStrOrNo = undefined, price: typeStrOrNo = undefined): void {
         const { editing } = this.state;
         editing.edit = true;
         editing.cat = category;
@@ -291,6 +309,12 @@ export default class QuoteEdit extends React.Component<Props, State> {
         editing.price = price || '';
         editing.value = value;
         this.setState({ editing })
+    }
+
+    private edit_cancel(): void {
+        this.setState({
+            editing: { edit: false, cat: '', item: '', value: '', value2: '', price: '', error: false, }
+        })
     }
 
     saveEdit(): void {
@@ -363,6 +387,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
             //Exit the method when error occurs
             return;
         }
+
+        processingObj = this.obj_sort(processingObj);
 
         //If nothing's wrong, save
         this.setState({ TESTDATA: processingObj });
@@ -630,13 +656,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         this.quitEdit();
     }
 
-    private cancel_edit(): void {
-        this.setState({
-            editing: { edit: false, cat: '', item: '', value: '', value2: '', price: '', error: false, }
-        })
-    }
-
-    private quitEdit = this.cancel_edit;
+    private quitEdit = this.edit_cancel;
 
     reset(): void { //old
         this.setState({
@@ -677,7 +697,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                     let itemName = 
                         <span key={`qe_item_${forKey}`} className='qe-bar-text left'>
                             <span key={`qe_item_et_${forKey}`} className='qe-bar-text-span'>{item}</span>
-                            <span key={`qe_item_e_${forKey}`} className='qe-bar-button' onClick={() => { this.startEdit(item, category, item) }}>
+                            <span key={`qe_item_e_${forKey}`} className='qe-bar-button' onClick={() => { this.edit_start(item, category, item) }}>
                                 <FontAwesomeIcon icon={faPen}/>
                             </span>
                         </span>;
@@ -706,7 +726,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                             <span
                                 key={`qe_itemV_e_${forKey}`}
                                 className='qe-bar-button'
-                                onClick={() => { this.startEdit(DATA[category][item], category, item, DATA[category][item]) }}
+                                onClick={() => { this.edit_start(DATA[category][item], category, item, DATA[category][item]) }}
                             ><FontAwesomeIcon icon={faPen}/></span>
                         </span>;
                     // |QUOTE PRICING --------> (EDITING)
@@ -809,7 +829,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             //Category template (NOT EDITING)
             let catContent = <span key={`qe_cat_${category}`} className='qe-bar-text'>
                 <span key={`qe_cat_et_${category}`} className='qe-bar-text-span'>{category}</span>
-                <span key={`qe_car_e_${category}`} className='qe-bar-button' onClick={() => { this.startEdit(category, category) }}>
+                <span key={`qe_car_e_${category}`} className='qe-bar-button' onClick={() => { this.edit_start(category, category) }}>
                     <FontAwesomeIcon icon={faPen}/>
                 </span>
                 {catDelete}
@@ -972,7 +992,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         let catContent = 
             <span key={`qec_${category}`} className='qe-bar-text'>
                 <span key={`qec_t_${category}`} className='qe-bar-text-span'>{category}</span>
-                <span key={`qec_e_${category}`} className='qe-bar-button' onClick={() => { this.startEdit(category, category) }}>
+                <span key={`qec_e_${category}`} className='qe-bar-button' onClick={() => { this.edit_start(category, category) }}>
                     <FontAwesomeIcon icon={faPen}/></span>
                 {catDelete}
             </span>;
@@ -986,7 +1006,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 <span key={`qec_ed_${category}`} className='qe-bar-button ok' onClick={() => { this.edit_update('save') }}>
                     <FontAwesomeIcon icon={faCheck}/>
                 </span>
-                <span key={`qec_eq_${category}`} className='qe-bar-button' onClick={() => { this.cancel_edit() }}>
+                <span key={`qec_eq_${category}`} className='qe-bar-button' onClick={() => { this.edit_cancel() }}>
                     <FontAwesomeIcon icon={faTimes}/>
                 </span>
                 {catDelete}
@@ -1009,7 +1029,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         let itemName = 
             <span key={`qei_${forKey}`} className='qe-bar-text left'>
                 <span key={`qei_et_${forKey}`} className='qe-bar-text-span'>{item}</span>
-                <span key={`qei_e_${forKey}`} className='qe-bar-button' onClick={() => { this.startEdit(item, category, item) }}>
+                <span key={`qei_e_${forKey}`} className='qe-bar-button' onClick={() => { this.edit_start(item, category, item) }}>
                     <FontAwesomeIcon icon={faPen}/>
                 </span>
             </span>;
@@ -1018,7 +1038,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
         let itemValue = 
             <span key={`qei_V_${forKey}`} className='qe-bar-text'>${price}
                 <span key={`qe_itemV_e_${forKey}`} className='qe-bar-button'
-                    onClick={() => { this.startEdit(price, category, item, price) }}
+                    onClick={() => { this.edit_start(price, category, item, price) }}
                 ><FontAwesomeIcon icon={faPen}/></span>
             </span>;
 
@@ -1036,7 +1056,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         <span key={`qei_ed_${forKey}`} className='qe-bar-button ok' onClick={() => { this.edit_update('save') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
-                        <span key={`qei_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.cancel_edit() }}>
+                        <span key={`qei_eq_${forKey}`} className='qe-bar-button' onClick={() => { this.edit_cancel() }}>
                             <FontAwesomeIcon icon={faTimes}/>
                         </span>
                     </span>;
@@ -1090,7 +1110,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         <span key={`qe_add_eq`} className='qe-bar-button ok' onClick={() => { this.edit_update('create') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
-                        <span key={`qe_add_ed`} className='qe-bar-button' onClick={() => { this.cancel_edit() }}>
+                        <span key={`qe_add_ed`} className='qe-bar-button' onClick={() => { this.edit_cancel() }}>
                             <FontAwesomeIcon icon={faTimes}/>
                         </span>
                     </span>
@@ -1132,7 +1152,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                         <span key={`qe_addI_eq_${category}`} className='qe-bar-button ok' onClick={() => { this.edit_update('create') }}>
                             <FontAwesomeIcon icon={faCheck}/>
                         </span>
-                        <span key={`qe_addI_ed_${category}`} className='qe-bar-button' onClick={() => { this.cancel_edit() }}>
+                        <span key={`qe_addI_ed_${category}`} className='qe-bar-button' onClick={() => { this.edit_cancel() }}>
                             <FontAwesomeIcon icon={faTimes}/>
                         </span>
                     </span>
