@@ -9,9 +9,9 @@ import UserEdit from './useredit';
 type Props = {
     loggedIn: boolean,
     uid: string,
-    func_updateUsername: (param: any) => any,
     username: string, 
     role: string, 
+    func_updateUsername: (param: any) => any,
     func_logout: () => void,
 };
 type State = {

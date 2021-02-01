@@ -39,8 +39,7 @@ type State = {
     YEAR: string,
     MAKE: string,
     MODEL: string,
-    _DATA: intTreeObj;
-    OLD: string,
+    _DATA: intTreeObj,
     editing: intEditing,
 
     refresh: boolean,
@@ -67,7 +66,6 @@ export default class QuoteEdit extends React.Component<Props, State> {
             MAKE: '',
             MODEL: '',
             _DATA: { title: 'root', child: '(null)' },
-            OLD: '',
             editing: {
                 'edit': false,
                 'cat': '',
@@ -167,7 +165,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
             this.props.logout(JSON.stringify(response.data));
             if (this._ismounted && typeof response.data !== 'string') {
                 const refinedData = this.obj_setTree('root', response.data);
-                this.setState({ _DATA: refinedData, OLD: JSON.stringify(refinedData), wait: false,  });
+                localStorage.setItem(`temp_edit_`, JSON.stringify(refinedData));
+                this.setState({ _DATA: refinedData, wait: false,  });
             }
         });
     };
@@ -250,6 +249,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 propsM: { 'top': '64px', 'opacity': '0' },
             });
             setTimeout(() => {
+                if (!localStorage.getItem('temp_edit_') === null) { localStorage.removeItem('temp_edit_'); }
                 this.setState({
                     show: 0,
                     propsBG: this.props_bg_off,
@@ -306,7 +306,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 }
             }
         }
-        console.log('SAVE OBJ' + JSON.stringify(saveObj)); //for debugging purposes
+        //console.log('SAVE OBJ' + JSON.stringify(saveObj)); //for debugging purposes
 
         //Choose the correct logic for the "kind" of update
         switch (kind) {
@@ -579,13 +579,19 @@ export default class QuoteEdit extends React.Component<Props, State> {
         return output;
     }
 
-    reset(): void { //old
-        this.setState({
-            _DATA: JSON.parse(this.state.OLD),
-            YEAR: this.props.vehicleYear,
-            MAKE: this.props.vehicleMake,
-            MODEL: this.props.vehicleModel,
-        });
+    private reset(): void {
+        if (localStorage.getItem('temp_edit_') === null) {
+            this.quickPrompt(`ERROR: Cached data is not found to reset to!`);
+            return;
+        } else {
+            const oldData = localStorage.getItem('temp_edit_') as string;
+            this.setState({
+                _DATA: JSON.parse(oldData),
+                YEAR: this.props.vehicleYear,
+                MAKE: this.props.vehicleMake,
+                MODEL: this.props.vehicleModel,
+            });
+        }
     }
     
 
