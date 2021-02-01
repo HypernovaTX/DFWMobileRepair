@@ -37,7 +37,7 @@
         font-size: 1em; 
         padding: 2px 0px; 
         text-align: left; 
-        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
     .qe-item .qe-bar-text:last-child { border-bottom: none; }
     .qe-item .qe-bar-text.left, .qe-bar-text.right { float: none; }

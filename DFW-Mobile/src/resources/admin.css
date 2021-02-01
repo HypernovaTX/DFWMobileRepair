@@ -424,7 +424,7 @@
     display: flow-root;
 }
 .qe-item {
-    background: #FFF;
+    background: #F0F0F0;
     display: flex;
 }
 .qe-cat.add, .qe-item.add {
