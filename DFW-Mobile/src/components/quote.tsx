@@ -118,9 +118,21 @@ export default class Quotes extends React.Component<Props, State> {
             <div key='qt_s' className='ct-section section4' style={{}} ref={this.ref_top}>
                 <div key='qt_ss' className='section2-box'>
                     <h3>Select your vehicle:</h3>
+                    {}
                 </div>
             </div>
         );
+    }
+    private template_generate_selection(): JSX.Element {
+        //If there's no data to pull
+        if (localStorage.getItem('quote_list') === undefined) {
+            return (<div key='no-data'></div>)
+        }
+        
+        const getData = JSON.parse(localStorage.getItem('quote_list') || '{}');
+        return (
+            <div key='no-data'></div>
+        )
     }
     private template_quotesection() {
         //const { DATA } = this.state;
