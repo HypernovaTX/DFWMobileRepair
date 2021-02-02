@@ -96,25 +96,31 @@ export default class Quotes extends React.Component<Props, State> {
     //-------------------------------------------------------------------- TEMPLATE --------------------------------------------------------------------
     private template_lander(): JSX.Element {
         const LOGO_IMG = require('./../resources/images/logo-current.png');
-        const style = { backgroundPositionY: window.pageYOffset / 2 };
+        const style = { backgroundPositionY: `calc(${(window.pageYOffset / 2 )} - 50vh)` };
         const preventDrag = (e: typeDragEv) => { e.preventDefault(); };
-        const key = ['qt_ld', 'qt_ld_co', 'qt_ld_co_lo'];
 
         return (
-            <div key={key[0]} className='lander quote' style={style} ref={this.ref_top}>
-                <div key={key[1]} className='lander-contain quote' draggable='false' onDragStart={preventDrag}>
-                    <div key={key[2]} className='logo'>
-                        <img key={`${key[2]}_im`} src={LOGO_IMG} alt='DFW Mobile Repair Logo' draggable="false" onDragStart={preventDrag}></img>
-                        <div key={`${key[2]}_sc`} className='land-btn-section'>
-                            <span key={`${key[2]}_sc_bt`} className='land-item' onClick={() => {}}>RETURN TO HOME</span>
-                        </div>
+            <div key='qt_l' className='lander quote' style={style} ref={this.ref_top}>
+                <div key='qt_lc' className='lander-contain quote' draggable='false' onDragStart={preventDrag}>
+                    <div key='qt_lcl' className='logo'>
+                        <img key={`qt_lcl_im`} src={LOGO_IMG} alt='DFW Mobile Repair Logo' draggable="false" onDragStart={preventDrag}></img>
                     </div>
+                </div>
+                <div key='qt_lccs' className='lander-cover-shade'></div>
+                <div key='qt_lcc' className='lander-cover'>
+                    <div key='qt_lcct' className='lander-cover-txt'>Return to home</div>
                 </div>
             </div>
         );
     }
-    private template_selector() {
-
+    private template_selector(): JSX.Element {
+        return (
+            <div key='qt_s' className='ct-section section4' style={{}} ref={this.ref_top}>
+                <div key='qt_ss' className='section2-box'>
+                    <h3>Select your vehicle:</h3>
+                </div>
+            </div>
+        );
     }
     private template_quotesection() {
         //const { DATA } = this.state;
@@ -122,6 +128,7 @@ export default class Quotes extends React.Component<Props, State> {
     private template_main(): JSX.Element {
         return(<div key='q_wrapper' className='wrapper'>
             {this.template_lander()}
+            {this.template_selector()}
         </div>)
     }
 
