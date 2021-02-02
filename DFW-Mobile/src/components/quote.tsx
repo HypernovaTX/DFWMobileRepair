@@ -1,7 +1,7 @@
 import React from 'react';
 import '../resources/quote.css';
-//import axios from 'axios';
-//import * as CONFIG from '../config.json';
+import axios, { AxiosResponse } from 'axios';
+import * as CONFIG from '../config.json';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
 //import Cookies from 'js-cookie';
@@ -19,6 +19,7 @@ interface intRawJSON {[key: string]: any};
 
 type typeRefDiv = React.RefObject<HTMLDivElement>;
 type typeDragEv = React.DragEvent<HTMLElement>;
+type typeStringOrNo = string | undefined;
 
 type Props = {
 };
@@ -35,6 +36,7 @@ type State = {
 };
 
 export default class Quotes extends React.Component<Props, State> {
+    private _ismounted: boolean = false;
     private ref_top: typeRefDiv = React.createRef();
 
     constructor(p: Props) {
@@ -55,12 +57,41 @@ export default class Quotes extends React.Component<Props, State> {
     //-------------------------------------------------------------------- COMPONENT --------------------------------------------------------------------
     public componentDidMount(): void {
         this.setState({ load_general: true });
-
+        this._ismounted = true;
+        this.getData();
     }
 
     //-------------------------------------------------------------------- API --------------------------------------------------------------------
+    private getData(): void {
+        const postData = new FormData();
 
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=fulllist`, postData)
+        .then((response: AxiosResponse<any>) => {
+            if (this._ismounted && typeof response.data !== 'string') {
+                const refinedData = this.obj_setTree('root', response.data);
+                localStorage.setItem(`quote_list`, JSON.stringify(refinedData));
+            }
+        });
+    }
     //-------------------------------------------------------------------- LOGICS --------------------------------------------------------------------
+    //convert raw JSON data into something more refined 
+    obj_setTree(title: string, child: intRawJSON | string): intTreeObj {
+        let childData: intTreeObj[] = [];
+        let childString: typeStringOrNo;
+
+        if (typeof child !== 'string') {
+            for (const key in child) {
+                childData.push(this.obj_setTree(key, child[key]));
+            }
+        } else {
+            childString = child;
+        }
+        let output = {
+            title: title,
+            child: childString || childData,
+        };
+        return output;
+    }
 
     //-------------------------------------------------------------------- TEMPLATE --------------------------------------------------------------------
     private template_lander(): JSX.Element {
