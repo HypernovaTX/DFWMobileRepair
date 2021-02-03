@@ -153,6 +153,7 @@ export default class Quotes extends React.Component<Props, State> {
             <div key='selectionArea' className='selection-area'>
                 {this.template_selection_year()}
                 {this.template_selection_make()}
+                {this.template_selection_model()}
             </div>
         )
     }
@@ -179,7 +180,7 @@ export default class Quotes extends React.Component<Props, State> {
                     if (SELECTION.year !== ev.target.value) {
                         SELECTION.year = ev.target.value;
                         SELECTION.make = ''; SELECTION.model = ''; SELECTION.id = '';
-                        this.setState({ SELECTION });
+                        this.setState({ SELECTION, list_model: [] });
                     }
                     this.update_makemodel(JSONData);
                 }}
@@ -223,6 +224,51 @@ export default class Quotes extends React.Component<Props, State> {
             selectWrap = 
                 <select key='q_make' className='form-selectcar' disabled={false} onChange={onChangeEvent} value={SELECTION.make}>
                     <option disabled selected value=''> -- SELECT MAKE -- </option>
+                    {output}
+                </select>;
+        }
+
+        return (selectWrap);
+    }
+
+    private template_selection_model(): JSX.Element {
+        const { list_model, SELECTION } = this.state;
+        const JSONData: intTreeObj = JSON.parse(localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`);
+        let output: JSX.Element[] = [];
+
+        //Go over each of the child for model
+        output = list_model.reverse().map((modelName: string[]) => {
+            return <option value={modelName.join('<|>')}>{modelName[0]}</option>
+        });
+
+        
+        const onChangeEvent = (ev: typeDropdown) => {
+            //When changing the SELECT MODEL input
+            let { SELECTION } = this.state;
+            //Do not change value and reset if the value is the same as before
+            if (SELECTION.make !== ev.target.value) {
+                SELECTION.model = ev.target.value.split('<|>')[0];
+                SELECTION.id = ev.target.value.split('<|>')[1];
+                this.setState({ SELECTION });
+                this.update_makemodel(JSONData);
+            }
+        }
+
+        //determine whether to enable/disable <select> with custom classnames and attributes
+        let selectValue = '';
+        if (SELECTION.make !== '' && SELECTION.id !== '') {
+            selectValue = `${SELECTION.make}<|>${SELECTION.id}`;
+        }
+        
+        let selectWrap = 
+            <select key='q_model' className='form-selectcar disabled' disabled={true} onChange={onChangeEvent} value={selectValue}>
+                <option disabled selected value=''> -- SELECT MODEL -- </option>
+                {output}
+            </select>;
+        if (list_model.length > 0) {
+            selectWrap = 
+                <select key='q_model' className='form-selectcar' disabled={false} onChange={onChangeEvent} value={selectValue}>
+                    <option disabled selected value=''> -- SELECT MODEL -- </option>
                     {output}
                 </select>;
         }
