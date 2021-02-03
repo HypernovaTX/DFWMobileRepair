@@ -182,9 +182,10 @@ export default class Quotes extends React.Component<Props, State> {
                         SELECTION.make = '';
                         SELECTION.model = '';
                         SELECTION.id = '____';
+                        this.update_makemodel(JSONData);
                         this.setState({ SELECTION, list_model: [] });
                     }
-                    this.update_makemodel(JSONData);
+                    
                 }}
             >
                 <option disabled selected> -- SELECT YEAR -- </option>
@@ -212,7 +213,7 @@ export default class Quotes extends React.Component<Props, State> {
                 SELECTION.make = ev.target.value;
                 SELECTION.model = '';
                 SELECTION.id = '____';
-                this.setState({ SELECTION });
+                this.setState({ SELECTION, list_model: [] });
                 this.update_makemodel(JSONData);
             }
         }
