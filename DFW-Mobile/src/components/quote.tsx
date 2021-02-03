@@ -44,7 +44,7 @@ export default class Quotes extends React.Component<Props, State> {
         super(p);
 
         this.state = {
-            SELECTION: { year: '', make: '', model: '', id: '____', }, 
+            SELECTION: { year: 'NA', make: 'NO_MAKE_NAME', model: '', id: '____', }, 
             DATA: { title: 'root', child: '(null)' }, 
 
             list_make: [],
@@ -147,7 +147,7 @@ export default class Quotes extends React.Component<Props, State> {
     private template_generate_selection(): JSX.Element {
         //If there's no data to pull
         if (localStorage.getItem('quote_list') === undefined) {
-            return (<div key='no-data'></div>)
+            return (<div key='no-data'>NO DATA</div>)
         }
         return (
             <div key='selectionArea' className='selection-area'>
@@ -159,6 +159,7 @@ export default class Quotes extends React.Component<Props, State> {
     }
 
     private template_selection_year(): JSX.Element {
+        const { SELECTION } = this.state;
         const JSONData: intTreeObj = JSON.parse(
             localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`
         );
@@ -166,7 +167,9 @@ export default class Quotes extends React.Component<Props, State> {
         //Go over each of the child for year
         if (typeof JSONData.child !== 'string') {
             output = JSONData.child.reverse().map((childObj: intTreeObj) => {
-                return <option value={childObj.title}>{childObj.title}</option>
+                return (
+                    <option key={`qso_y_${childObj.title}`} value={childObj.title}>{childObj.title}</option>
+                );
             })
         }
         return (
@@ -179,7 +182,7 @@ export default class Quotes extends React.Component<Props, State> {
                     //Do not change value and reset if the value is the same as before
                     if (SELECTION.year !== ev.target.value) {
                         SELECTION.year = ev.target.value;
-                        SELECTION.make = '';
+                        SELECTION.make = 'NO_MAKE_NAME';
                         SELECTION.model = '';
                         SELECTION.id = '____';
                         this.update_makemodel(JSONData);
@@ -188,7 +191,7 @@ export default class Quotes extends React.Component<Props, State> {
                     
                 }}
             >
-                <option disabled selected> -- SELECT YEAR -- </option>
+                <option key='qso_y_XXX' disabled={(SELECTION.year !== 'NA')} value='NA'> -- SELECT YEAR -- </option>
                 {output}
             </select>
         );
@@ -201,7 +204,7 @@ export default class Quotes extends React.Component<Props, State> {
 
         //Go over each of the child for make
         output = list_make.reverse().map((makeName: string) => {
-            return <option value={makeName}>{makeName}</option>
+            return <option key={`qso_mk_${makeName}`} value={makeName}>{makeName}</option>
         });
 
         
@@ -221,13 +224,13 @@ export default class Quotes extends React.Component<Props, State> {
         //determine the stype of <select>
         let selectWrap = 
             <select key='q_make' className='form-selectcar disabled' disabled={true} onChange={onChangeEvent} value={SELECTION.make}>
-                <option disabled selected value=''> -- SELECT MAKE -- </option>
+                <option key='qso_mk_XXX' disabled value='NO_MAKE_NAME'> -- SELECT MAKE -- </option>
                 {output}
             </select>;
         if (list_make.length > 0) {
             selectWrap = 
                 <select key='q_make' className='form-selectcar' disabled={false} onChange={onChangeEvent} value={SELECTION.make}>
-                    <option disabled selected value=''> -- SELECT MAKE -- </option>
+                    <option key='qso_mk_XXX' disabled value='NO_MAKE_NAME'> -- SELECT MAKE -- </option>
                     {output}
                 </select>;
         }
@@ -243,7 +246,7 @@ export default class Quotes extends React.Component<Props, State> {
         //Go over each of the child for model
         output = list_model.reverse().map((modelName: string[]) => {
             return (
-                <option value={modelName.join('____')}>{modelName[0]}</option>
+                <option key={`qso_md_${modelName[1]}`} value={modelName.join('____')}>{modelName[0]}</option>
             );
         });
 
@@ -270,13 +273,13 @@ export default class Quotes extends React.Component<Props, State> {
         //determine whether to enable/disable <select> with custom classnames and attributes
         let selectWrap = 
             <select key='q_model' className='form-selectcar disabled' disabled={true} onChange={onChangeEvent} value={selectValue}>
-                <option disabled selected value='____'> -- SELECT MODEL -- </option>
+                <option key='qso_md_XXX' disabled value='____'> -- SELECT MODEL -- </option>
                 {output}
             </select>;
         if (list_model.length > 0) {
             selectWrap = 
                 <select key='q_model' className='form-selectcar' disabled={false} onChange={onChangeEvent} value={selectValue}>
-                    <option disabled selected value='____'> -- SELECT MODEL -- </option>
+                    <option key='qso_md_XXX' disabled value='____'> -- SELECT MODEL -- </option>
                     {output}
                 </select>;
         }
