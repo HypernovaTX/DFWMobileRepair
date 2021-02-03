@@ -20,16 +20,13 @@ interface intRawJSON {[key: string]: any};
 type typeRefDiv = React.RefObject<HTMLDivElement>;
 type typeDragEv = React.DragEvent<HTMLElement>;
 type typeStringOrNo = string | undefined;
+type typeDropdown = React.ChangeEvent<HTMLSelectElement>;
 
 type Props = {
 };
 type State = {
     SELECTION: intSelector, 
     DATA: intTreeObj, 
-    
-    list_year: string[], 
-    list_make: string[], 
-    list_model: string[], 
 
     load_general: boolean,
     load_list: boolean, 
@@ -46,10 +43,6 @@ export default class Quotes extends React.Component<Props, State> {
             SELECTION: { year: '', make: '', model: '', }, 
             DATA: { title: 'root', child: '(null)' }, 
 
-            list_year: [], 
-            list_make: [], 
-            list_model: [], 
-
             load_general: false, 
             load_list: false,
         }
@@ -58,11 +51,11 @@ export default class Quotes extends React.Component<Props, State> {
     public componentDidMount(): void {
         this.setState({ load_general: true });
         this._ismounted = true;
-        this.getData();
+        this.getFullVehicleList();
     }
 
     //-------------------------------------------------------------------- API --------------------------------------------------------------------
-    private getData(): void {
+    private getFullVehicleList(): void {
         const postData = new FormData();
 
         axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=fulllist`, postData)
@@ -118,7 +111,7 @@ export default class Quotes extends React.Component<Props, State> {
             <div key='qt_s' className='ct-section section4' style={{}} ref={this.ref_top}>
                 <div key='qt_ss' className='section2-box'>
                     <h3>Select your vehicle:</h3>
-                    {}
+                    {this.template_generate_selection()}
                 </div>
             </div>
         );
@@ -128,15 +121,46 @@ export default class Quotes extends React.Component<Props, State> {
         if (localStorage.getItem('quote_list') === undefined) {
             return (<div key='no-data'></div>)
         }
-        
-        const getData = JSON.parse(localStorage.getItem('quote_list') || '{}');
         return (
-            <div key='no-data'></div>
+            <div key='selectionArea' className='selection-area'>
+                {this.template_selection_year()}
+            </div>
         )
     }
-    private template_quotesection() {
-        //const { DATA } = this.state;
+
+    private template_selection_year(): JSX.Element {
+        const JSONData: intTreeObj = JSON.parse(
+            localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`
+        );
+        let output: JSX.Element[] = [<React.Fragment key='no_year'></React.Fragment>];
+        //Go over each of the child
+        if (typeof JSONData.child !== 'string') {
+            output = JSONData.child.reverse().map((childObj: intTreeObj) => {
+                return <option value={childObj.title}>{childObj.title}</option>
+            })
+        }
+        return (
+            <select
+                key='q_year'
+                className='form-selectcar '
+                onChange={(ev: typeDropdown) => {
+                    //When changing the SELECT YEAR input
+                    let { SELECTION } = this.state;
+                    //Do not change value and reset if the value is the same as before
+                    if (SELECTION.year !== ev.target.value) {
+                        SELECTION.year = ev.target.value;
+                        SELECTION.make = '';
+                        SELECTION.model = '';
+                        this.setState({ SELECTION });
+                    }
+                }}
+            >
+                <option disabled selected> -- SELECT YEAR -- </option>
+                {output}
+            </select>
+        );
     }
+
     private template_main(): JSX.Element {
         return(<div key='q_wrapper' className='wrapper'>
             {this.template_lander()}
