@@ -74,7 +74,17 @@ h3 {
 }
 .selection-area {
     text-align: center;
-    
+
+}
+.form-selectcar.disabled{
+    border: 0px solid rgba(0, 0, 0, 0);
+    font-size: 1.2em;
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+    width: 50%;
+    height: 0px;
+    transition: 200ms linear all;
 }
 .form-selectcar {
     border: 1px solid rgba(0, 0, 0, 0);
@@ -84,7 +94,8 @@ h3 {
     border-radius: 8px;
     color: #333;
     width: 50%;
-    background: #f8f8f8;
+    height: 2.15em;
+    background: #FFF;
     text-align: center;
     transition: 200ms linear all;
 }

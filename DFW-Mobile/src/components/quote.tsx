@@ -14,6 +14,7 @@ interface intSelector {
     year: string;
     make: string;
     model: string;
+    id: string;
 }
 interface intRawJSON {[key: string]: any};
 
@@ -28,6 +29,9 @@ type State = {
     SELECTION: intSelector, 
     DATA: intTreeObj, 
 
+    list_make: string[],
+    list_model: string[][],
+
     load_general: boolean,
     load_list: boolean, 
 };
@@ -40,8 +44,11 @@ export default class Quotes extends React.Component<Props, State> {
         super(p);
 
         this.state = {
-            SELECTION: { year: '', make: '', model: '', }, 
+            SELECTION: { year: '', make: '', model: '', id: '', }, 
             DATA: { title: 'root', child: '(null)' }, 
+
+            list_make: [],
+            list_model: [],
 
             load_general: false, 
             load_list: false,
@@ -86,6 +93,27 @@ export default class Quotes extends React.Component<Props, State> {
         return output;
     }
 
+    update_makemodel(input: intTreeObj): void {
+        const { SELECTION } = this.state;
+
+        let { list_make, list_model } = this.state;
+        if (SELECTION.year !== '' && typeof input.child !== 'string') {
+            for (const each_year of input.child) {
+                if (each_year.title === SELECTION.year && typeof each_year.child !== 'string') {
+                    for (const each_make of each_year.child) {
+                        if (each_make.title === SELECTION.make && typeof each_make.child !== 'string' && SELECTION.make !== '') {
+                            list_model = each_make.child.reverse().map((model: intTreeObj) => {
+                                return [model.title, model.child as string];
+                            }); 
+                        }
+                    }
+                    list_make = each_year.child.reverse().map((make: intTreeObj) => { return make.title })
+                }
+            }
+        }
+        this.setState({ list_make, list_model });
+    }
+
     //-------------------------------------------------------------------- TEMPLATE --------------------------------------------------------------------
     private template_lander(): JSX.Element {
         const LOGO_IMG = require('./../resources/images/logo-current.png');
@@ -124,6 +152,7 @@ export default class Quotes extends React.Component<Props, State> {
         return (
             <div key='selectionArea' className='selection-area'>
                 {this.template_selection_year()}
+                {this.template_selection_make()}
             </div>
         )
     }
@@ -132,8 +161,8 @@ export default class Quotes extends React.Component<Props, State> {
         const JSONData: intTreeObj = JSON.parse(
             localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`
         );
-        let output: JSX.Element[] = [<React.Fragment key='no_year'></React.Fragment>];
-        //Go over each of the child
+        let output: JSX.Element[] = [<React.Fragment key='q_year'></React.Fragment>];
+        //Go over each of the child for year
         if (typeof JSONData.child !== 'string') {
             output = JSONData.child.reverse().map((childObj: intTreeObj) => {
                 return <option value={childObj.title}>{childObj.title}</option>
@@ -149,16 +178,56 @@ export default class Quotes extends React.Component<Props, State> {
                     //Do not change value and reset if the value is the same as before
                     if (SELECTION.year !== ev.target.value) {
                         SELECTION.year = ev.target.value;
-                        SELECTION.make = '';
-                        SELECTION.model = '';
+                        SELECTION.make = ''; SELECTION.model = ''; SELECTION.id = '';
                         this.setState({ SELECTION });
                     }
+                    this.update_makemodel(JSONData);
                 }}
             >
                 <option disabled selected> -- SELECT YEAR -- </option>
                 {output}
             </select>
         );
+    }
+
+    private template_selection_make(): JSX.Element {
+        const { list_make, SELECTION } = this.state;
+        const JSONData: intTreeObj = JSON.parse(localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`);
+        let output: JSX.Element[] = [];
+
+        //Go over each of the child for make
+        output = list_make.reverse().map((makeName: string) => {
+            return <option value={makeName}>{makeName}</option>
+        });
+
+        
+        const onChangeEvent = (ev: typeDropdown) => {
+            //When changing the SELECT MAKE input
+            let { SELECTION } = this.state;
+            //Do not change value and reset if the value is the same as before
+            if (SELECTION.make !== ev.target.value) {
+                SELECTION.make = ev.target.value;
+                SELECTION.model = '';  SELECTION.id = '';
+                this.setState({ SELECTION });
+                this.update_makemodel(JSONData);
+            }
+        }
+
+        //determine the stype of <select>
+        let selectWrap = 
+            <select key='q_make' className='form-selectcar disabled' disabled={true} onChange={onChangeEvent} value={SELECTION.make}>
+                <option disabled selected value=''> -- SELECT MAKE -- </option>
+                {output}
+            </select>;
+        if (list_make.length > 0) {
+            selectWrap = 
+                <select key='q_make' className='form-selectcar' disabled={false} onChange={onChangeEvent} value={SELECTION.make}>
+                    <option disabled selected value=''> -- SELECT MAKE -- </option>
+                    {output}
+                </select>;
+        }
+
+        return (selectWrap);
     }
 
     private template_main(): JSX.Element {
