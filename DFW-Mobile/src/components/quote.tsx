@@ -97,7 +97,34 @@ export default class Quotes extends React.Component<Props, State> {
         const { SELECTION } = this.state;
 
         let { list_make, list_model } = this.state;
-        if (SELECTION.year !== '' && typeof input.child !== 'string') {
+        //starts from te root and starts off finding Make when the year is selected
+        if (SELECTION.year && typeof input.child !== 'string') {
+            //NEW CODES
+            //Pull the child array of "intTreeObj" from the "root" child (input.child)
+            const MakesFromYear = (
+                input.child.find((findYear: intTreeObj) => findYear.title === SELECTION.year) ||
+                { title: SELECTION.year, child: [] } //default if undefined
+            ).child as intTreeObj[];
+
+            //Map out the title of each object in the array to 'list_make'
+            list_make = MakesFromYear.reverse().map((make: intTreeObj) => { return make.title });
+            
+            //Now dig deeper for models from MAKE node
+            if (SELECTION.make) {
+                //Pull the child array of "intTreeObj" from the "year" child (MakesFromYear)
+                const ModelsFromMake = (
+                    MakesFromYear.find((findMake: intTreeObj) => findMake.title === SELECTION.make) ||
+                    { title: SELECTION.make, child: [] } //default if undefined
+                ).child as intTreeObj[];
+
+                 //Map out the title of each object in the array to 'list_make'
+                list_model = ModelsFromMake.reverse().map((model: intTreeObj) => {
+                    return [model.title, model.child as string]
+                });
+            }
+                
+            /*
+            //OLD CODES
             for (const each_year of input.child) {
                 if (each_year.title === SELECTION.year && typeof each_year.child !== 'string') {
                     for (const each_make of each_year.child) {
@@ -109,7 +136,7 @@ export default class Quotes extends React.Component<Props, State> {
                     }
                     list_make = each_year.child.reverse().map((make: intTreeObj) => { return make.title })
                 }
-            }
+            }*/
         }
         this.setState({ list_make, list_model });
     }
@@ -136,7 +163,7 @@ export default class Quotes extends React.Component<Props, State> {
     }
     private template_selector(): JSX.Element {
         return (
-            <div key='qt_s' className='ct-section section4' style={{}} ref={this.ref_top}>
+            <div key='qt_s' className='ct-section section5' style={{}} ref={this.ref_top}>
                 <div key='qt_ss' className='section2-box'>
                     <h3>Select your vehicle:</h3>
                     {this.template_generate_selection()}
