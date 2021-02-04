@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from 'axios';
 import * as CONFIG from '../config.json';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
-//import Cookies from 'js-cookie';
+import Cookies from 'js-cookie';
 
 interface intTreeObj {
     title: string;
@@ -18,10 +18,11 @@ interface intSelector {
 }
 interface intRawJSON {[key: string]: any};
 
-type typeRefDiv = React.RefObject<HTMLDivElement>;
-type typeDragEv = React.DragEvent<HTMLElement>;
-type typeStringOrNo = string | undefined;
-type typeDropdown = React.ChangeEvent<HTMLSelectElement>;
+type RefDiv = React.RefObject<HTMLDivElement>;
+type DragEv = React.DragEvent<HTMLElement>;
+type StringOrNo = string | undefined;
+type DropdownSelect = React.ChangeEvent<HTMLSelectElement>;
+type APIResponse = AxiosResponse<any>;
 
 type Props = {
 };
@@ -38,7 +39,7 @@ type State = {
 
 export default class Quotes extends React.Component<Props, State> {
     private _ismounted: boolean = false;
-    private ref_top: typeRefDiv = React.createRef();
+    private ref_top: RefDiv = React.createRef();
 
     constructor(p: Props) {
         super(p);
@@ -63,21 +64,33 @@ export default class Quotes extends React.Component<Props, State> {
 
     //-------------------------------------------------------------------- API --------------------------------------------------------------------
     private getFullVehicleList(): void {
-        const postData = new FormData();
-
-        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=fulllist`, postData)
-        .then((response: AxiosResponse<any>) => {
+        axios.get(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=fulllist`)
+        .then((response: APIResponse) => {
             if (this._ismounted && typeof response.data !== 'string') {
-                const refinedData = this.obj_setTree('root', response.data);
+                const refinedData = this.obj_sort(this.obj_setTree('root', response.data));
                 localStorage.setItem(`quote_list`, JSON.stringify(refinedData));
+            }
+        });
+    }
+
+    private getVehicleQuotes(): void {
+        const { SELECTION } = this.state;
+        const postData = new FormData();
+        postData.append('id', SELECTION.id);
+
+        axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=data`, postData)
+        .then((response: APIResponse) => {
+            if (this._ismounted && typeof response.data !== 'string') {
+                const refinedData = this.obj_sort(this.obj_setTree('root', response.data));
+                localStorage.setItem(`quote_vehicle`, JSON.stringify(refinedData));
             }
         });
     }
     //-------------------------------------------------------------------- LOGICS --------------------------------------------------------------------
     //convert raw JSON data into something more refined 
-    obj_setTree(title: string, child: intRawJSON | string): intTreeObj {
+    private obj_setTree(title: string, child: intRawJSON | string): intTreeObj {
         let childData: intTreeObj[] = [];
-        let childString: typeStringOrNo;
+        let childString: StringOrNo;
 
         if (typeof child !== 'string') {
             for (const key in child) {
@@ -93,6 +106,25 @@ export default class Quotes extends React.Component<Props, State> {
         return output;
     }
 
+    //Used for sorting complext obj
+    private obj_sort(input: intTreeObj): intTreeObj {
+        let output = input;
+        const compareObjTitle = (a: intTreeObj, b: intTreeObj) => {
+            if (a.title.toLowerCase() > b.title.toLowerCase()) { return 1; }
+            if (a.title.toLowerCase() < b.title.toLowerCase()) { return -1; }
+            return 0;
+        }
+
+        if (typeof output.child !== 'string') {
+            for (let c = 0; c < output.child.length; c++) {
+                output.child[c] = this.obj_sort(output.child[c]);
+            }
+            output.child.sort(compareObjTitle);
+        }
+        return output;
+    }
+
+    //This functions updates the list for make and model, also calls for API request if the selection is complete
     update_makemodel(input: intTreeObj): void {
         const { SELECTION } = this.state;
 
@@ -122,30 +154,23 @@ export default class Quotes extends React.Component<Props, State> {
                     return [model.title, model.child as string]
                 });
             }
-                
-            /*
-            //OLD CODES
-            for (const each_year of input.child) {
-                if (each_year.title === SELECTION.year && typeof each_year.child !== 'string') {
-                    for (const each_make of each_year.child) {
-                        if (each_make.title === SELECTION.make && typeof each_make.child !== 'string' && SELECTION.make !== '') {
-                            list_model = each_make.child.reverse().map((model: intTreeObj) => {
-                                return [model.title, model.child as string];
-                            }); 
-                        }
-                    }
-                    list_make = each_year.child.reverse().map((make: intTreeObj) => { return make.title })
-                }
-            }*/
+        }
+
+        //calls for API request if the selection is complete
+        if (SELECTION.model && SELECTION.id !== '____' && !Cookies.get('current_vehicle')) {
+            Cookies.set('current_vehicle', SELECTION.id);
+            this.setState({ load_list: true });
+            this.getVehicleQuotes();
         }
         this.setState({ list_make, list_model });
     }
 
     //-------------------------------------------------------------------- TEMPLATE --------------------------------------------------------------------
+    //The very top banner
     private template_lander(): JSX.Element {
         const LOGO_IMG = require('./../resources/images/logo-current.png');
         const style = { backgroundPositionY: `calc(${(window.pageYOffset / 2 )} - 50vh)` };
-        const preventDrag = (e: typeDragEv) => { e.preventDefault(); };
+        const preventDrag = (e: DragEv) => { e.preventDefault(); };
 
         return (
             <div key='qt_l' className='lander quote' style={style} ref={this.ref_top}>
@@ -161,30 +186,32 @@ export default class Quotes extends React.Component<Props, State> {
             </div>
         );
     }
+
+    //The section for the vehicle selectors
     private template_selector(): JSX.Element {
-        return (
-            <div key='qt_s' className='ct-section section5' style={{}} ref={this.ref_top}>
-                <div key='qt_ss' className='section2-box'>
-                    <h3>Select your vehicle:</h3>
-                    {this.template_generate_selection()}
-                </div>
-            </div>
-        );
-    }
-    private template_generate_selection(): JSX.Element {
-        //If there's no data to pull
-        if (localStorage.getItem('quote_list') === undefined) {
-            return (<div key='no-data'>NO DATA</div>)
-        }
-        return (
+        let selectors = (
             <div key='selectionArea' className='selection-area'>
                 {this.template_selection_year()}
                 {this.template_selection_make()}
                 {this.template_selection_model()}
             </div>
-        )
-    }
+        );
+        
+        //If there's no data to pull
+        if (localStorage.getItem('quote_list') === undefined) {
+            selectors = (<div key='no-data'>NO DATA</div>);
+        }
 
+        const wrapper = (
+            <div key='qt_s' className='ct-section section5' style={{}} ref={this.ref_top}>
+                <div key='qt_ss' className='section2-box'>
+                    <h3>Select your vehicle:</h3>
+                    {selectors}
+                </div>
+            </div>
+        );
+        return (wrapper);
+    }
     private template_selection_year(): JSX.Element {
         const { SELECTION } = this.state;
         const JSONData: intTreeObj = JSON.parse(
@@ -203,7 +230,7 @@ export default class Quotes extends React.Component<Props, State> {
             <select
                 key='q_year'
                 className='form-selectcar '
-                onChange={(ev: typeDropdown) => {
+                onChange={(ev: DropdownSelect) => {
                     //When changing the SELECT YEAR input
                     let { SELECTION } = this.state;
                     //Do not change value and reset if the value is the same as before
@@ -212,6 +239,7 @@ export default class Quotes extends React.Component<Props, State> {
                         SELECTION.make = 'NO_MAKE_NAME';
                         SELECTION.model = '';
                         SELECTION.id = '____';
+                        if (Cookies.get('current_vehicle')) { Cookies.remove('current_vehicle'); }
                         this.update_makemodel(JSONData);
                         this.setState({ SELECTION, list_model: [] });
                     }
@@ -223,7 +251,6 @@ export default class Quotes extends React.Component<Props, State> {
             </select>
         );
     }
-
     private template_selection_make(): JSX.Element {
         const { list_make, SELECTION } = this.state;
         const JSONData: intTreeObj = JSON.parse(localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`);
@@ -235,7 +262,7 @@ export default class Quotes extends React.Component<Props, State> {
         });
 
         
-        const onChangeEvent = (ev: typeDropdown) => {
+        const onChangeEvent = (ev: DropdownSelect) => {
             //When changing the SELECT MAKE input
             let { SELECTION } = this.state;
             //Do not change value and reset if the value is the same as before
@@ -244,6 +271,7 @@ export default class Quotes extends React.Component<Props, State> {
                 SELECTION.model = '';
                 SELECTION.id = '____';
                 this.setState({ SELECTION, list_model: [] });
+                if (Cookies.get('current_vehicle')) { Cookies.remove('current_vehicle'); }
                 this.update_makemodel(JSONData);
             }
         }
@@ -264,7 +292,6 @@ export default class Quotes extends React.Component<Props, State> {
 
         return (selectWrap);
     }
-
     private template_selection_model(): JSX.Element {
         const { list_model, SELECTION } = this.state;
         const JSONData: intTreeObj = JSON.parse(localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`);
@@ -278,7 +305,7 @@ export default class Quotes extends React.Component<Props, State> {
         });
 
         
-        const onChangeEvent = (ev: typeDropdown) => {
+        const onChangeEvent = (ev: DropdownSelect) => {
             //When changing the SELECT MODEL input
             enum _ { make, id };
             let { SELECTION } = this.state;
@@ -289,6 +316,7 @@ export default class Quotes extends React.Component<Props, State> {
                 SELECTION.model = makeAndID[_.make];
                 SELECTION.id = makeAndID[_.id];
                 this.setState({ SELECTION });
+                if (Cookies.get('current_vehicle')) { Cookies.remove('current_vehicle'); }
                 this.update_makemodel(JSONData);
             }
         }
@@ -314,6 +342,7 @@ export default class Quotes extends React.Component<Props, State> {
         return (selectWrap);
     }
 
+    //MAIN template
     private template_main(): JSX.Element {
         return(<div key='q_wrapper' className='wrapper'>
             {this.template_lander()}
