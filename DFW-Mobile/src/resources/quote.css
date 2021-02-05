@@ -144,10 +144,11 @@ h3 {
     background: #ca4a00;
     color: #FFF;
     display: inline-flex;
-    margin: 32px;
-    width: 20em;
+    margin: 32px 8px;
+    width: 25em;
     flex-direction: column;
     border-radius: 4px;
+    user-select: none; 
 }
 .qlist-cat-title {
     font-size: 1.2em;
@@ -157,3 +158,11 @@ h3 {
     background: rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
+.qlist-itm {
+    padding: 2px 8px;
+}
+.qlist-itm-l, .qlist-itm-r {
+    display: inline;
+}
+.qlist-itm-l { float: left; }
+.qlist-itm-r { float: right; }
