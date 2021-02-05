@@ -1,5 +1,5 @@
 .lander.quote {
-    width: 100vw;
+    width: 100%;
     height: 25vh;
     background: url(/static/media/landing-bg-placeholder1.2f199abc.jpg);
     background-size: cover;
@@ -110,30 +110,31 @@ h3 {
 .section6 {
     padding: 0px;
     overflow: hidden;
-    padding: 32px 0px 8px; /* Placeholder */
+    transition: 200ms linear all;
+    height: 0px;
 }
 .section6.active {
     padding: 32px 0px 8px;
+    height: auto;
 }
 .section3-box {
     width: 80%;
     margin: auto;
     color: #333;
-    height: 80%;
+    height: auto;
     display: block;
 }
 .list-quotes {
-    transition: 200ms linear all;
     text-align: center;
-    height: -webkit-fill-available;
     width: 100%;
     margin: 0px;
+    padding: 24px 0px;
 }
 .list-quotes.none {
-    margin: 24px 0px;
+    margin: 16px 0px;
 }
 .list-quotes.load {
-    margin: 24px 0px;
+    margin: 16px 0px;
 }
 .list-quotes.load .ld { margin: auto; }
 .list-quotes.load .ld, .list-quotes.load img {
@@ -144,25 +145,37 @@ h3 {
     background: #ca4a00;
     color: #FFF;
     display: inline-flex;
-    margin: 32px 8px;
-    width: 25em;
+    margin: 8px;
+    width: 16em;
     flex-direction: column;
     border-radius: 4px;
     user-select: none; 
+    transition: 200ms linear all;
 }
+.qlist-cat:hover { background: #ff5e00; }
 .qlist-cat-title {
     font-size: 1.2em;
     font-weight: 500;
     padding: 4px 8px;
     text-transform: uppercase;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.25);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 .qlist-itm {
     padding: 2px 8px;
 }
+.qlist-itm.alt {
+    background: rgba(255, 255, 255, 0.1);
+}
+.qlist-itm.nan {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+}
 .qlist-itm-l, .qlist-itm-r {
     display: inline;
+    z-index: 1;
 }
-.qlist-itm-l { float: left; }
+.qlist-itm-l {
+    float: left;
+}
 .qlist-itm-r { float: right; }

@@ -7,6 +7,7 @@ import './../resources/loading.min.css';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
+import ReactDOM from 'react-dom';
 
 interface intTreeObj {
     title: string;
@@ -43,6 +44,7 @@ type State = {
 export default class Quotes extends React.Component<Props, State> {
     private _ismounted: boolean = false;
     private ref_top: RefDiv = React.createRef();
+    private ref_quotebox: RefDiv = React.createRef();
 
     constructor(p: Props) {
         super(p);
@@ -172,6 +174,15 @@ export default class Quotes extends React.Component<Props, State> {
         this.setState({ list_make, list_model });
     }
 
+    private get_quotediv_height(): number {
+        const quoteBoxRef = this.ref_quotebox.current;
+        if (quoteBoxRef) {
+            console.log('height: ' + quoteBoxRef.clientHeight);
+            return (quoteBoxRef.clientHeight);
+        }
+        return 0;
+    }
+
     //-------------------------------------------------------------------- TEMPLATE --------------------------------------------------------------------
     //The very top banner
     private template_lander(): JSX.Element {
@@ -210,7 +221,7 @@ export default class Quotes extends React.Component<Props, State> {
         }
 
         const wrapper = (
-            <div key='qt_s' className='ct-section section5' style={{}} ref={this.ref_top}>
+            <div key='qt_s' className='ct-section section5'>
                 <div key='qt_ss' className='section2-box'>
                     <h3>Select your vehicle:</h3>
                     {selectors}
@@ -264,7 +275,7 @@ export default class Quotes extends React.Component<Props, State> {
         let output: JSX.Element[] = [];
 
         //Go over each of the child for make
-        output = list_make.map((makeName: string) => {
+        output = list_make.reverse().map((makeName: string) => {
             return <option key={`qso_mk_${makeName}`} value={makeName}>{makeName}</option>
         });
 
@@ -305,7 +316,7 @@ export default class Quotes extends React.Component<Props, State> {
         let output: JSX.Element[] = [];
 
         //Go over each of the child for model
-        output = list_model.map((modelName: string[]) => {
+        output = list_model.reverse().map((modelName: string[]) => {
             return (
                 <option key={`qso_md_${modelName[1]}`} value={modelName.join('____')}>{modelName[0]}</option>
             );
@@ -359,6 +370,9 @@ export default class Quotes extends React.Component<Props, State> {
             localStorage.getItem('quote_vehicle') || `{ title: 'root', child: '(null)' }`
         );
 
+        //Get height for the section
+        //let styleHeight = (has_car || load_list) ? { height: this.get_quotediv_height() + 160 } : { height: 0 };
+        //console.log({ styleHeight });
         //Default
         let contents = (<div key='qt_qss_wrap' className='list-quotes none'>No Data</div>);
 
@@ -384,8 +398,8 @@ export default class Quotes extends React.Component<Props, State> {
         }
 
         const wrapper = (
-            <div key='qt_qs' className={`ct-section section6 ${wrapperClassName}`} style={{}} ref={this.ref_top}>
-                <div key='qt_qss' className='section3-box'>
+            <div key='qt_qs' className={`ct-section section6 ${wrapperClassName}`} style={{}}> 
+                <div key='qt_qss' className='section3-box' ref={this.ref_quotebox}>
                     <h2>{sectionTitle}</h2>
                     {contents}
                 </div>
@@ -397,10 +411,8 @@ export default class Quotes extends React.Component<Props, State> {
         let output: JSX.Element[] = [];
         //start from the root
         if (data.title === 'root') {
-            console.log('as root');
-            console.log({data});
             //Ensure child data is not a string
-            if (typeof data.child === 'string') { data.child = []; console.log('child is not []'); }
+            if (typeof data.child === 'string') { data.child = []; }
             //for each category
             for (const cat of data.child) {
                 const name = cat.title;
@@ -415,19 +427,32 @@ export default class Quotes extends React.Component<Props, State> {
                     </div>
                 )
             }
+            //If it's blank
+            if (output.length === 0) {
+                output.push(<React.Fragment key='qt_list_cat_NAN'>No Data</React.Fragment>);
+            }
         }
         else {
+            //Use this for putting the 'alt' tag on 'qlist-itm' for a slightly different color for every even numbered entry
+            let altList = false;
             //for each item (subcat)
             for (const item of data.child as intTreeObj[]) {
                 const name = item.title;
-
+                const listAltClass = (altList) ? 'alt' : '';
+                altList = !altList;
                 //Push to the list of items (subcat)
                 output.push(
-                    <div key={`qt_list_${data.title}_itm_${name}`} className='qlist-itm'>
+                    <div key={`qt_list_${data.title}_itm_${name}`} className={`qlist-itm ${listAltClass}`}>
                         <div key={`qt_list_${data.title}_itm_${name}_l`} className='qlist-itm-l'>{item.title}</div>
-                        <div key={`qt_list_${data.title}_itm_${name}_r`} className='qlist-itm-r'>{item.child}</div>
+                        <div key={`qt_list_${data.title}_itm_${name}_r`} className='qlist-itm-r'>${item.child}</div>
                     </div>
                 )
+            }
+            //If it's blank
+            if (output.length === 0) {
+                output.push(
+                    <div key={`qt_list_${data.title}_itm_NA`} className='qlist-itm nan'>- No Data -</div>
+                );
             }
         }
         return output;
