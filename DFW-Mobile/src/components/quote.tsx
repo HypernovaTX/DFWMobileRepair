@@ -2,7 +2,8 @@ import React from 'react';
 import '../resources/quote.css';
 import axios, { AxiosResponse } from 'axios';
 import * as CONFIG from '../config.json';
-import ContactForm from './contact'
+import ContactForm from './contact';
+import './../resources/loading.min.css';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
@@ -55,7 +56,7 @@ export default class Quotes extends React.Component<Props, State> {
 
             load_general: false, 
             load_list: false, 
-            has_car: false,
+            has_car: false, 
         }
     }
     //-------------------------------------------------------------------- COMPONENT --------------------------------------------------------------------
@@ -87,7 +88,9 @@ export default class Quotes extends React.Component<Props, State> {
                 const refinedData = this.obj_sort(this.obj_setTree('root', response.data));
                 localStorage.setItem(`quote_vehicle`, JSON.stringify(refinedData));
             }
-            this.setState({ load_list: false });
+            setTimeout(() => {
+                this.setState({ load_list: false, has_car: true });
+            }, 500);
         });
     }
     //-------------------------------------------------------------------- LOGICS --------------------------------------------------------------------
@@ -129,7 +132,7 @@ export default class Quotes extends React.Component<Props, State> {
     }
 
     //This functions updates the list for make and model, also calls for API request if the selection is complete
-    update_makemodel(input: intTreeObj): void {
+    private update_makemodel(input: intTreeObj): void {
         const { SELECTION } = this.state;
 
         let { list_make, list_model } = this.state;
@@ -352,11 +355,9 @@ export default class Quotes extends React.Component<Props, State> {
         const sectionTitle = `Quotes for ${SELECTION.year} ${SELECTION.make} ${SELECTION.model}`;
 
         //Prepare saved localStorage data 'quote_vehicle' (saved list of quotes for a selected car)
-        let cacheDataString = localStorage.getItem('quote_vehicle');
-        let cacheDataObj: intTreeObj = { title: 'root', child: 'null' };
-        if (cacheDataString === 'string') {
-            cacheDataObj = JSON.parse(cacheDataString);
-        }
+        const cacheData: intTreeObj = JSON.parse(
+            localStorage.getItem('quote_vehicle') || `{ title: 'root', child: '(null)' }`
+        );
 
         //Default
         let contents = (<div key='qt_qss_wrap' className='list-quotes none'>No Data</div>);
@@ -367,17 +368,17 @@ export default class Quotes extends React.Component<Props, State> {
             contents = (
                 <div key='qt_qss_wrap' className='list-quotes load'>
                     <div key='qt_qss_loading_icon' className='ld ld-clock' style={styleSpinner}><img
-                        src={require('./../../resources/images/nut.png')} alt='loading' key='quoteedit_loading_img' 
+                        src={require('./../resources/images/nut.png')} alt='loading' key='quoteedit_loading_img' 
                     ></img></div>
-                    <div key='qt_qss_loading_txt' className='loading-cover-text'>Saving data...</div>
+                    <div key='qt_qss_loading_txt' className='loading-cover-text'>Loading quotes...</div>
                 </div>
             );
         }
         //When the list is done loading and has data
-        else if (has_car && cacheDataString) {
+        else if (has_car && typeof cacheData.child !== 'string') {
             contents = (
                 <div key='qt_qss_wrap' className='list-quotes'>
-                    {this.template_format_quote(cacheDataObj)}
+                    {this.template_format_quote(cacheData)}
                 </div>
             );
         }
@@ -396,8 +397,12 @@ export default class Quotes extends React.Component<Props, State> {
         let output: JSX.Element[] = [];
         //start from the root
         if (data.title === 'root') {
+            console.log('as root');
+            console.log({data});
+            //Ensure child data is not a string
+            if (typeof data.child === 'string') { data.child = []; console.log('child is not []'); }
             //for each category
-            for (const cat of data.child as intTreeObj[]) {
+            for (const cat of data.child) {
                 const name = cat.title;
                 //Populate the items (subcat)
                 const child = this.template_format_quote(cat);
@@ -405,6 +410,7 @@ export default class Quotes extends React.Component<Props, State> {
                 //Push to the list of categories
                 output.push(
                     <div key={`qt_list_cat_${name}`} className='qlist-cat'>
+                        <div key={`qt_list_cat_title_${name}`} className='qlist-cat-title'>{name}</div>
                         {child}
                     </div>
                 )
@@ -418,7 +424,8 @@ export default class Quotes extends React.Component<Props, State> {
                 //Push to the list of items (subcat)
                 output.push(
                     <div key={`qt_list_${data.title}_itm_${name}`} className='qlist-itm'>
-                        {item.title} {item.child}
+                        <div key={`qt_list_${data.title}_itm_${name}_l`} className='qlist-itm-l'>{item.title}</div>
+                        <div key={`qt_list_${data.title}_itm_${name}_r`} className='qlist-itm-r'>{item.child}</div>
                     </div>
                 )
             }

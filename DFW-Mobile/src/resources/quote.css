@@ -135,3 +135,25 @@ h3 {
 .list-quotes.load {
     margin: 24px 0px;
 }
+.list-quotes.load .ld { margin: auto; }
+.list-quotes.load .ld, .list-quotes.load img {
+    width: 2em; height: 2em;
+}
+
+.qlist-cat {
+    background: #ca4a00;
+    color: #FFF;
+    display: inline-flex;
+    margin: 32px;
+    width: 20em;
+    flex-direction: column;
+    border-radius: 4px;
+}
+.qlist-cat-title {
+    font-size: 1.2em;
+    font-weight: 500;
+    padding: 4px 8px;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
