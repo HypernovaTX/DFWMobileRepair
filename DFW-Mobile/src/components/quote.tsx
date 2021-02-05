@@ -264,7 +264,7 @@ export default class Quotes extends React.Component<Props, State> {
         let output: JSX.Element[] = [];
 
         //Go over each of the child for make
-        output = list_make.reverse().map((makeName: string) => {
+        output = list_make.map((makeName: string) => {
             return <option key={`qso_mk_${makeName}`} value={makeName}>{makeName}</option>
         });
 
@@ -305,7 +305,7 @@ export default class Quotes extends React.Component<Props, State> {
         let output: JSX.Element[] = [];
 
         //Go over each of the child for model
-        output = list_model.reverse().map((modelName: string[]) => {
+        output = list_model.map((modelName: string[]) => {
             return (
                 <option key={`qso_md_${modelName[1]}`} value={modelName.join('____')}>{modelName[0]}</option>
             );
