@@ -2,6 +2,7 @@ import React from 'react';
 import '../resources/quote.css';
 import axios, { AxiosResponse } from 'axios';
 import * as CONFIG from '../config.json';
+import ContactForm from './contact'
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
@@ -35,6 +36,7 @@ type State = {
 
     load_general: boolean,
     load_list: boolean, 
+    has_car: boolean,
 };
 
 export default class Quotes extends React.Component<Props, State> {
@@ -52,7 +54,8 @@ export default class Quotes extends React.Component<Props, State> {
             list_model: [],
 
             load_general: false, 
-            load_list: false,
+            load_list: false, 
+            has_car: false,
         }
     }
     //-------------------------------------------------------------------- COMPONENT --------------------------------------------------------------------
@@ -84,6 +87,7 @@ export default class Quotes extends React.Component<Props, State> {
                 const refinedData = this.obj_sort(this.obj_setTree('root', response.data));
                 localStorage.setItem(`quote_vehicle`, JSON.stringify(refinedData));
             }
+            this.setState({ load_list: false });
         });
     }
     //-------------------------------------------------------------------- LOGICS --------------------------------------------------------------------
@@ -159,7 +163,7 @@ export default class Quotes extends React.Component<Props, State> {
         //calls for API request if the selection is complete
         if (SELECTION.model && SELECTION.id !== '____' && !Cookies.get('current_vehicle')) {
             Cookies.set('current_vehicle', SELECTION.id);
-            this.setState({ load_list: true });
+            this.setState({ load_list: true, has_car: true });
             this.getVehicleQuotes();
         }
         this.setState({ list_make, list_model });
@@ -241,7 +245,7 @@ export default class Quotes extends React.Component<Props, State> {
                         SELECTION.id = '____';
                         if (Cookies.get('current_vehicle')) { Cookies.remove('current_vehicle'); }
                         this.update_makemodel(JSONData);
-                        this.setState({ SELECTION, list_model: [] });
+                        this.setState({ SELECTION, list_model: [], has_car: false });
                     }
                     
                 }}
@@ -270,7 +274,7 @@ export default class Quotes extends React.Component<Props, State> {
                 SELECTION.make = ev.target.value;
                 SELECTION.model = '';
                 SELECTION.id = '____';
-                this.setState({ SELECTION, list_model: [] });
+                this.setState({ SELECTION, list_model: [], has_car: false });
                 if (Cookies.get('current_vehicle')) { Cookies.remove('current_vehicle'); }
                 this.update_makemodel(JSONData);
             }
@@ -315,7 +319,7 @@ export default class Quotes extends React.Component<Props, State> {
             if (SELECTION.model !== makeAndID[_.make]) {
                 SELECTION.model = makeAndID[_.make];
                 SELECTION.id = makeAndID[_.id];
-                this.setState({ SELECTION });
+                this.setState({ SELECTION, has_car: false });
                 if (Cookies.get('current_vehicle')) { Cookies.remove('current_vehicle'); }
                 this.update_makemodel(JSONData);
             }
@@ -342,11 +346,56 @@ export default class Quotes extends React.Component<Props, State> {
         return (selectWrap);
     }
 
+    private template_list_quotes(): JSX.Element {
+        const { has_car, load_list, SELECTION } = this.state;
+        const wrapperClassName = (has_car || load_list) ? 'active' : '';
+        const sectionTitle = `Quotes for ${SELECTION.year} ${SELECTION.make} ${SELECTION.model}`
+        let contents = (<div key='qt_qss_wrap' className='list-quotes none'>No Data</div>);
+
+        if (load_list) {
+            contents = (
+                <div key='qt_qss_wrap' className='list-quotes load'>
+                    
+                </div>
+            );
+        }
+
+        else if (has_car) {
+            
+        }
+
+        const wrapper = (
+            <div key='qt_qs' className={`ct-section section6 ${wrapperClassName}`} style={{}} ref={this.ref_top}>
+                <div key='qt_qss' className='section3-box'>
+                    <h2>{sectionTitle}</h2>
+                    {contents}
+                </div>
+            </div>
+        );
+        return (wrapper);
+    }
+    private template_format_quote() {
+
+    }
+
     //MAIN template
     private template_main(): JSX.Element {
         return(<div key='q_wrapper' className='wrapper'>
             {this.template_lander()}
             {this.template_selector()}
+            {this.template_list_quotes()}
+            <div
+                    key='M_section4'
+                    className='ct-section section4'
+                    
+                >
+                    <div key='contact_body' className='section1-box'>
+                        <h2 key='contact_h2'>Contact Form</h2>
+                        <div key='contact_content' className='contact-body'>
+                            <ContactForm />
+                        </div>
+                    </div>
+                </div>
         </div>)
     }
 

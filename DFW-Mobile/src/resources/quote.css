@@ -106,3 +106,27 @@ h3 {
     text-align: center;
     transition: 200ms linear all;
 }
+
+.section6 {
+    padding: 0px;
+    overflow: hidden;
+    padding: 32px 0px 8px; /* Placeholder */
+}
+.section6.active {
+    padding: 32px 0px 8px;
+}
+.section3-box {
+    width: 80%;
+    margin: auto;
+    color: #333;
+    height: 80%;
+    display: block;
+}
+.list-quotes {
+    transition: 200ms linear all;
+}
+.list-quotes.load {
+    width: 100%;
+    height: -webkit-fill-available;
+    text-align: center;
+}
