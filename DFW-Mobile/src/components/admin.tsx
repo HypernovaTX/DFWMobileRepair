@@ -5,8 +5,8 @@ import './../resources/user.css';
 import './../resources/mobileadmin.css';
 import './../resources/loading.min.css';
 import * as CONFIG from '../config.json';
-import ManageQuotes from './admin/managequotes'
-import ManageUsers from './admin/manageusers'
+import ManageQuotes from './admin/managequotes';
+import ManageUsers from './admin/manageusers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';

@@ -349,19 +349,37 @@ export default class Quotes extends React.Component<Props, State> {
     private template_list_quotes(): JSX.Element {
         const { has_car, load_list, SELECTION } = this.state;
         const wrapperClassName = (has_car || load_list) ? 'active' : '';
-        const sectionTitle = `Quotes for ${SELECTION.year} ${SELECTION.make} ${SELECTION.model}`
+        const sectionTitle = `Quotes for ${SELECTION.year} ${SELECTION.make} ${SELECTION.model}`;
+
+        //Prepare saved localStorage data 'quote_vehicle' (saved list of quotes for a selected car)
+        let cacheDataString = localStorage.getItem('quote_vehicle');
+        let cacheDataObj: intTreeObj = { title: 'root', child: 'null' };
+        if (cacheDataString === 'string') {
+            cacheDataObj = JSON.parse(cacheDataString);
+        }
+
+        //Default
         let contents = (<div key='qt_qss_wrap' className='list-quotes none'>No Data</div>);
 
+        //When the list is loading
         if (load_list) {
+            const styleSpinner = { animationDuration: '2s' };
             contents = (
                 <div key='qt_qss_wrap' className='list-quotes load'>
-                    
+                    <div key='qt_qss_loading_icon' className='ld ld-clock' style={styleSpinner}><img
+                        src={require('./../../resources/images/nut.png')} alt='loading' key='quoteedit_loading_img' 
+                    ></img></div>
+                    <div key='qt_qss_loading_txt' className='loading-cover-text'>Saving data...</div>
                 </div>
             );
         }
-
-        else if (has_car) {
-            
+        //When the list is done loading and has data
+        else if (has_car && cacheDataString) {
+            contents = (
+                <div key='qt_qss_wrap' className='list-quotes'>
+                    {this.template_format_quote(cacheDataObj)}
+                </div>
+            );
         }
 
         const wrapper = (
@@ -374,8 +392,38 @@ export default class Quotes extends React.Component<Props, State> {
         );
         return (wrapper);
     }
-    private template_format_quote() {
+    private template_format_quote(data: intTreeObj): JSX.Element[] {
+        let output: JSX.Element[] = [];
+        //start from the root
+        if (data.title === 'root') {
+            //for each category
+            for (const cat of data.child as intTreeObj[]) {
+                const name = cat.title;
+                //Populate the items (subcat)
+                const child = this.template_format_quote(cat);
 
+                //Push to the list of categories
+                output.push(
+                    <div key={`qt_list_cat_${name}`} className='qlist-cat'>
+                        {child}
+                    </div>
+                )
+            }
+        }
+        else {
+            //for each item (subcat)
+            for (const item of data.child as intTreeObj[]) {
+                const name = item.title;
+
+                //Push to the list of items (subcat)
+                output.push(
+                    <div key={`qt_list_${data.title}_itm_${name}`} className='qlist-itm'>
+                        {item.title} {item.child}
+                    </div>
+                )
+            }
+        }
+        return output;
     }
 
     //MAIN template

@@ -124,9 +124,14 @@ h3 {
 }
 .list-quotes {
     transition: 200ms linear all;
+    text-align: center;
+    height: -webkit-fill-available;
+    width: 100%;
+    margin: 0px;
+}
+.list-quotes.none {
+    margin: 24px 0px;
 }
 .list-quotes.load {
-    width: 100%;
-    height: -webkit-fill-available;
-    text-align: center;
+    margin: 24px 0px;
 }
