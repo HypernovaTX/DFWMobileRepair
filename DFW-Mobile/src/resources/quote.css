@@ -68,7 +68,8 @@
 
 
 .section5 {
-    background: rgba(91, 44, 13, 0.1);
+    background: rgba(0, 0, 0, 0.05);
+    color: #FFF; 
     padding: 32px 0px 8px;
 }
 h3 {
@@ -105,6 +106,10 @@ h3 {
     background: #FFF;
     text-align: center;
     transition: 200ms linear all;
+}
+.quote-footnote {
+    user-select: none;
+    margin-bottom: 32px;
 }
 
 .section6 {

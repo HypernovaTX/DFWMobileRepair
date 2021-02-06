@@ -7,7 +7,6 @@ import './../resources/loading.min.css';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { faPlus, faUsers, faTags } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
-import ReactDOM from 'react-dom';
 
 interface intTreeObj {
     title: string;
@@ -65,6 +64,12 @@ export default class Quotes extends React.Component<Props, State> {
     public componentDidMount(): void {
         this.setState({ load_general: true });
         this._ismounted = true;
+        if (localStorage.getItem('my_vehicle')) {
+            const SELECTION = JSON.parse(
+                localStorage.getItem('my_vehicle') || JSON.stringify(this.state.SELECTION)
+            );
+            this.setState({ SELECTION });
+        }
         this.getFullVehicleList();
     }
 
@@ -168,6 +173,7 @@ export default class Quotes extends React.Component<Props, State> {
         //calls for API request if the selection is complete
         if (SELECTION.model && SELECTION.id !== '____' && !Cookies.get('current_vehicle')) {
             Cookies.set('current_vehicle', SELECTION.id);
+            localStorage.setItem('my_vehicle', JSON.stringify(SELECTION));
             this.setState({ load_list: true, has_car: true });
             this.getVehicleQuotes();
         }
@@ -207,6 +213,11 @@ export default class Quotes extends React.Component<Props, State> {
 
     //The section for the vehicle selectors
     private template_selector(): JSX.Element {
+        const footnote = `
+            If your vehicle and/or service is not on the list. 
+            Please give us a call at (972) 968-9688 or leave us a message using the contact form below. 
+            We will get back to you as soon as possible! 
+        `;
         let selectors = (
             <div key='selectionArea' className='selection-area'>
                 {this.template_selection_year()}
@@ -225,6 +236,8 @@ export default class Quotes extends React.Component<Props, State> {
                 <div key='qt_ss' className='section2-box'>
                     <h3>Select your vehicle:</h3>
                     {selectors}
+
+                    <div key='qt_s_note' className='quote-footnote'>{footnote}</div>
                 </div>
             </div>
         );
@@ -458,25 +471,33 @@ export default class Quotes extends React.Component<Props, State> {
         return output;
     }
 
+    private template_footer(): JSX.Element {
+        return (
+            <div key='M_footer' className='footer'>
+                <div key='f_container' className='footer-contain'>
+                    <span key='f_text1' className='footer-text'>Copyright &#169; 2014 - 2020, DFW Mobile Repair</span>
+                    <span key='f_text2' className='footer-text'>Website designed and programmed by Arthur (Hypernova) Guo</span>
+                </div>
+            </div>
+        );
+    }
+
     //MAIN template
     private template_main(): JSX.Element {
-        return(<div key='q_wrapper' className='wrapper'>
-            {this.template_lander()}
-            {this.template_selector()}
-            {this.template_list_quotes()}
-            <div
-                    key='M_section4'
-                    className='ct-section section4'
-                    
-                >
+        return(
+            <div key='q_wrapper' className='wrapper'>
+                {this.template_lander()}
+                {this.template_selector()}
+                {this.template_list_quotes()}
+                <div key='M_section4' className='ct-section section4'>
                     <div key='contact_body' className='section1-box'>
                         <h2 key='contact_h2'>Contact Form</h2>
-                        <div key='contact_content' className='contact-body'>
-                            <ContactForm />
-                        </div>
+                        <div key='contact_content' className='contact-body'><ContactForm /></div>
                     </div>
                 </div>
-        </div>)
+                {this.template_footer()}
+            </div>
+        );
     }
 
     public render() {
