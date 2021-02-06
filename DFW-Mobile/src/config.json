@@ -1,5 +1,6 @@
 {
     "backendhost": "http://localhost:8080",
     "backendindex": "DFWM/manager.php",
-    "root": "http://localhost:3000"
+    "root": "http://localhost:3000",
+    "template": {}
 }

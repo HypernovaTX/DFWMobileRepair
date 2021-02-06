@@ -764,8 +764,8 @@ export default class QuoteEdit extends React.Component<Props, State> {
             if (editing.price === price) {
                 itemValue = 
                     <span key={`qeit_p_${forKey}`} className='qe-bar-text'>
-                        $<input key={`qei_p_i_${forKey}`} className='edit-item-txt short' value={editing.value} type='number' min='0.00'
-                            onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }}
+                        $<input key={`qei_p_i_${forKey}`} className='edit-item-txt short' value={editing.value} 
+                            onChange={(change: typeInputChange) => { editing.value = change.target.value; this.setState({ editing }); }} 
                         ></input>
                         <span key={`qei_p_sv_${forKey}`} className='qe-bar-button ok' onClick={() => { this.edit_update('save') }}>
                             <FontAwesomeIcon icon={faCheck}/>
