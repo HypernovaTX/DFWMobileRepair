@@ -7,20 +7,39 @@ import MainPage from './components/mainpage';
 import Quote from './components/quote';
 import Admin from './components/admin';
 import E404 from './components/404';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-} from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Helmet from 'react-helmet';
 
+function helmet(title: string, urltext: string, info: string) {
+  return (
+    <Helmet>
+      <meta charSet="utf-8" />
+      <title>{title}</title>
+      <meta name="description" content={info} />
+      <link rel="canonical" href={`https://dfwmobilerepair.com/${urltext}`} />
+    </Helmet>
+  );
+}
 
 const ALL = (
   <Router>
     <Switch>
-      <Route exact path="/"><MainPage/></Route>
-      <Route exact path="/admin"><Admin/></Route>
-      <Route exact path="/quote"><Quote/></Route>
-      <Route><E404/></Route>
+      <Route exact path="/">
+        {helmet('DFW Mobile Repair - Home', '', 'Dallas Fort Worth Mobile Mechanic - We come to you!')}
+        <MainPage/>
+      </Route>
+      <Route exact path="/quote">
+        {helmet('DFW Mobile Repair - Quotes', '', 'Get an estimated quote for the service needed for your car!')}
+        <Quote/>
+      </Route>
+      <Route exact path="/admin">
+        {helmet('DFW Mobile Repair - Admin CP', '', 'Admin Control Panel - Manages users and quotes.')}
+        <Admin/>
+      </Route>
+      <Route>
+      {helmet('DFW Mobile Repair - NOT FOUND', '', '404 - Page not found!')}
+        <E404/>
+      </Route>
     </Switch>
   </Router>
 );
