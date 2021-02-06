@@ -189,15 +189,33 @@ export default class Quotes extends React.Component<Props, State> {
         return 0;
     }
 
+    private scrollTo(ref: React.RefObject<any>): () => void {
+        const scroll_behavior = { behavior: 'smooth', block: 'start' };
+        const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+
+        const up = window.pageYOffset;
+        console.log({ up });
+
+        //iOS Safari scrolling bug fix
+        if (iosPlatforms.indexOf(window.navigator.platform) !== -1) {
+            return () => { ref.current.scrollIntoViewIfNeeded(scroll_behavior); };
+        }
+        //Applies to any system 
+        else {
+            return () => { ref.current.scrollIntoView(scroll_behavior); };
+        }
+    }
+
     //-------------------------------------------------------------------- TEMPLATE --------------------------------------------------------------------
     //The very top banner
     private template_lander(): JSX.Element {
         const LOGO_IMG = require('./../resources/images/logo-current.png');
         const style = { backgroundPositionY: `calc(${(window.pageYOffset / 2 )} - 50vh)` };
         const preventDrag = (e: DragEv) => { e.preventDefault(); };
+        const goHome = () => { window.location.href = CONFIG.root; }
 
         return (
-            <div key='qt_l' className='lander quote' style={style} ref={this.ref_top}>
+            <div key='qt_l' className='lander quote' style={style} ref={this.ref_top} onClick={goHome}>
                 <div key='qt_lc' className='lander-contain quote' draggable='false' onDragStart={preventDrag}>
                     <div key='qt_lcl' className='logo'>
                         <img key={`qt_lcl_im`} src={LOGO_IMG} alt='DFW Mobile Repair Logo' draggable="false" onDragStart={preventDrag}></img>
@@ -481,11 +499,20 @@ export default class Quotes extends React.Component<Props, State> {
             </div>
         );
     }
+    private template_gotop(): JSX.Element {
+        let goTop = { opacity: 0, right: -80 };
+        if (window.pageYOffset === window.innerHeight * 0.1) {
+            goTop = { opacity: 1, right: 0 };
+        }
+        return <div key='q_go_up' className='go-top' style={goTop} onClick={this.scrollTo(this.ref_top)}
+                >&#8679;</div>
+    }
 
     //MAIN template
     private template_main(): JSX.Element {
         return(
             <div key='q_wrapper' className='wrapper'>
+                {this.template_gotop()}
                 {this.template_lander()}
                 {this.template_selector()}
                 {this.template_list_quotes()}
@@ -501,6 +528,11 @@ export default class Quotes extends React.Component<Props, State> {
     }
 
     public render() {
-        return(this.template_main());
+        return(
+            <React.Fragment key='classWrapper'>
+                
+                {this.template_main()}
+            </React.Fragment>
+        );
     }
 }

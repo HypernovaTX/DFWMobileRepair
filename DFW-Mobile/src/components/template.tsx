@@ -2,6 +2,7 @@ import React from 'react';
 import * as ServiceList from "./services.json"; 
 import ContactForm from './contact'
 //import User from './user'
+import * as CONFIG from '../config.json';
 import '.././resources/services.css';
 
 type Props = {
@@ -71,7 +72,7 @@ export default class Template extends React.Component<Props, State> {
         const LOGO_IMG = require('./../resources/images/logo-current.png');
         const style = { backgroundPositionY: head_bgy + head_bgo };
         const preventDrag = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); };
-
+        const goQuote = () => { window.location.href = `${CONFIG.root}/quote`; }
         
         return (
             <div key='M_header'className='lander' style={style} ref={this.ref_top}>
@@ -96,10 +97,15 @@ export default class Template extends React.Component<Props, State> {
                                 onClick={this.scrollTo(this.ref_s2)}
                             >SERVICES</span>
                             <span
+                                key='hl_btn_4'
+                                className='land-item'
+                                onClick={goQuote}
+                            >GET A QUOTE</span>
+                            <span
                                 key='hl_btn_1'
                                 className='land-btn'
                                 onClick={this.scrollTo(this.ref_s4)}
-                            >GET A QUOTE</span>
+                            >CONTACT US</span>
                             <a
                                 key='phone_num'
                                 className='phone-btn'
