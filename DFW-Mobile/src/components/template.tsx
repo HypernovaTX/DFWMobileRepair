@@ -26,6 +26,7 @@ export default class Template extends React.Component<Props, State> {
     ref_s5: React.RefObject<HTMLDivElement>;
     ref_top: React.RefObject<HTMLDivElement>;
     scroll_behavior: { behavior: string; block: string; };
+    private goQuote = () => { window.location.href = `${CONFIG.root}/quote`; }
 
     constructor(p: Props) {
         super(p);
@@ -72,7 +73,6 @@ export default class Template extends React.Component<Props, State> {
         const LOGO_IMG = require('./../resources/images/logo-current.png');
         const style = { backgroundPositionY: head_bgy + head_bgo };
         const preventDrag = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); };
-        const goQuote = () => { window.location.href = `${CONFIG.root}/quote`; }
         
         return (
             <div key='M_header'className='lander' style={style} ref={this.ref_top}>
@@ -99,7 +99,7 @@ export default class Template extends React.Component<Props, State> {
                             <span
                                 key='hl_btn_4'
                                 className='land-item'
-                                onClick={goQuote}
+                                onClick={this.goQuote}
                             >GET A QUOTE</span>
                             <span
                                 key='hl_btn_1'
@@ -322,6 +322,9 @@ export default class Template extends React.Component<Props, State> {
                     <p>
                         Not all of the listed services can be applied to all vehicle make and models. If your expected service is not on the list, we may or may not able to service it. Please leave us your contact information and we’ll get back to you as soon as possible!
                     </p>
+                    <div key='quote_shortcut' className='phone-btn' onClick={this.goQuote}>
+                        Click here to get a detailed quote
+                    </div>
                 </div>
             </>
         );

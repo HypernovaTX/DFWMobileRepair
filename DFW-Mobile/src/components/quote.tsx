@@ -193,8 +193,8 @@ export default class Quotes extends React.Component<Props, State> {
         const scroll_behavior = { behavior: 'smooth', block: 'start' };
         const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
 
-        const up = window.pageYOffset;
-        console.log({ up });
+        //const up = window.pageYOffset;
+        //console.log({ up });
 
         //iOS Safari scrolling bug fix
         if (iosPlatforms.indexOf(window.navigator.platform) !== -1) {
