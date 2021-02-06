@@ -64,12 +64,12 @@ export default class Quotes extends React.Component<Props, State> {
     public componentDidMount(): void {
         this.setState({ load_general: true });
         this._ismounted = true;
-        if (localStorage.getItem('my_vehicle')) {
+        /*if (localStorage.getItem('my_vehicle')) {
             const SELECTION = JSON.parse(
                 localStorage.getItem('my_vehicle') || JSON.stringify(this.state.SELECTION)
             );
             this.setState({ SELECTION });
-        }
+        }*/
         this.getFullVehicleList();
     }
 
@@ -501,7 +501,7 @@ export default class Quotes extends React.Component<Props, State> {
     }
     private template_gotop(): JSX.Element {
         let goTop = { opacity: 0, right: -80 };
-        if (window.pageYOffset === window.innerHeight * 0.1) {
+        if (window.pageYOffset > window.innerHeight * 0.1) {
             goTop = { opacity: 1, right: 0 };
         }
         return <div key='q_go_up' className='go-top' style={goTop} onClick={this.scrollTo(this.ref_top)}
@@ -512,7 +512,6 @@ export default class Quotes extends React.Component<Props, State> {
     private template_main(): JSX.Element {
         return(
             <div key='q_wrapper' className='wrapper'>
-                {this.template_gotop()}
                 {this.template_lander()}
                 {this.template_selector()}
                 {this.template_list_quotes()}
