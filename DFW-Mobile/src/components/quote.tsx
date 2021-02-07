@@ -1,7 +1,7 @@
 import React from 'react';
-import '../resources/quote.css';
+import './../resources/quote.css';
 import axios, { AxiosResponse } from 'axios';
-import * as CONFIG from '../config.json';
+import * as CONFIG from './../config.json';
 import ContactForm from './contact';
 import './../resources/loading.min.css';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -263,9 +263,12 @@ export default class Quotes extends React.Component<Props, State> {
     }
     private template_selection_year(): JSX.Element {
         const { SELECTION } = this.state;
-        const JSONData: intTreeObj = JSON.parse(
-            localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`
-        );
+        let JSONData: intTreeObj = { title: 'root', child: '(null)' };
+        if (localStorage.getItem('quote_list') !== null) {
+            JSONData = JSON.parse(
+                localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`
+            );
+        }
         let output: JSX.Element[] = [<React.Fragment key='q_year'></React.Fragment>];
         //Go over each of the child for year
         if (typeof JSONData.child !== 'string') {
@@ -302,8 +305,15 @@ export default class Quotes extends React.Component<Props, State> {
     }
     private template_selection_make(): JSX.Element {
         const { list_make, SELECTION } = this.state;
-        const JSONData: intTreeObj = JSON.parse(localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`);
+        let JSONData: intTreeObj = { title: 'root', child: '(null)' };
         let output: JSX.Element[] = [];
+
+
+        if (localStorage.getItem('quote_list') !== null) {
+            JSONData = JSON.parse(
+                localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`
+            );
+        }
 
         //Go over each of the child for make
         output = list_make.reverse().map((makeName: string) => {
@@ -343,8 +353,14 @@ export default class Quotes extends React.Component<Props, State> {
     }
     private template_selection_model(): JSX.Element {
         const { list_model, SELECTION } = this.state;
-        const JSONData: intTreeObj = JSON.parse(localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`);
+        let JSONData: intTreeObj = { title: 'root', child: '(null)' };
         let output: JSX.Element[] = [];
+
+        if (localStorage.getItem('quote_list') !== null) {
+            JSONData = JSON.parse(
+                localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`
+            );
+        }
 
         //Go over each of the child for model
         output = list_model.reverse().map((modelName: string[]) => {
@@ -395,11 +411,14 @@ export default class Quotes extends React.Component<Props, State> {
         const { has_car, load_list, SELECTION } = this.state;
         const wrapperClassName = (has_car || load_list) ? 'active' : '';
         const sectionTitle = `Quotes for ${SELECTION.year} ${SELECTION.make} ${SELECTION.model}`;
+        let cacheData: intTreeObj = { title: 'root', child: '(null)' };
 
         //Prepare saved localStorage data 'quote_vehicle' (saved list of quotes for a selected car)
-        const cacheData: intTreeObj = JSON.parse(
-            localStorage.getItem('quote_vehicle') || `{ title: 'root', child: '(null)' }`
-        );
+        if (localStorage.getItem('quote_vehicle') !== null) {
+            cacheData = JSON.parse(
+                localStorage.getItem('quote_vehicle') || `{ title: 'root', child: '(null)' }`
+            );
+        }
 
         //Get height for the section
         //let styleHeight = (has_car || load_list) ? { height: this.get_quotediv_height() + 160 } : { height: 0 };
