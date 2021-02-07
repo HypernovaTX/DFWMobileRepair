@@ -889,10 +889,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
             <div key={`quoteedit_load_spinner`} className='ld ld-spin' style={styleSpinner}>
                 <img src={require('./../../resources/images/nut.png')} alt='loading' key={`quoteedit_load_img`}></img></div></div>);
     }
-    
-    //Main template
-    private template(): JSX.Element {
-        const { propsM, YEAR, MAKE, MODEL, wait } = this.state;
+
+    private template_buttons(): JSX.Element {
+        const { wait } = this.state;
         const { newQuote } = this.props;
         let reset = <React.Fragment key='admin_qe_reset_empty'></React.Fragment>;
         let saveButtonName = 'Create';
@@ -910,6 +909,30 @@ export default class QuoteEdit extends React.Component<Props, State> {
             >Reset</button>;
             saveButtonName = 'Update';
         }
+
+        return (
+            <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
+                <button
+                    key='admin_qe_confirm'
+                    onClick={() => { this.saveData(); }}
+                    disabled={wait}
+                    className='admin-qe-btn main'
+                >{saveButtonName}</button>
+                <button
+                    key='admin_qe_cancel'
+                    onClick={() => { this.close(); }}
+                    disabled={wait}
+                    className='admin-qe-btn'
+                >Cancel</button>
+                {reset}
+            </div>
+        );
+    }
+    
+    //Main template
+    private template(): JSX.Element {
+        const { propsM, YEAR, MAKE, MODEL, wait } = this.state;
+        
         return(<div key='admin_qe_dbox' className='admin-qe-box' style={propsM}>
             <div key='admin_qe_vehicle_info' className='admin-qe-block'>
                 <div key='admin_qe_title_sub' className='admin-qe-ttext'>Vehicle Make/Model:</div>
@@ -950,21 +973,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 <div key='admin_qe_content' className='admin-qe-content'>
                     {this.handle_dataToList(this.state._DATA, false)}
                 </div>
-                <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
-                    <button
-                        key='admin_qe_confirm'
-                        onClick={() => { this.saveData(); }}
-                        disabled={wait}
-                        className='admin-qe-btn main'
-                    >{saveButtonName}</button>
-                    <button
-                        key='admin_qe_cancel'
-                        onClick={() => { this.close(); }}
-                        disabled={wait}
-                        className='admin-qe-btn'
-                    >Cancel</button>
-                    {reset}
-                </div>
+                {this.template_buttons()}
             </div>
         </div>
         );
