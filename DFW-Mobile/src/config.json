@@ -2,5 +2,61 @@
     "backendhost": "http://localhost:8080",
     "backendindex": "DFWM/manager.php",
     "root": "http://localhost:3000",
-    "template": {}
+    "template": {
+        "Brakes": {
+            "Brake Pads Replacement": "0.00",
+            "Brake Rotors": "0.00",
+            "Brake Fluid Exchange": "0.00",
+            "Brake Drums/Shoes": "0.00",
+            "Misc Brake System Repair": "0.00"
+        },
+        "Cooling System": {
+            "Radiators": "0.00",
+            "Thermostat": "0.00",
+            "Hoses": "0.00",
+            "Water Pumps": "0.00",
+            "Fans": "0.00",
+            "Leak Repair": "0.00"
+        },
+        "Diagnostics": {
+            "General": "0.00",
+            "Electrical": "0.00"
+        },
+        "Electrical Repair": {
+            "No Crank Conditions": "0.00",
+            "No Start Conditions": "0.00",
+            "Loss of Power": "0.00",
+            "Misc Electrical Repair": "0.00"
+        },
+        "Engine Repair": {
+            "Starters": "0.00", 
+            "Alternators": "0.00",
+            "Oil Leak": "0.00",
+            "Tune-ups": "0.00",
+            "Belts": "0.00",
+            "Misc Engine Repair": "0.00"
+        },
+        "Fuel System": {
+            "Fuel Pump": "0.00", 
+            "Fuel Filter": "0.00", 
+            "Induction Service": "0.00", 
+            "Injectors": "0.00", 
+            "Misc Fuel System Repair": "0.00"
+        },
+        "Others": {
+            "Roadside Assistant": "0.00",
+            "Battery Services": "0.00",
+            "Pre-purchase Inspections": "0.00"
+        },
+        "Steering & Suspension": {
+            "Suspension Overhaul": "0.00",
+            "Inner/Outer Tie Rods": "0.00",
+            "Shocks": "0.00",
+            "Control Arms": "0.00",
+            "Ball Joints": "0.00",
+            "Power Steering Pump": "0.00",
+            "Steering Rack": "0.00",
+            "Wheel Hub Bearings": "0.00"
+        }
+    }
 }
