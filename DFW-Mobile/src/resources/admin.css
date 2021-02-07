@@ -357,7 +357,7 @@
 .admin-qe-buttonbox {
     width: 100%;
     margin: auto;
-    padding: 8px;
+    padding: 8px 0px;
     text-align: center;
     white-space: nowrap;
 }
@@ -367,7 +367,7 @@
     color: #FFF;
     max-width: 50%;
     width: 25%;
-    margin: 8px 16px;
+    margin: 8px;
     height: 1.5em;
     text-align: center;
     line-height: 1.5em;
@@ -385,6 +385,9 @@
     background: #888;
     color: #444;
     cursor: default;
+}
+.admin-qe-btn.small {
+    width: 2em;
 }
 .admin-qe-title {
     display: flex;

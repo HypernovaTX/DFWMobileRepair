@@ -2,7 +2,7 @@ import React from 'react';
 import axios, { AxiosResponse } from 'axios';
 import * as CONFIG from '../../config.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faTimes, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faTimes, faPen, faTrash, faClone } from '@fortawesome/free-solid-svg-icons';
 
 interface intTreeObj { title: string; child: intTreeObj[] | string; };
 interface intTreeObjAlt { t: string; c: intTreeObjAlt | string; };
@@ -600,7 +600,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             localStorage.setItem(`temp_edit_`, JSON.stringify(refinedData));
             this.setState({ _DATA: refinedData,  });
         }
-        this.props.promptOpen("Are you sure you want to apply the template and overwrite all of the exiting data?", loadTemplate, ()=>{}, true);
+        this.props.promptOpen("Are you sure you want to apply the template and overwrite all of the exiting data?", loadTemplate, ()=>{}, false);
         
     }
 
@@ -896,35 +896,33 @@ export default class QuoteEdit extends React.Component<Props, State> {
         let reset = <React.Fragment key='admin_qe_reset_empty'></React.Fragment>;
         let saveButtonName = 'Create';
         if (newQuote === false) {
-            reset = <button key='admin_qe_reset'
-                onClick={() => {
-                    this.props.promptOpen('Are you sure you want to reset all of the data to how it is?', 
-                        () => { this.reset(); this.setState({ inBackground: false }); }, 
-                        () => { this.setState({ inBackground: false }); }, 
-                        false);
-                    this.setState({ inBackground: true });
-                }}
-                disabled={wait}
-                className='admin-qe-btn'
-            >Reset</button>;
+            reset = (
+                <button
+                    key='admin_qe_reset' disabled={wait} className='admin-qe-btn'
+                    onClick={() => {
+                        this.props.promptOpen('Are you sure you want to reset all of the data to how it is?', 
+                            () => { this.reset(); this.setState({ inBackground: false }); }, 
+                            () => { this.setState({ inBackground: false }); }, 
+                            false);
+                        this.setState({ inBackground: true });
+                    }}
+                >Reset</button>
+            );
             saveButtonName = 'Update';
         }
 
         return (
             <div key='admin_qe_bc'  className='admin-qe-buttonbox'>
                 <button
-                    key='admin_qe_confirm'
-                    onClick={() => { this.saveData(); }}
-                    disabled={wait}
-                    className='admin-qe-btn main'
+                    key='admin_qe_confirm' onClick={() => { this.saveData(); }} disabled={wait} className='admin-qe-btn main'
                 >{saveButtonName}</button>
                 <button
-                    key='admin_qe_cancel'
-                    onClick={() => { this.close(); }}
-                    disabled={wait}
-                    className='admin-qe-btn'
+                    key='admin_qe_cancel' onClick={() => { this.close(); }} disabled={wait} className='admin-qe-btn'
                 >Cancel</button>
                 {reset}
+                <button
+                    key='admin_qe_template' onClick={() => { this.applyTemplate(); }} disabled={wait} className='admin-qe-btn small'
+                ><FontAwesomeIcon icon={faClone}/></button>
             </div>
         );
     }
@@ -933,49 +931,29 @@ export default class QuoteEdit extends React.Component<Props, State> {
     private template(): JSX.Element {
         const { propsM, YEAR, MAKE, MODEL, wait } = this.state;
         
-        return(<div key='admin_qe_dbox' className='admin-qe-box' style={propsM}>
-            <div key='admin_qe_vehicle_info' className='admin-qe-block'>
-                <div key='admin_qe_title_sub' className='admin-qe-ttext'>Vehicle Make/Model:</div>
-                <div key='admin_qe_title' className='admin-qe-title'>
-                    <input
-                        key={`admin_qe_year`}
-                        className='admin-qe-title-txt'
-                        value={YEAR}
-                        type='number'
-                        placeholder='year'
-                        size={1}
-                        disabled={wait}
-                        onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                            this.setState({ YEAR: e.currentTarget.value.replace(/\D/, '') });
-                        }}></input>
-                    <input
-                        key={`admin_qe_make`}
-                        className='admin-qe-title-txt'
-                        value={MAKE}
-                        placeholder='make'
-                        size={10}
-                        disabled={wait}
-                        onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                            this.setState({ MAKE: e.currentTarget.value });
-                        }}></input>
-                    <input
-                        key={`admin_qe_model`}
-                        className='admin-qe-title-txt'
-                        value={MODEL}
-                        placeholder='model'
-                        size={20}
-                        disabled={wait}
-                        onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                            this.setState({ MODEL: e.currentTarget.value });
-                        }}></input>
+        return(
+            <div key='admin_qe_dbox' className='admin-qe-box' style={propsM}>
+                <div key='admin_qe_vehicle_info' className='admin-qe-block'>
+                    <div key='admin_qe_title_sub' className='admin-qe-ttext'>Vehicle Make/Model:</div>
+                    <div key='admin_qe_title' className='admin-qe-title'>
+                        <input
+                            key={`admin_qe_year`} className='admin-qe-title-txt' value={YEAR} type='number' placeholder='year' size={1} disabled={wait}
+                            onChange={(e: typeInputChange) => { this.setState({ YEAR: e.currentTarget.value.replace(/\D/, '') }); }}
+                        ></input>
+                        <input
+                            key={`admin_qe_make`} className='admin-qe-title-txt' value={MAKE} placeholder='make' size={10} disabled={wait}
+                            onChange={(e: typeInputChange) => { this.setState({ MAKE: e.currentTarget.value }); }}
+                        ></input>
+                        <input
+                            key={`admin_qe_model`} className='admin-qe-title-txt' value={MODEL} placeholder='model' size={20} disabled={wait}
+                            onChange={(e: typeInputChange) => { this.setState({ MODEL: e.currentTarget.value }); }}
+                        ></input>
+                    </div>
+                    <div key='admin_qe_content_sub' className='admin-qe-ttext'>List of quotes:</div>
+                    <div key='admin_qe_content' className='admin-qe-content'>{this.handle_dataToList(this.state._DATA, false)}</div>
+                    {this.template_buttons()}
                 </div>
-                <div key='admin_qe_content_sub' className='admin-qe-ttext'>List of quotes:</div>
-                <div key='admin_qe_content' className='admin-qe-content'>
-                    {this.handle_dataToList(this.state._DATA, false)}
-                </div>
-                {this.template_buttons()}
             </div>
-        </div>
         );
     }
 

@@ -46,7 +46,7 @@
     input.edit-item-txt { margin: 0px; width: 5.1rem; height: 1.1em; }
     .qe-item input.edit-item-txt { margin: 2px 0px; width: 6.3rem; }
     .admin-qe-buttonbox { width: auto; white-space: normal; }
-    .admin-qe-btn { border-radius: 8px; font-size: 1em; height: 2em; margin: 2px 4px; width: 30%; }
+    .admin-qe-btn { border-radius: 8px; font-size: 1em; height: 2em; margin: 2px 4px; }
     .qe-bar-delete-txt { display: inline; font-size: 0.7em; color: rgb(184, 64, 64); text-transform: uppercase; }
 
     /* user list */
