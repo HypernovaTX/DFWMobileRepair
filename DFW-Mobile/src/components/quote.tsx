@@ -87,6 +87,7 @@ export default class Quotes extends React.Component<Props, State> {
             if (this._ismounted && typeof response.data !== 'string') {
                 const refinedData = this.obj_sort(this.obj_setTree('root', response.data));
                 localStorage.setItem(`quote_list`, JSON.stringify(refinedData));
+                //setTimeout(() => { this.setState({ load_general: false }); }, 1000);
             }
         });
     }
@@ -238,6 +239,9 @@ export default class Quotes extends React.Component<Props, State> {
 
     //The section for the vehicle selectors
     private template_selector(): JSX.Element {
+        const { load_general } = this.state;
+        const styleSpinner = { animationDuration: '2s' };
+        const preventDrag = (e: DragEv) => { e.preventDefault(); };
         const footnote = `
             If your vehicle and/or service is not on the list. 
             Please give us a call at (972) 968-9688 or leave us a message using the contact form below. 
@@ -254,6 +258,16 @@ export default class Quotes extends React.Component<Props, State> {
         //If there's no data to pull
         if (localStorage.getItem('quote_list') === undefined) {
             selectors = (<div key='no-data'>NO DATA</div>);
+        }
+        if (load_general) {
+            selectors = (
+                <div key='loading_all_cars' className='list-quotes load'>
+                    <div key='qt_qss_loading_icon' className='ld ld-clock' style={styleSpinner} onDragStart={preventDrag}><img
+                        src={require('./../resources/images/nut.png')} alt='loading' key='quoteedit_loading_img' onDragStart={preventDrag}
+                    ></img></div>
+                    <div key='qt_qss_loading_txt' className='loading-cover-text'>Loading vehicle list...</div>
+                </div>
+            );
         }
 
         const wrapper = (

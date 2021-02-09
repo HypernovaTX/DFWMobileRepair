@@ -183,3 +183,7 @@ h3 {
     float: left;
 }
 .qlist-itm-r { float: right; }
+
+.loading-cover-text {
+    user-select: none;
+}
