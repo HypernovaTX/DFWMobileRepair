@@ -38,12 +38,14 @@ type State = {
     load_general: boolean,
     load_list: boolean, 
     has_car: boolean,
+    empty_quote: boolean,
 };
 
 export default class Quotes extends React.Component<Props, State> {
     private _ismounted: boolean = false;
     private ref_top: RefDiv = React.createRef();
     private ref_quotebox: RefDiv = React.createRef();
+    private waitForData: NodeJS.Timeout = setTimeout(() => {}, 0);
 
     constructor(p: Props) {
         super(p);
@@ -58,6 +60,7 @@ export default class Quotes extends React.Component<Props, State> {
             load_general: false, 
             load_list: false, 
             has_car: false, 
+            empty_quote: true, 
         }
     }
     //-------------------------------------------------------------------- COMPONENT --------------------------------------------------------------------
@@ -71,6 +74,10 @@ export default class Quotes extends React.Component<Props, State> {
             this.setState({ SELECTION });
         }*/
         this.getFullVehicleList();
+
+        this.waitForData = setInterval(() => {
+            if (this.state.empty_quote) { this.forceUpdate(); }
+        }, 500);
     }
 
     //-------------------------------------------------------------------- API --------------------------------------------------------------------
@@ -262,12 +269,17 @@ export default class Quotes extends React.Component<Props, State> {
         return (wrapper);
     }
     private template_selection_year(): JSX.Element {
-        const { SELECTION } = this.state;
+        const { SELECTION, empty_quote } = this.state;
         let JSONData: intTreeObj = { title: 'root', child: '(null)' };
         if (localStorage.getItem('quote_list') !== null) {
+            if (empty_quote) { this.setState({ empty_quote: false }); }
+            if (this.waitForData) { clearTimeout(this.waitForData); }
             JSONData = JSON.parse(
                 localStorage.getItem('quote_list') || `{ title: 'root', child: '(null)' }`
             );
+        } else if (!empty_quote) {
+            this.setState({ empty_quote: true, load_general: true });
+            this.getFullVehicleList();
         }
         let output: JSX.Element[] = [<React.Fragment key='q_year'></React.Fragment>];
         //Go over each of the child for year
