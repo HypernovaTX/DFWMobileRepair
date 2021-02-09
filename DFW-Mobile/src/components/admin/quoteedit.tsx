@@ -613,6 +613,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
             return;
         } else {
             const oldData = localStorage.getItem('temp_edit_') as string;
+            console.log({ oldData });
             this.setState({
                 _DATA: JSON.parse(oldData),
                 YEAR: this.props.vehicleYear,
@@ -625,7 +626,7 @@ export default class QuoteEdit extends React.Component<Props, State> {
     private applyTemplate(): void {
         const loadTemplate = () => {
             const refinedData = this.obj_setTree('root', CONFIG.template);
-            localStorage.setItem(`temp_edit_`, JSON.stringify(refinedData));
+            //localStorage.setItem(`temp_edit_`, JSON.stringify(refinedData));
             this.setState({ _DATA: refinedData,  });
         }
         this.props.promptOpen("Are you sure you want to apply the template and overwrite all of the exiting data?", loadTemplate, ()=>{}, false);
