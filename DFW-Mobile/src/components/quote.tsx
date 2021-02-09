@@ -87,7 +87,7 @@ export default class Quotes extends React.Component<Props, State> {
             if (this._ismounted && typeof response.data !== 'string') {
                 const refinedData = this.obj_sort(this.obj_setTree('root', response.data));
                 localStorage.setItem(`quote_list`, JSON.stringify(refinedData));
-                //setTimeout(() => { this.setState({ load_general: false }); }, 1000);
+                setTimeout(() => { this.setState({ load_general: false }); }, 1000);
             }
         });
     }
