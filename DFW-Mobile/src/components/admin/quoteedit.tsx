@@ -90,12 +90,38 @@ export default class QuoteEdit extends React.Component<Props, State> {
 
     //Keyboard stuffs
     public handleKeypress = (ev: KeyboardEvent) => {
+        const { inBackground, editing } = this.state;
         //Esc to close the editing window
-        if (ev.key === 'Escape' && this.state.inBackground === false) {
-            if (this.state.editing.edit === false) {
-                this.close();
-            } else {
-                this.edit_cancel();
+        if (!inBackground) {
+            if (ev.key === 'Escape') {
+                //Close the window
+                if (!editing.edit) {
+                    this.close();
+                }
+                //Cancel the current category/item editing operation
+                else {
+                    this.edit_cancel();
+                }
+            }
+
+            //Press enter to save edit
+            if (ev.key === 'Enter') {
+                //Apple the category/item editing operation
+                if (editing.edit) {
+                    //Saving existing edit
+                    if (editing.cat !== '_<!!NewCategory!!>_'
+                    && editing.item !== '_<!!NewItem!!>_') {
+                        this.edit_update('save');
+                    }
+                    //Create edit
+                    else {
+                        this.edit_update('create');
+                    }
+                }
+                //Save all of the data and close
+                else {
+                    this.saveData();
+                }
             }
         }
     }
