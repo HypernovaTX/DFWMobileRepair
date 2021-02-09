@@ -634,11 +634,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
             if (typeof inObj.child !== 'string') {
                 //dig deeper into the object
                 for (const childItem of inObj.child) { output = [...output, ...this.handle_dataToList(childItem)]; }
-
-                //Add category button
-                output.push(this.template_addCategory());
-                output.shift(); //Comment this out for debugging with the original element (it will show XXX to split between the two)
             }
+            //Add category button
+            output.push(this.template_addCategory());
+            output.shift(); //Comment this out for debugging with the original element (it will show XXX to split between the two)
         } 
         //Begin handle data and turn them into elements
         else {
