@@ -46,8 +46,31 @@ export default class UserEdit extends React.Component<Props, State> {
         }
     }
 
-    componentDidMount() { this._ismounted = true; }
+    componentDidMount() {
+        this._ismounted = true;
+        window.addEventListener('keydown', this.handleKeypress);
+    }
+
     componentWillUnmount() { this._ismounted = false; }
+
+    //Keyboard stuffs
+    public handleKeypress = (ev: KeyboardEvent) => {
+        const { inBackground } = this.state;
+        
+        if (!inBackground) {
+            //Esc to close the editing window
+            if (ev.key === 'Escape') {
+                this.close();
+            }
+
+            //Press enter to save all of the data and close
+            if (ev.key === 'Enter') {
+                this.saveData();
+            }
+        }
+    }
+
+
     /************************************************** UE - API **************************************************/
     getData(): void {
         //Make sure this is NOT a new user

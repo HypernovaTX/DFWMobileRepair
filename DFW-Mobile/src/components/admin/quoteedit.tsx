@@ -91,10 +91,10 @@ export default class QuoteEdit extends React.Component<Props, State> {
     //Keyboard stuffs
     public handleKeypress = (ev: KeyboardEvent) => {
         const { inBackground, editing } = this.state;
-        //Esc to close the editing window
+        
         if (!inBackground) {
             if (ev.key === 'Escape') {
-                //Close the window
+                //Esc to close the editing window
                 if (!editing.edit) {
                     this.close();
                 }
