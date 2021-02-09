@@ -222,7 +222,9 @@ export default class QuoteEdit extends React.Component<Props, State> {
                 return;
             }
 
-            postData.append('data', JSON.stringify(DATA));
+            let saveData = JSON.stringify(DATA);
+            if (saveData === `"(null)"`) { saveData = `{}`; } //Make sure it is not saved as "(null)"
+            postData.append('data', saveData);
             if (this.props.newQuote) { param = 'create'; }
             else { postData.append('id', this.props.vehicleID); }
             axios.post(`${CONFIG.backendhost}/${CONFIG.backendindex}?act=quote&q=${param}`, postData)
