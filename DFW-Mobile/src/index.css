@@ -27,6 +27,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+select {
+  -webkit-appearance: none;
+}
 
 .lander {
   width: 100vw;
