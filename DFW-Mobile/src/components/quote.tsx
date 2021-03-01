@@ -217,7 +217,7 @@ export default class Quotes extends React.Component<Props, State> {
     //-------------------------------------------------------------------- TEMPLATE --------------------------------------------------------------------
     //The very top banner
     private template_lander(): JSX.Element {
-        const LOGO_IMG = require('./../resources/images/logo-current.png');
+        const LOGO_IMG = require('./../resources/images/logo-current.png').default;
         const style = { backgroundPositionY: `calc(${(window.pageYOffset / 2 )} - 50vh)` };
         const preventDrag = (e: DragEv) => { e.preventDefault(); };
         const goHome = () => { window.location.href = CONFIG.root; }
@@ -263,7 +263,7 @@ export default class Quotes extends React.Component<Props, State> {
             selectors = (
                 <div key='loading_all_cars' className='list-quotes load'>
                     <div key='qt_qss_loading_icon' className='ld ld-clock' style={styleSpinner} onDragStart={preventDrag}><img
-                        src={require('./../resources/images/nut.png')} alt='loading' key='quoteedit_loading_img' onDragStart={preventDrag}
+                        src={require('./../resources/images/nut.png').default} alt='loading' key='quoteedit_loading_img' onDragStart={preventDrag}
                     ></img></div>
                     <div key='qt_qss_loading_txt' className='loading-cover-text'>Loading vehicle list...</div>
                 </div>
@@ -458,7 +458,7 @@ export default class Quotes extends React.Component<Props, State> {
             contents = (
                 <div key='qt_qss_wrap' className='list-quotes load'>
                     <div key='qt_qss_loading_icon' className='ld ld-clock' style={styleSpinner}><img
-                        src={require('./../resources/images/nut.png')} alt='loading' key='quoteedit_loading_img' 
+                        src={require('./../resources/images/nut.png').default} alt='loading' key='quoteedit_loading_img' 
                     ></img></div>
                     <div key='qt_qss_loading_txt' className='loading-cover-text'>Loading quotes...</div>
                 </div>

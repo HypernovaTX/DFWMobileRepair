@@ -70,7 +70,7 @@ export default class Template extends React.Component<Props, State> {
 
     head(): JSX.Element {
         const { head_bgo, head_bgy } = this.props;
-        const LOGO_IMG = require('./../resources/images/logo-current.png');
+        const LOGO_IMG = require('./../resources/images/logo-current.png').default;
         const style = { backgroundPositionY: head_bgy + head_bgo };
         const preventDrag = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); };
         
