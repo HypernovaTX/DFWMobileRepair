@@ -315,6 +315,11 @@ select {
   display: block;
   font-size: 0.9em;
 }
+a.footer-text img {
+  width: 50%;
+  height: 50%;
+  margin-bottom: 1em;
+}
 
 .contact-body,.hours-container {
   margin-top: 24px;

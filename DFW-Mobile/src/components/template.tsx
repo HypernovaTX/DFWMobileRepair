@@ -194,9 +194,13 @@ export default class Template extends React.Component<Props, State> {
     }
 
     footer(): JSX.Element {
+        const preventDrag = (e: React.DragEvent<HTMLImageElement>) => { e.preventDefault(); };
         return (
             <div key='M_footer' className='footer'>
                 <div key='f_container' className='footer-contain'>
+                    <a key='f_award' className='footer-text' href='https://www.cv-magazine.com/winners/dfw-mobile-repair/#page'>
+                        <img src={require('./../resources/images/global-automotive-awards-2020-png-01.webp').default} alt='' onDragStart={preventDrag}></img>
+                    </a>
                     <span key='f_text1' className='footer-text'>Copyright &#169; 2014 - 2020, DFW Mobile Repair</span>
                     <span key='f_text2' className='footer-text'>Website designed and programmed by Arthur (Hypernova) Guo</span>
                 </div>
